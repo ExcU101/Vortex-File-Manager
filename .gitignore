@@ -1,0 +1,23 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+/signing
+
+# Project exclude paths
+/buildSrc/build/
+/filesystem/build/
+/filesystem/build/intermediates/javac/debug/classes/
+/filesystem-unix/build/
+/filesystem-unix/build/intermediates/javac/debug/classes/
+/pluginsystem/build/
+/pluginsystem/build/intermediates/javac/debug/classes/
+/pluginsystem-common/build/
+/pluginsystem-common/build/intermediates/javac/debug/classes/
