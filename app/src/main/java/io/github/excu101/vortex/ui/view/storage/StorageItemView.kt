@@ -8,6 +8,7 @@ import android.graphics.drawable.RippleDrawable
 import android.util.TypedValue
 import android.view.View.MeasureSpec.*
 import android.view.ViewAnimationUtils
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
@@ -15,6 +16,7 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.contains
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.Builder
@@ -177,13 +179,6 @@ class StorageItemView(context: Context) : FrameLayout(context) {
         icon.setOnLongClickListener(listener)
     }
 
-
-    val iconX
-        get() = icon.x
-
-    val iconY
-        get() = icon.y
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthSize = getSize(widthMeasureSpec) // requires full width-size
         val widthMode = getMode(widthMeasureSpec)
@@ -210,7 +205,6 @@ class StorageItemView(context: Context) : FrameLayout(context) {
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
         if (containsIcon) {
             icon.layout(
                 largeInnerPadding,

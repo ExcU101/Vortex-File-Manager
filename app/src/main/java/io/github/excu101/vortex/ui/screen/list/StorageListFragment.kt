@@ -2,29 +2,30 @@ package io.github.excu101.vortex.ui.screen.list
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils.calculateLuminance
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import io.github.excu101.pluginsystem.model.Action
-import io.github.excu101.vortex.R
 import io.github.excu101.vortex.base.utils.collectState
+import io.github.excu101.vortex.data.Color
 import io.github.excu101.vortex.databinding.FragmentStorageListBinding
+import io.github.excu101.vortex.ui.theme.Theme
+import io.github.excu101.vortex.ui.theme.key.trailSurfaceColorKey
 import io.github.excu101.vortex.ui.view.actions
 import io.github.excu101.vortex.ui.view.bar
 import kotlinx.coroutines.launch
+import kotlin.LazyThreadSafetyMode.NONE
 
 @AndroidEntryPoint
 class StorageListFragment : Fragment() {
@@ -33,14 +34,20 @@ class StorageListFragment : Fragment() {
 
     private var binding: FragmentStorageListBinding? = null
 
-    private var root: CoordinatorLayout? = null
+    private val controller: WindowInsetsControllerCompat? by lazy(NONE) {
+        binding?.root?.let { view ->
+            WindowCompat.getInsetsController(
+                requireActivity().window,
+                view
+            )
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        root = CoordinatorLayout(inflater.context)
         binding = FragmentStorageListBinding.inflate(layoutInflater, container, false)
         return binding?.root
     }
@@ -48,15 +55,8 @@ class StorageListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
-//            val search = bar.menu.add("Search").apply {
-//                setIcon(R.drawable.ic_search_24)
-//                setShowAsAction(SHOW_AS_ACTION_IF_ROOM)
-//            }
-//
-//            val filter = bar.menu.add("Sort").apply {
-//                setIcon(R.drawable.ic_filter_24)
-//                setShowAsAction(SHOW_AS_ACTION_IF_ROOM)
-//            }
+            controller?.isAppearanceLightStatusBars =
+                calculateLuminance(Theme<Int, Color>(trailSurfaceColorKey)) > 0.5
 
             trail.adapter.register { view, item, position ->
                 viewModel.navigateTo(unit = item.value)

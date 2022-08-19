@@ -40,6 +40,6 @@ class StorageListViewBehavior : CoordinatorLayout.Behavior<StorageListView> {
         child: StorageListView,
         dependency: View,
     ): Boolean {
-        return dependency is TrailView || dependency is BottomBar
+        return dependency is TrailView
     }
 }
