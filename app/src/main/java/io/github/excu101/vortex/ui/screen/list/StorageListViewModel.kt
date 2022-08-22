@@ -1,19 +1,16 @@
 package io.github.excu101.vortex.ui.screen.list
 
-import android.content.res.Resources
-import android.graphics.drawable.Drawable
 import android.os.Environment
-import androidx.annotation.DrawableRes
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.excu101.filesystem.fs.FileUnit
 import io.github.excu101.filesystem.fs.utils.asPath
-import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.GroupAction
-import io.github.excu101.vortex.R
-import io.github.excu101.vortex.base.utils.*
+import io.github.excu101.vortex.base.utils.ViewModelContainerHandler
+import io.github.excu101.vortex.base.utils.intent
+import io.github.excu101.vortex.base.utils.new
+import io.github.excu101.vortex.base.utils.state
 import io.github.excu101.vortex.data.TrailData
 import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.provider.StorageProvider
@@ -22,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.apply
 
 @HiltViewModel
 class StorageListViewModel @Inject constructor(
@@ -62,8 +58,10 @@ class StorageListViewModel @Inject constructor(
         items: Collection<FileUnit>,
         isSelected: Boolean = selected.value.containsAll(items),
     ) = intent {
-        val data = _selected.value
-        if (isSelected) data.addAll(items) else data.removeAll(items.toSet())
+        val data = mutableSetOf<FileUnit>().apply {
+            addAll(selected.value)
+            addAll(items)
+        }
         _selected.emit(data)
     }
 

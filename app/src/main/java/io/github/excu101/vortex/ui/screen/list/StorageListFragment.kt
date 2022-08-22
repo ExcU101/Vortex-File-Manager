@@ -25,6 +25,7 @@ import io.github.excu101.vortex.ui.theme.key.trailSurfaceColorKey
 import io.github.excu101.vortex.ui.view.actions
 import io.github.excu101.vortex.ui.view.bar
 import kotlinx.coroutines.launch
+import java.io.File
 import kotlin.LazyThreadSafetyMode.NONE
 
 @AndroidEntryPoint
@@ -65,12 +66,12 @@ class StorageListFragment : Fragment() {
             list.adapter.registerLong { view, item, position ->
                 when (view) {
                     is ImageView -> {
-                        Toast.makeText(requireContext(), "FUCK", Toast.LENGTH_LONG)
+
                         true
                     }
 
                     is FrameLayout -> {
-                        Toast.makeText(requireContext(), "FUCK", Toast.LENGTH_LONG)
+
                         true
                     }
 
@@ -110,7 +111,7 @@ class StorageListFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.selected.collect { data ->
-                        list.adapter.replaceSelectedFiles(data.toList())
+                        list.adapter.addSelected(data)
                     }
                 }
             }

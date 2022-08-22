@@ -26,5 +26,6 @@ android {
 
 dependencies {
     implementation(project(Deps.Application.FileSystem))
+    implementation(Deps.AndroidX.Fragment)
     implementation(kotlin("reflect"))
 }

@@ -8,7 +8,6 @@ object NativeCalls {
         System.loadLibrary("unix-calls")
     }
 
-
     external fun putByte(address: Long, data: Byte)
 
     external fun getByte(address: Long): Byte

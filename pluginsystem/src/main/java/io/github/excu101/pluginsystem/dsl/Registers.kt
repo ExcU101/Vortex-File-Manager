@@ -6,7 +6,6 @@ import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.pluginsystem.model.Plugin
-import io.github.excu101.pluginsystem.model.Screen
 import io.github.excu101.pluginsystem.provider.Managers
 import io.github.excu101.pluginsystem.utils.EmptyDrawable
 import kotlin.reflect.KClass
@@ -16,16 +15,6 @@ annotation class RegistersMarker
 
 @RegistersMarker
 class Registers(val plugin: Plugin) {
-
-    inner class ScreenRegister(
-        override var route: String = "",
-        override var icon: Drawable?,
-        override var content: View,
-    ) : Screen
-
-    fun Plugin.screen(route: String, icon: Drawable? = null, block: View) {
-        Managers.Screen.register(plugin = this, ScreenRegister(route, icon, block))
-    }
 
     inner class GroupRegister(
         var name: String,

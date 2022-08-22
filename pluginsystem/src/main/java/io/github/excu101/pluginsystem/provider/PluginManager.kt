@@ -3,9 +3,7 @@ package io.github.excu101.pluginsystem.provider
 import android.content.Context
 import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.pluginsystem.model.Plugin
-import io.github.excu101.pluginsystem.model.Screen
 import io.github.excu101.pluginsystem.provider.impl.GroupManagerImpl
-import io.github.excu101.pluginsystem.provider.impl.ScreenManagerImpl
 import io.github.excu101.pluginsystem.utils.asPluginsUrl
 import java.io.File
 
@@ -20,10 +18,6 @@ object PluginManager {
         get() = _plugins
 
     fun load(path: String) = load(File(path))
-
-    fun getPlugin(screen: Screen) {
-        (Managers.Screen as ScreenManagerImpl).getPlugin(screen)
-    }
 
     fun getPlugin(group: GroupAction) {
         (Managers.Group as GroupManagerImpl).getPlugin(group)

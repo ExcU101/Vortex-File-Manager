@@ -1,7 +1,6 @@
 package io.github.excu101.vortex.ui.view.storage
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import io.github.excu101.filesystem.fs.FileUnit
 import io.github.excu101.vortex.ui.base.BaseAdapter
 
@@ -12,26 +11,7 @@ class StorageListAdapter : BaseAdapter<FileUnit, StorageItemViewHolder>(
         setHasStableIds(true)
     }
 
-    private var selected: List<FileUnit> = listOf()
-
-    fun replaceSelectedFiles(list: List<FileUnit>) {
-        val differ = object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int = selected.size
-
-            override fun getNewListSize(): Int = list.size
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return list[newItemPosition].path == selected[oldItemPosition].path
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return list[newItemPosition].path == selected[oldItemPosition].path
-            }
-        }
-        val result = DiffUtil.calculateDiff(differ)
-        selected = list
-        result.dispatchUpdatesTo(this)
-    }
+    private val selected = mutableListOf<FileUnit>()
 
     override fun getItemId(position: Int): Long {
         return getItem(position).path.hashCode().toLong()
@@ -41,6 +21,24 @@ class StorageListAdapter : BaseAdapter<FileUnit, StorageItemViewHolder>(
         return StorageItemViewHolder(
             root = StorageItemView(context = parent.context)
         )
+    }
+
+    fun addSelected(selected: Collection<FileUnit>) {
+        this.selected.addAll(selected)
+        for (s in selected) {
+            if (s in currentList) {
+                notifyItemChanged(indexOf(s))
+            }
+        }
+    }
+
+    fun removeSelected(selected: Collection<FileUnit>) {
+        this.selected.removeAll(selected)
+        for (s in selected) {
+            if (s in currentList) {
+                notifyItemChanged(indexOf(s))
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: StorageItemViewHolder, position: Int) {

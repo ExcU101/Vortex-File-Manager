@@ -1,50 +1,71 @@
 package io.github.excu101.filesystem.fs.attr.size
 
-import io.github.excu101.filesystem.fs.attr.size.Size.Types.B
-import io.github.excu101.filesystem.fs.attr.size.Size.Types.values
+import java.text.DecimalFormat
+
 
 class Size(val inputMemory: Long) {
 
-    companion object {
-        private infix fun Int.pow(n: Int): Double {
-            if (n <= 0) {
-                return 1.0
-            }
-            return this * pow(n - 1)
-        }
+    enum class BinaryPrefixes(val value: Long) {
+        B(1L),
+        KiB(B.value shl 10),
+        MiB(KiB.value shl 10),
+        GiB(MiB.value shl 10),
+        TiB(GiB.value shl 10),
+        PiB(TiB.value shl 10),
+        EiB(PiB.value shl 10),
+        ZiB(EiB.value shl 10),
+        YiB(ZiB.value shl 10)
     }
 
-    private val type: Types
-        get() = parseType()
+    enum class SiPrefixes(val value: Long) {
+        B(1L),
+        KB(B.value * 1000),
+        MB(KB.value * 1000),
+        GB(MB.value * 1000),
+        TB(GB.value * 1000),
+        PB(TB.value * 1000),
+        EB(PB.value * 1000),
+        ZB(EB.value * 1000),
+        YB(ZB.value * 1000),
+    }
 
     fun isEmpty(): Boolean = inputMemory == 0L
 
-    override fun toString(): String {
-        return round().toString() + type.toString()
-    }
+    fun toBinaryType(): String {
+        if (inputMemory < 0) throw IllegalArgumentException("Invalid file size: $inputMemory")
 
-    private fun round(): Int {
-        return (inputMemory / type.value).toInt()
-    }
-
-    private fun parseType(): Types = values().fold(B) { prev, current ->
-        if (inputMemory >= current.value) {
-            current
-        } else {
-            prev
+        val type = BinaryPrefixes.values().fold(BinaryPrefixes.B) { prev, current ->
+            if (inputMemory >= current.value) {
+                current
+            } else {
+                prev
+            }
         }
+
+        return formatSize(type.value, type.name)
     }
 
-    enum class Types(val value: Double) {
-        B(value = 2 pow 3),
-        KB(value = 2 pow 10),
-        MB(value = 2 pow 20),
-        GB(value = 2 pow 30),
-        TB(value = 2 pow 40),
-        PB(value = 2 pow 50),
-        EB(value = 2 pow 60),
-        ZB(value = 2 pow 70),
-        YB(value = 2 pow 80)
+    fun toSiType(): String {
+        if (inputMemory < 0) throw IllegalArgumentException("Invalid file size: $inputMemory")
+
+        val type = SiPrefixes.values().fold(SiPrefixes.B) { prev, current ->
+            if (inputMemory >= current.value) {
+                current
+            } else {
+                prev
+            }
+        }
+
+        return formatSize(type.value, type.name)
     }
 
+    override fun toString(): String {
+        return toSiType()
+    }
+
+    private fun formatSize(divider: Long, unitName: String): String {
+        return DecimalFormat("#")
+            .format(inputMemory.toDouble() / divider)
+            .toString() + unitName
+    }
 }

@@ -27,8 +27,8 @@ object Theme {
 
     var isDark: Boolean = false
         set(value) {
-            update()
             field = value
+            update()
         }
 
     fun getText(key: String): Text = text[key] ?: Text(String())
