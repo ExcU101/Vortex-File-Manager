@@ -6,11 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.graphics.ColorUtils.calculateLuminance
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -18,14 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.vortex.base.utils.collectState
-import io.github.excu101.vortex.data.Color
 import io.github.excu101.vortex.databinding.FragmentStorageListBinding
-import io.github.excu101.vortex.ui.theme.Theme
-import io.github.excu101.vortex.ui.theme.key.trailSurfaceColorKey
 import io.github.excu101.vortex.ui.view.actions
 import io.github.excu101.vortex.ui.view.bar
 import kotlinx.coroutines.launch
-import java.io.File
 import kotlin.LazyThreadSafetyMode.NONE
 
 @AndroidEntryPoint
@@ -34,6 +26,14 @@ class StorageListFragment : Fragment() {
     private val viewModel by viewModels<StorageListViewModel>()
 
     private var binding: FragmentStorageListBinding? = null
+
+    private val ADD_ACTION_ID = 0
+    private val ADD_ACTION_TITLE = "Add File"
+    private val ADD_ACTION_MENU by lazy {
+        bar.menu.add(0, ADD_ACTION_ID, 0, ADD_ACTION_TITLE).apply {
+            setIcon(com.google.android.material.R.drawable.mtrl_ic_arrow_drop_down)
+        }
+    }
 
     private val controller: WindowInsetsControllerCompat? by lazy(NONE) {
         binding?.root?.let { view ->
@@ -50,17 +50,27 @@ class StorageListFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentStorageListBinding.inflate(layoutInflater, container, false)
+        bar.hideOnScroll = true
+        ADD_ACTION_MENU
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
-            controller?.isAppearanceLightStatusBars =
-                calculateLuminance(Theme<Int, Color>(trailSurfaceColorKey)) > 0.5
-
             trail.adapter.register { view, item, position ->
                 viewModel.navigateTo(unit = item.value)
+            }
+
+            bar.setOnMenuItemClickListener {
+                when (it) {
+                    ADD_ACTION_MENU -> {
+
+                        true
+                    }
+
+                    else -> false
+                }
             }
 
             list.adapter.registerLong { view, item, position ->

@@ -39,3 +39,6 @@ fun <P : Path> DirectoryStream<P>.toList(): List<P> {
         return@use list
     }
 }
+
+inline val Path.list
+    get() = system.provider.newDirectorySteam(this).toList()

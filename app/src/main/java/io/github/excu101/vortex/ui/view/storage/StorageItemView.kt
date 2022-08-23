@@ -2,31 +2,24 @@ package io.github.excu101.vortex.ui.view.storage
 
 import android.content.Context
 import android.content.res.ColorStateList.valueOf
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.LayerDrawable
+import android.graphics.ColorFilter
+import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.RippleDrawable
-import android.util.TypedValue
 import android.view.View.MeasureSpec.*
-import android.view.ViewAnimationUtils
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import androidx.core.view.contains
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.Builder
-import io.github.excu101.vortex.data.Color
-import io.github.excu101.vortex.ui.theme.Theme
+import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.ui.theme.key.*
-import io.github.excu101.vortex.ui.view.AnimatableColor
 import io.github.excu101.vortex.ui.view.dp
 import kotlin.math.min
-
 
 class StorageItemView(context: Context) : FrameLayout(context) {
 
@@ -54,6 +47,12 @@ class StorageItemView(context: Context) : FrameLayout(context) {
             title.setTextColor(value)
         }
 
+    var backgroundElevation: Float
+        get() = shape.elevation
+        set(value) {
+            shape.elevation = value
+        }
+
     val containsTitle: Boolean
         get() = contains(title)
 
@@ -63,18 +62,28 @@ class StorageItemView(context: Context) : FrameLayout(context) {
     val containsIcon: Boolean
         get() = contains(icon)
 
-    var isItemSelected: Boolean = false
+    private val iconShape = MaterialShapeDrawable(
+        Builder().setAllCorners(CornerFamily.ROUNDED, 500F).build()
+    ).apply {
 
+        fillColor = valueOf(ThemeColor(fileItemIconBackgroundColorKey))
+    }
 
     private val iconBackground = RippleDrawable(
-        valueOf(Theme<Int, Color>(fileItemIconTintColorKey)),
-        MaterialShapeDrawable(
-            Builder()
-                .setAllCorners(CornerFamily.ROUNDED, 500F)
-                .build()
-        ).apply {
-            fillColor = valueOf(Theme<Int, Color>(fileItemIconBackgroundColorKey))
-        },
+        valueOf(ThemeColor(fileItemIconTintColorKey)),
+        iconShape,
+        null
+    )
+
+    private val shape = MaterialShapeDrawable(
+    ).apply {
+        initializeElevationOverlay(context)
+        fillColor = valueOf(ThemeColor(fileItemSurfaceColorKey))
+    }
+
+    private val background = RippleDrawable(
+        valueOf(ThemeColor(fileItemIconTintColorKey)),
+        shape,
         null
     )
 
@@ -86,19 +95,19 @@ class StorageItemView(context: Context) : FrameLayout(context) {
         minimumHeight = iconSize
         isClickable = true
         isFocusable = true
-        imageTintList = valueOf(Theme<Int, Color>(fileItemIconTintColorKey))
+        imageTintList = valueOf(ThemeColor(fileItemIconTintColorKey))
     }
 
     private val title = TextView(context).apply {
         textSize = 16F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        setTextColor(Theme<Int, Color>(fileItemTitleTextColorKey))
+        setTextColor(ThemeColor(fileItemTitleTextColorKey))
     }
 
     private val info = TextView(context).apply {
         textSize = 14F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        setTextColor(Theme<Int, Color>(fileItemSecondaryTextColorKey))
+        setTextColor(ThemeColor(fileItemSecondaryTextColorKey))
     }
 
     private fun ensureContainingTitle() {
@@ -144,31 +153,30 @@ class StorageItemView(context: Context) : FrameLayout(context) {
 
     fun updateSelection(isSelected: Boolean) {
         if (isSelected) {
-            titleColor = Theme<Int, Color>(fileItemTitleSelectedTextColorKey)
-            infoColor = Theme<Int, Color>(fileItemSecondarySelectedTextColorKey)
-            icon.setColorFilter(Theme<Int, Color>(fileItemIconSelectedTintColorKey))
+            titleColor = ThemeColor(fileItemTitleSelectedTextColorKey)
+            infoColor = ThemeColor(fileItemSecondarySelectedTextColorKey)
+            icon.setColorFilter(ThemeColor(fileItemIconSelectedTintColorKey))
+            iconShape.fillColor = valueOf(ThemeColor(fileItemIconBackgroundSelectedColorKey))
+            shape.fillColor = valueOf(ThemeColor(fileItemSurfaceSelectedColorKey))
         } else {
-            titleColor = Theme<Int, Color>(fileItemTitleTextColorKey)
-            infoColor = Theme<Int, Color>(fileItemSecondaryTextColorKey)
-            icon.setColorFilter(Theme<Int, Color>(fileItemIconTintColorKey))
+            titleColor = ThemeColor(fileItemTitleTextColorKey)
+            infoColor = ThemeColor(fileItemSecondaryTextColorKey)
+            icon.setColorFilter(ThemeColor(fileItemIconTintColorKey))
+            iconShape.fillColor = valueOf(ThemeColor(fileItemIconBackgroundColorKey))
+            shape.fillColor = valueOf(ThemeColor(fileItemSurfaceColorKey))
         }
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
+    }
+
     init {
-        ensureContainingTitle()
-        ensureContainingInfo()
-        val outValue = TypedValue()
-        getContext().theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)
         isClickable = true
         isFocusable = true
-        background = LayerDrawable(
-            arrayOf(
-                ColorDrawable(
-                    Theme<Int, Color>(fileItemSurfaceColorKey)
-                ),
-                ContextCompat.getDrawable(context, outValue.resourceId),
-            )
-        )
+        setBackground(background)
     }
 
     fun setOnIconClickListener(listener: OnClickListener) {
@@ -199,9 +207,15 @@ class StorageItemView(context: Context) : FrameLayout(context) {
         setMeasuredDimension(width, height)
 
         val availableWidth = width - largeInnerPadding
-        icon.measure(makeMeasureSpec(iconSize, AT_MOST), makeMeasureSpec(iconSize, AT_MOST))
-        title.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(24.dp, AT_MOST))
-        info.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(16.dp, AT_MOST))
+        if (containsIcon) {
+            icon.measure(makeMeasureSpec(iconSize, AT_MOST), makeMeasureSpec(iconSize, AT_MOST))
+        }
+        if (containsTitle) {
+            title.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(24.dp, AT_MOST))
+        }
+        if (containsInfo) {
+            info.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(16.dp, AT_MOST))
+        }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

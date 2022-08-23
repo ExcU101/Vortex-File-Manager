@@ -1,41 +1,53 @@
 package io.github.excu101.filesystem.fs.attr.size
 
+import java.math.BigInteger
 import java.text.DecimalFormat
 
+class Size(val memory: BigInteger) {
 
-class Size(val inputMemory: Long) {
+    constructor(size: Long) : this(size.toBigInteger())
 
-    enum class BinaryPrefixes(val value: Long) {
-        B(1L),
-        KiB(B.value shl 10),
-        MiB(KiB.value shl 10),
-        GiB(MiB.value shl 10),
-        TiB(GiB.value shl 10),
-        PiB(TiB.value shl 10),
-        EiB(PiB.value shl 10),
-        ZiB(EiB.value shl 10),
-        YiB(ZiB.value shl 10)
+    companion object {
+        private infix fun Int.pow(n: Int): BigInteger {
+            if (n <= 0) {
+                return BigInteger.ONE
+            }
+
+            return this.toBigInteger() * pow(n - 1)
+        }
     }
 
-    enum class SiPrefixes(val value: Long) {
-        B(1L),
-        KB(B.value * 1000),
-        MB(KB.value * 1000),
-        GB(MB.value * 1000),
-        TB(GB.value * 1000),
-        PB(TB.value * 1000),
-        EB(PB.value * 1000),
-        ZB(EB.value * 1000),
-        YB(ZB.value * 1000),
+    enum class BinaryPrefixes(val value: BigInteger) {
+        B(2 pow 3),
+        KiB(2 pow 10),
+        MiB(2 pow 20),
+        GiB(2 pow 30),
+        TiB(2 pow 40),
+        PiB(2 pow 50),
+        EiB(2 pow 60),
+        ZiB(2 pow 70),
+        YiB(2 pow 80)
     }
 
-    fun isEmpty(): Boolean = inputMemory == 0L
+    enum class SiPrefixes(val value: BigInteger) {
+        B(1L.toBigInteger()),
+        KB(B.value.multiply(1000.toBigInteger())),
+        MB(KB.value.multiply(1000.toBigInteger())),
+        GB(MB.value.multiply(1000.toBigInteger())),
+        TB(GB.value.multiply(1000.toBigInteger())),
+        PB(TB.value.multiply(1000.toBigInteger())),
+        EB(PB.value.multiply(1000.toBigInteger())),
+        ZB(EB.value.multiply(1000.toBigInteger())),
+        YB(ZB.value.multiply(1000.toBigInteger())),
+    }
+
+    fun isEmpty(): Boolean = memory > BigInteger.ZERO
 
     fun toBinaryType(): String {
-        if (inputMemory < 0) throw IllegalArgumentException("Invalid file size: $inputMemory")
+//        if (memory < 0) throw IllegalArgumentException("Invalid file size: $memory")
 
         val type = BinaryPrefixes.values().fold(BinaryPrefixes.B) { prev, current ->
-            if (inputMemory >= current.value) {
+            if (memory > current.value) {
                 current
             } else {
                 prev
@@ -46,10 +58,10 @@ class Size(val inputMemory: Long) {
     }
 
     fun toSiType(): String {
-        if (inputMemory < 0) throw IllegalArgumentException("Invalid file size: $inputMemory")
+//        if (memory < 0) throw IllegalArgumentException("Invalid file size: $memory")
 
         val type = SiPrefixes.values().fold(SiPrefixes.B) { prev, current ->
-            if (inputMemory >= current.value) {
+            if (memory > current.value) {
                 current
             } else {
                 prev
@@ -63,9 +75,9 @@ class Size(val inputMemory: Long) {
         return toSiType()
     }
 
-    private fun formatSize(divider: Long, unitName: String): String {
+    private fun formatSize(divider: BigInteger, unitName: String): String {
         return DecimalFormat("#")
-            .format(inputMemory.toDouble() / divider)
+            .format(memory.div(divider))
             .toString() + unitName
     }
 }

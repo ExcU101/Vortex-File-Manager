@@ -11,7 +11,6 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.ui.MainActivity
 import io.github.excu101.vortex.ui.view.action.ActionListDialog
-import io.github.excu101.vortex.ui.view.bar.BottomBar
 import kotlin.math.ceil
 
 @Suppress(names = ["FunctionName"])
@@ -27,8 +26,8 @@ inline fun AnimatableColor(
     _animator.start()
 }
 
-inline val Fragment.bar: BottomBar
-    get() = (requireActivity() as MainActivity).bar
+inline val Fragment.bar: BottomAppBar
+    get() = requireActivity().findViewById(R.id.bar)
 
 val Fragment.actions: ActionListDialog
     get() = (requireActivity() as MainActivity).list

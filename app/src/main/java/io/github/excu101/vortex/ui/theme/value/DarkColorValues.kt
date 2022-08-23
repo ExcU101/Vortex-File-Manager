@@ -1,9 +1,10 @@
-package io.github.excu101.vortex.ui.theme
+package io.github.excu101.vortex.ui.theme.value
 
-import io.github.excu101.vortex.data.Color
+import io.github.excu101.pluginsystem.model.Color
+import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.theme.key.*
 
-fun defaultDarkTheme(): Theme {
+fun initVortexDarkColorValues(): Theme {
     Theme[backgroundColorKey] = Color(value = 0xFF212121)
     Theme[surfaceColorKey] = Color.Black
     Theme[accentColorKey] = Color(value = 0xFF3062FF)

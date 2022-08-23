@@ -1,25 +1,19 @@
 package io.github.excu101.vortex.ui.view.warning
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.ColorStateList.valueOf
 import android.util.AttributeSet
-import android.view.Gravity.CENTER
-import android.view.View.MeasureSpec.AT_MOST
-import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.WRAP_CONTENT
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
 import com.google.android.material.button.MaterialButton
 import io.github.excu101.pluginsystem.model.Action
+import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.R
-import io.github.excu101.vortex.data.Color
-import io.github.excu101.vortex.ui.theme.Theme
 import io.github.excu101.vortex.ui.theme.key.fileWarningActionContentColorKey
 import io.github.excu101.vortex.ui.theme.key.fileWarningBackgroundColorKey
 import io.github.excu101.vortex.ui.view.dp
@@ -94,8 +88,8 @@ class WarningView : FrameLayout {
             val view = MaterialButton(context).apply {
                 icon = action.icon
                 text = action.title
-                iconTint = valueOf(Theme<Int, Color>(fileWarningActionContentColorKey))
-                setTextColor(Theme<Int, Color>(fileWarningActionContentColorKey))
+                iconTint = valueOf(ThemeColor(fileWarningActionContentColorKey))
+                setTextColor(ThemeColor(fileWarningActionContentColorKey))
                 layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
             }
             addView(view, index + 2)
@@ -103,7 +97,7 @@ class WarningView : FrameLayout {
     }
 
     init {
-        setBackgroundColor(Theme<Int, Color>(fileWarningBackgroundColorKey))
+        setBackgroundColor(ThemeColor(fileWarningBackgroundColorKey))
         isClickable = true
         isFocusable = true
         setIcon(R.drawable.ic_info_24)

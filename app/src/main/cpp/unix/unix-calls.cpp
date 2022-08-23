@@ -20,7 +20,7 @@ static char *fromByteArrayToPath(
         JNIEnv *env,
         jbyteArray path
 ) {
-    jbyte *segments = env->GetByteArrayElements(path, NULL);
+    jbyte *segments = env->GetByteArrayElements(path, nullptr);
     jsize jLength = env->GetArrayLength(path);
     auto length = (size_t) jLength;
     char *cPath = (char *) malloc(length + 1);
@@ -35,7 +35,7 @@ static jobject doStat(
         char *path,
         bool isLinkStatus
 ) {
-    static jmethodID constructor(0);
+    static jmethodID constructor(nullptr);
     if (!constructor) { constructor = findUnixStatusStructureInitMethod(env); }
     struct stat64 status = {};
     isLinkStatus ? isLinkExists(path, &status) : isExists(path, &status);
@@ -174,7 +174,7 @@ static jobject newLinuxDirentStruct(
         JNIEnv *env,
         const struct dirent64 *directory
 ) {
-    static jmethodID constructor(NULL);
+    static jmethodID constructor(nullptr);
     if (!constructor) {
         constructor = findUnixDirentStructureInitMethod(env);
     }
@@ -237,7 +237,7 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_readDir(
 }
 
 static jobject openFileDescriptor(JNIEnv *env, int id) {
-    static jmethodID constructor(0);
+    static jmethodID constructor(nullptr);
     if (!constructor) {
         constructor = findJavaFileDescriptorInitMethod(env);
     }
@@ -283,7 +283,7 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_mkdir(
 }
 
 static jobject doStatVfs(JNIEnv *env, const struct statvfs64 *statvfs) {
-    static jmethodID constructor(0);
+    static jmethodID constructor(nullptr);
     if (!constructor) {
         constructor = findUnixFileSystemStatusStructureInitMethod(env);
     }

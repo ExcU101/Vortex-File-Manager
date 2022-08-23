@@ -107,7 +107,7 @@ class UnixDirectoryStream internal constructor(
                     onError(exception)
                     false
                 }
-                if (!accepted) continue
+                if (! accepted) continue
 
                 return path
             }

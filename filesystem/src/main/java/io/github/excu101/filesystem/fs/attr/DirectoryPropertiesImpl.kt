@@ -2,6 +2,7 @@ package io.github.excu101.filesystem.fs.attr
 
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.list
 
 internal class DirectoryPropertiesImpl constructor(directory: Path) : DirectoryProperties {
 
@@ -11,20 +12,18 @@ internal class DirectoryPropertiesImpl constructor(directory: Path) : DirectoryP
     private val _emptyFiles: MutableList<Path> = mutableListOf()
 
     init {
-        FileProvider.newDirStream(directory).use { stream ->
-            for (path in stream) {
-                val attrs = FileProvider.readAttrs(path, BasicAttrs::class)
-                if (attrs.isDirectory) {
-                    if (attrs.size.isEmpty()) {
-                        _emptyDirs.add(path)
-                    }
-                    _dirs.add(path)
-                } else {
-                    if (attrs.size.isEmpty()) {
-                        _emptyFiles.add(path)
-                    }
-                    _files.add(path)
+        directory.list.forEach { path ->
+            val attrs = FileProvider.readAttrs(path, BasicAttrs::class)
+            if (attrs.isDirectory) {
+                if (attrs.size.isEmpty()) {
+                    _emptyDirs.add(path)
                 }
+                _dirs.add(path)
+            } else {
+                if (attrs.size.isEmpty()) {
+                    _emptyFiles.add(path)
+                }
+                _files.add(path)
             }
         }
     }

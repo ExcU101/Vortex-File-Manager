@@ -1,13 +1,15 @@
-package io.github.excu101.vortex.data
+package io.github.excu101.pluginsystem.model
 
+import android.graphics.Color.parseColor
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorLong
+import io.github.excu101.pluginsystem.ui.theme.Theme
 
 class Color(@ColorInt override val value: Int) : DataHolder<Int> {
 
     constructor(@ColorLong value: Long) : this(value = value.toInt())
 
-    constructor(name: String) : this(value = android.graphics.Color.parseColor(name))
+    constructor(code: String) : this(value = parseColor(code))
 
     companion object {
         val Black = Color(value = 0xFF000000)

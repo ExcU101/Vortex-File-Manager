@@ -104,5 +104,5 @@ class UnixAttributes private constructor(private val structure: UnixStatusStruct
         )
 
     override val size: Size
-        get() = Size(inputMemory = structure.size)
+        get() = Size(size = structure.size)
 }

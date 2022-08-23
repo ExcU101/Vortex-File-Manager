@@ -1,35 +1,34 @@
-package io.github.excu101.vortex.ui.theme
+package io.github.excu101.pluginsystem.ui.theme
 
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.ShapeDrawable
-import io.github.excu101.vortex.data.Color
-import io.github.excu101.vortex.data.DataHolder
-import io.github.excu101.vortex.data.Dimen
-import io.github.excu101.vortex.data.Text
+import io.github.excu101.pluginsystem.model.*
+import io.github.excu101.pluginsystem.utils.EmptyDrawable
+
+fun ThemeColor(key: String): Int {
+    return Theme<Int, Color>(key)
+}
+
+fun ThemeDimen(key: String): Int {
+    return Theme<Int, Dimen>(key)
+}
+
+fun ThemeIcon(key: String): Drawable {
+    return Theme<Drawable, Icon>(key)
+}
+
+fun ThemeText(key: String): String {
+    return Theme<String, Text>(key)
+}
 
 object Theme {
 
-    val light by lazy {
-        isDark = false
-    }
-
-    val dark by lazy {
-        isDark = true
-    }
-
-    private val icons: HashMap<String, Drawable> = hashMapOf()
+    private val icons: HashMap<String, Icon> = hashMapOf()
 
     private val text: HashMap<String, Text> = hashMapOf()
 
     private val colors: HashMap<String, Color> = hashMapOf()
 
     private val dimens: HashMap<String, Dimen> = hashMapOf()
-
-    var isDark: Boolean = false
-        set(value) {
-            field = value
-            update()
-        }
 
     fun getText(key: String): Text = text[key] ?: Text(String())
 
@@ -45,9 +44,9 @@ object Theme {
 
     inline fun getDp(key: () -> String): Dimen = getDp(key = key())
 
-    fun getIcon(key: String): Drawable = icons[key] ?: ShapeDrawable()
+    fun getIcon(key: String): Icon = icons[key] ?: Icon(EmptyDrawable)
 
-    inline fun getIcon(key: () -> String): Drawable = getIcon(key())
+    inline fun getIcon(key: () -> String): Icon = getIcon(key())
 
     inline operator fun <H, reified T : DataHolder<H>> get(key: String): H {
         val holder = when (T::class) {
@@ -74,18 +73,8 @@ object Theme {
         text[key] = value
     }
 
-    operator fun set(key: String, value: Drawable) {
+    operator fun set(key: String, value: Icon) {
         icons[key] = value
-    }
-
-    init {
-        update()
-    }
-
-    fun update() {
-        if (isDark) defaultDarkTheme() else defaultLightTheme()
-        defaultDimens()
-        defaultTexts()
     }
 }
 

@@ -11,6 +11,13 @@ class MarginItemDecoration(
     private val bottom: Int = 0,
 ) : RecyclerView.ItemDecoration() {
 
+    constructor(vertical: Int = 0, horizontal: Int = 0) : this(
+        left = horizontal,
+        top = vertical,
+        right = horizontal,
+        bottom = vertical
+    )
+
     override fun getItemOffsets(
         outRect: Rect,
         view: View,

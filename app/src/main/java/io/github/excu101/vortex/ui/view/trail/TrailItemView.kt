@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.RippleDrawable
 import android.view.Gravity.CENTER
-import android.view.Gravity.CENTER_VERTICAL
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
@@ -14,9 +13,9 @@ import androidx.core.view.updatePadding
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.Builder
+import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import io.github.excu101.vortex.R
-import io.github.excu101.vortex.data.Color
-import io.github.excu101.vortex.ui.theme.Theme
 import io.github.excu101.vortex.ui.theme.key.*
 import io.github.excu101.vortex.ui.view.dp
 import io.github.excu101.vortex.ui.view.foundtation.InnerPaddingOwner
@@ -30,16 +29,15 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
             .setBottomLeftCorner(ROUNDED, 100F)
             .setBottomRightCorner(ROUNDED, 100F)
             .build()
-        fillColor = valueOf(Theme<Int, Color>(trailSurfaceColorKey))
+        fillColor = valueOf(ThemeColor(trailSurfaceColorKey))
     }
 
     private var rippleDrawable = RippleDrawable(
-        valueOf(Theme<Int, Color>(trailItemTitleTextColorKey)),
+        valueOf(ThemeColor(trailItemTitleTextColorKey)),
         roundedBackground,
         null
     )
 
-    private val desireHeight = 36.dp
     private val minWidth = 36.dp
 
     override val innerLargePadding = 16.dp
@@ -48,7 +46,7 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
 
     init {
         minimumWidth = minWidth
-        minimumHeight = desireHeight
+        minimumHeight = ThemeDimen(trailHeightKey).dp
         gravity = CENTER
         isClickable = true
         isFocusable = true
@@ -94,18 +92,14 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
 
     fun updateSelection(isSelected: Boolean) {
         if (isSelected) {
-            rippleDrawable.setColor(valueOf(Theme<Int, Color>(trailItemRippleSelectedTintColorKey)))
-            title.setTextColor(Theme<Int, Color>(trailItemTitleSelectedTextColorKey))
-            arrow.setColorFilter(Theme<Int, Color>(trailItemArrowSelectedTintColorKey))
+            rippleDrawable.setColor(valueOf(ThemeColor(trailItemRippleSelectedTintColorKey)))
+            title.setTextColor(ThemeColor(trailItemTitleSelectedTextColorKey))
+            arrow.setColorFilter(ThemeColor(trailItemArrowSelectedTintColorKey))
         } else {
-            rippleDrawable.setColor(valueOf(Theme<Int, Color>(trailItemRippleTintColorKey)))
-            title.setTextColor(Theme<Int, Color>(trailItemTitleTextColorKey))
-            arrow.setColorFilter(Theme<Int, Color>(trailItemArrowTintColorKey))
+            rippleDrawable.setColor(valueOf(ThemeColor(trailItemRippleTintColorKey)))
+            title.setTextColor(ThemeColor(trailItemTitleTextColorKey))
+            arrow.setColorFilter(ThemeColor(trailItemArrowTintColorKey))
         }
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, 48.dp)
     }
 
 }

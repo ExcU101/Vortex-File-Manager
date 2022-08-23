@@ -5,8 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.updatePadding
-import com.google.android.material.bottomappbar.BottomAppBar
-import io.github.excu101.vortex.ui.view.bar.BottomBar
+import io.github.excu101.vortex.ui.view.dp
 import io.github.excu101.vortex.ui.view.trail.TrailView
 
 class StorageListViewBehavior : CoordinatorLayout.Behavior<StorageListView> {
@@ -28,7 +27,9 @@ class StorageListViewBehavior : CoordinatorLayout.Behavior<StorageListView> {
     ): Boolean {
         return when (dependency) {
             is TrailView -> {
-                child.updatePadding(top = dependency.height + dependency.translationY.toInt())
+                child.updatePadding(
+                    top = dependency.height + dependency.translationY.toInt(),
+                )
                 true
             }
             else -> super.onDependentViewChanged(parent, child, dependency)

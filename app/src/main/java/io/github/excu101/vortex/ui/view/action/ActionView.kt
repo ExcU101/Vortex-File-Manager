@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
-import android.view.Gravity
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.FrameLayout
@@ -14,8 +13,7 @@ import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.view.contains
 import com.google.android.material.shape.MaterialShapeDrawable
-import io.github.excu101.vortex.data.Color
-import io.github.excu101.vortex.ui.theme.Theme
+import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.ui.theme.key.mainBarSurfaceColorKey
 import io.github.excu101.vortex.ui.theme.key.mainDrawerActionIconTintColorKey
 import io.github.excu101.vortex.ui.theme.key.mainDrawerActionTitleTextColorKey
@@ -30,7 +28,7 @@ class ActionView(context: Context) : FrameLayout(context) {
         background = RippleDrawable(
             valueOf(0xFF6200EE.toInt()),
             MaterialShapeDrawable().apply {
-                setTint(Theme<Int, Color>(mainBarSurfaceColorKey))
+                setTint(ThemeColor(mainBarSurfaceColorKey))
             },
             null
         )
@@ -55,8 +53,8 @@ class ActionView(context: Context) : FrameLayout(context) {
     }
 
     init {
-        setTitleColor(Theme<Int, Color>(mainDrawerActionTitleTextColorKey))
-        setIconTint(Theme<Int, Color>(mainDrawerActionIconTintColorKey))
+        setTitleColor(ThemeColor(mainDrawerActionTitleTextColorKey))
+        setIconTint(ThemeColor(mainDrawerActionIconTintColorKey))
     }
 
     val containsTitle: Boolean

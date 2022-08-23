@@ -1,14 +1,10 @@
 package io.github.excu101.vortex.ui.view.storage
 
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.github.excu101.vortex.data.Color
-import io.github.excu101.vortex.ui.theme.Theme
-import io.github.excu101.vortex.ui.theme.key.backgroundColorKey
 
 class StorageListView : RecyclerView, CoordinatorLayout.AttachedBehavior {
 
@@ -49,6 +45,7 @@ class StorageListView : RecyclerView, CoordinatorLayout.AttachedBehavior {
     init {
         setHasFixedSize(true)
         adapter = listAdapter
+        isNestedScrollingEnabled = true
         layoutManager = LinearLayoutManager(context, VERTICAL, false)
     }
 

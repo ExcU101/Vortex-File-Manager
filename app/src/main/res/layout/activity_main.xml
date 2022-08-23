@@ -14,4 +14,10 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/main_navigation" />
 
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

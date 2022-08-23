@@ -11,6 +11,8 @@ import io.github.excu101.vortex.base.utils.ViewModelContainerHandler
 import io.github.excu101.vortex.base.utils.intent
 import io.github.excu101.vortex.base.utils.new
 import io.github.excu101.vortex.base.utils.state
+import io.github.excu101.vortex.data.MutableStorageItemMapSet
+import io.github.excu101.vortex.data.StorageItemGroup
 import io.github.excu101.vortex.data.TrailData
 import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.provider.StorageProvider
@@ -25,13 +27,18 @@ class StorageListViewModel @Inject constructor(
     private val provider: StorageProvider,
     private val resources: ResourceProvider,
     private val handle: SavedStateHandle,
-) : ViewModelContainerHandler<StorageScreenState, StorageScreenSideEffect>(StorageScreenState(
-    isLoading = true)
+) : ViewModelContainerHandler<StorageScreenState, StorageScreenSideEffect>(
+    StorageScreenState.loading()
 ) {
 
     companion object {
         private const val TRAIL_KEY = "trail"
     }
+
+    private val _groups: MutableStateFlow<MutableList<StorageItemGroup>> = MutableStateFlow(
+        mutableListOf(StorageItemGroup(name = "", items = MutableStorageItemMapSet())))
+    val groups: StateFlow<List<StorageItemGroup>>
+        get() = _groups.asStateFlow()
 
     private val _selected: MutableStateFlow<MutableSet<FileUnit>> =
         MutableStateFlow(mutableSetOf())

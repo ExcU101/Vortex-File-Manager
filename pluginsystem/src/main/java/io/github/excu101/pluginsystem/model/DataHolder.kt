@@ -1,4 +1,4 @@
-package io.github.excu101.vortex.data
+package io.github.excu101.pluginsystem.model
 
 import kotlin.reflect.KProperty
 

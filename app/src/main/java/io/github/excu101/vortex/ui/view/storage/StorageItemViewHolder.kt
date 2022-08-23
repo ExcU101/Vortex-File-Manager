@@ -2,12 +2,9 @@ package io.github.excu101.vortex.ui.view.storage
 
 import android.view.View
 import androidx.annotation.DrawableRes
-import androidx.recyclerview.selection.ItemDetailsLookup
-import com.google.android.material.navigation.NavigationView
 import io.github.excu101.filesystem.fs.FileUnit
 import io.github.excu101.filesystem.fs.utils.properties
 import io.github.excu101.vortex.R
-import io.github.excu101.vortex.base.StorageUnit
 import io.github.excu101.vortex.ui.base.BaseViewHolder
 
 class StorageItemViewHolder(val root: StorageItemView) : BaseViewHolder<FileUnit>(root) {
@@ -33,11 +30,11 @@ class StorageItemViewHolder(val root: StorageItemView) : BaseViewHolder<FileUnit
     }
 
     @DrawableRes
-    private fun parseIcon(value: StorageUnit): Int {
+    private fun parseIcon(value: FileUnit): Int {
         return if (value.isDirectory) R.drawable.ic_folder_24 else R.drawable.ic_file_24
     }
 
-    private fun parseInfo(value: StorageUnit): String {
+    private fun parseInfo(value: FileUnit): String {
         val content = if (value.isDirectory) {
             when (val count = value.path.properties().count) {
                 0 -> "No item"
