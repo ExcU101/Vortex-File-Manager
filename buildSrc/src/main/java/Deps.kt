@@ -46,7 +46,7 @@ object Deps {
         val FileSystemUnix = mapOf("path" to ":filesystem-unix")
         val PluginSystem = mapOf("path" to ":pluginsystem")
         val PluginSystemCommon = mapOf("path" to ":pluginsystem-common")
-//        val UiComponent = mapOf("path" to ":ui-component")
+        val UiComponent = mapOf("path" to ":ui-component")
     }
 
     object UnitTest {

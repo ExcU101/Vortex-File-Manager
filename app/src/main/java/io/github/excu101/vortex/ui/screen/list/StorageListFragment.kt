@@ -6,17 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.core.view.*
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.excu101.pluginsystem.model.Color.Companion.Transparent
+import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.base.utils.collectState
+import io.github.excu101.vortex.data.TextHeaderItem
+import io.github.excu101.vortex.data.StorageItem
 import io.github.excu101.vortex.databinding.FragmentStorageListBinding
-import io.github.excu101.vortex.ui.view.actions
-import io.github.excu101.vortex.ui.view.bar
+import io.github.excu101.vortex.ui.component.adapter.Item
+import io.github.excu101.vortex.ui.component.bar
+import io.github.excu101.vortex.ui.component.theme.key.mainBarSurfaceColorKey
 import kotlinx.coroutines.launch
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -26,14 +32,6 @@ class StorageListFragment : Fragment() {
     private val viewModel by viewModels<StorageListViewModel>()
 
     private var binding: FragmentStorageListBinding? = null
-
-    private val ADD_ACTION_ID = 0
-    private val ADD_ACTION_TITLE = "Add File"
-    private val ADD_ACTION_MENU by lazy {
-        bar.menu.add(0, ADD_ACTION_ID, 0, ADD_ACTION_TITLE).apply {
-            setIcon(com.google.android.material.R.drawable.mtrl_ic_arrow_drop_down)
-        }
-    }
 
     private val controller: WindowInsetsControllerCompat? by lazy(NONE) {
         binding?.root?.let { view ->
@@ -50,8 +48,12 @@ class StorageListFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         binding = FragmentStorageListBinding.inflate(layoutInflater, container, false)
+
         bar.hideOnScroll = true
-        ADD_ACTION_MENU
+        bar.setBackgroundColor(ThemeColor(mainBarSurfaceColorKey))
+        requireActivity().window.statusBarColor = Transparent.value
+        requireActivity().window.navigationBarColor = ThemeColor(mainBarSurfaceColorKey)
+
         return binding?.root
     }
 
@@ -59,15 +61,11 @@ class StorageListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
             trail.adapter.register { view, item, position ->
-                viewModel.navigateTo(unit = item.value)
+                viewModel.navigateTo(item = StorageItem(item.value))
             }
 
             bar.setOnMenuItemClickListener {
                 when (it) {
-                    ADD_ACTION_MENU -> {
-
-                        true
-                    }
 
                     else -> false
                 }
@@ -92,11 +90,11 @@ class StorageListFragment : Fragment() {
             list.adapter.register { view, item, position ->
                 when (view) {
                     is ImageView -> {
-                        viewModel.choose(setOf(item), true)
+                        viewModel.choose(setOf(item) as Collection<StorageItem>, true)
                     }
 
                     is FrameLayout -> {
-                        viewModel.navigateTo(unit = item)
+                        viewModel.navigateTo(item = item as StorageItem)
                     }
                 }
             }
@@ -104,7 +102,14 @@ class StorageListFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.collectState { state ->
-                        list.adapter.submitList(state.items)
+                        val data = mutableListOf<Item<*>>()
+
+                        state.sections.forEach { (id, values) ->
+                            data.add(TextHeaderItem(id))
+                            data.addAll(values)
+                        }
+
+                        list.adapter.submitList(data)
                     }
                 }
             }
@@ -121,7 +126,7 @@ class StorageListFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.selected.collect { data ->
-                        list.adapter.addSelected(data)
+
                     }
                 }
             }
@@ -129,7 +134,7 @@ class StorageListFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.actions.collect { groups ->
-                        actions.updateActions(groups)
+
                     }
                 }
             }

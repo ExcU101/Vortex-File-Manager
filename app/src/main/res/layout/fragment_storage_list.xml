@@ -3,20 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.github.excu101.vortex.ui.view.storage.StorageListView
+    <io.github.excu101.vortex.ui.component.storage.StorageListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <io.github.excu101.vortex.ui.view.trail.TrailView
+    <io.github.excu101.vortex.ui.component.trail.TrailView
         android:id="@+id/trail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <io.github.excu101.vortex.ui.view.warning.WarningView
+    <io.github.excu101.vortex.ui.component.warning.WarningView
         android:id="@+id/warning"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

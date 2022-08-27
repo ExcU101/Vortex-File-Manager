@@ -18,5 +18,6 @@ include(
     ":filesystem",
     ":filesystem-unix",
     ":pluginsystem",
-    ":pluginsystem-common"
+    ":pluginsystem-common",
+    ":ui-component"
 )

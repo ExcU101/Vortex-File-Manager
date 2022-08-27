@@ -12,6 +12,12 @@ interface DirectoryProperties {
 
     val emptyFiles: List<Path>
 
+    val dirsCount: Int
+        get() = dirs.size
+
+    val filesCount: Int
+        get() = files.size
+
     val count: Int
-        get() = dirs.size + files.size
+        get() = dirsCount + filesCount
 }

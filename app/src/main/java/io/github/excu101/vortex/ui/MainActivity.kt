@@ -11,18 +11,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.databinding.ActivityMainBinding
-import io.github.excu101.vortex.ui.theme.key.backgroundColorKey
-import io.github.excu101.vortex.ui.view.action.ActionListDialog
-import kotlin.LazyThreadSafetyMode.NONE
+import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private var binding: ActivityMainBinding? = null
-
-    val list by lazy(NONE) {
-        ActionListDialog(context = this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             root.background = ColorDrawable(ThemeColor(backgroundColorKey))
             bar.setNavigationIcon(R.drawable.ic_menu_24)
             bar.setNavigationOnClickListener {
-                list.show()
+
             }
             ViewCompat.setOnApplyWindowInsetsListener(bar) { view, insets ->
                 val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())

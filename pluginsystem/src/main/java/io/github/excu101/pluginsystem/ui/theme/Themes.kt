@@ -8,29 +8,73 @@ fun ThemeColor(key: String): Int {
     return Theme<Int, Color>(key)
 }
 
+fun ThemeColor(key: String, default: Color): Int {
+    return Theme.getOrReplace(key, default).value
+}
+
 fun ThemeDimen(key: String): Int {
     return Theme<Int, Dimen>(key)
+}
+
+fun ThemeDimen(key: String, default: Dimen): Int {
+    return Theme.getOrReplace(key, default).value
 }
 
 fun ThemeIcon(key: String): Drawable {
     return Theme<Drawable, Icon>(key)
 }
 
+fun ThemeIcon(key: String, default: Icon): Drawable {
+    return Theme.getOrReplace(key, default).value
+}
+
 fun ThemeText(key: String): String {
     return Theme<String, Text>(key)
+}
+
+fun ThemeText(key: String, default: Text): String {
+    return Theme.getOrReplace(key, default).value
 }
 
 object Theme {
 
     private val icons: HashMap<String, Icon> = hashMapOf()
 
-    private val text: HashMap<String, Text> = hashMapOf()
+    private val texts: HashMap<String, Text> = hashMapOf()
 
     private val colors: HashMap<String, Color> = hashMapOf()
 
     private val dimens: HashMap<String, Dimen> = hashMapOf()
 
-    fun getText(key: String): Text = text[key] ?: Text(String())
+    fun getOrReplace(key: String, default: Text): Text {
+        return texts[key] ?: run {
+            texts[key] = default
+            default
+        }
+    }
+
+    fun getOrReplace(key: String, default: Color): Color {
+        return colors[key] ?: run {
+            colors[key] = default
+            default
+        }
+    }
+
+    fun getOrReplace(key: String, default: Icon): Icon {
+        return icons[key] ?: run {
+            icons[key] = default
+            default
+        }
+    }
+
+    fun getOrReplace(key: String, default: Dimen): Dimen {
+        return dimens[key] ?: run {
+            dimens[key] = default
+            default
+        }
+    }
+
+    fun getText(key: String): Text = texts[key] ?: Text(String())
 
     inline fun getText(key: () -> String): Text = getText(key = key())
 
@@ -48,6 +92,7 @@ object Theme {
 
     inline fun getIcon(key: () -> String): Icon = getIcon(key())
 
+    @Suppress(names = ["UNCHECKED_CAST"])
     inline operator fun <H, reified T : DataHolder<H>> get(key: String): H {
         val holder = when (T::class) {
             Color::class -> getColor(key = key)
@@ -70,7 +115,7 @@ object Theme {
     }
 
     operator fun set(key: String, value: Text) {
-        text[key] = value
+        texts[key] = value
     }
 
     operator fun set(key: String, value: Icon) {

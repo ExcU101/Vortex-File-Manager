@@ -92,4 +92,5 @@ dependencies {
     implementation(project(Deps.Application.FileSystemUnix))
     implementation(project(Deps.Application.PluginSystem))
     implementation(project(Deps.Application.PluginSystemCommon))
+    implementation(project(Deps.Application.UiComponent))
 }

@@ -4,16 +4,14 @@ import android.os.Environment
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.excu101.filesystem.fs.FileUnit
 import io.github.excu101.filesystem.fs.utils.asPath
+import io.github.excu101.filesystem.fs.utils.properties
 import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.vortex.base.utils.ViewModelContainerHandler
 import io.github.excu101.vortex.base.utils.intent
 import io.github.excu101.vortex.base.utils.new
 import io.github.excu101.vortex.base.utils.state
-import io.github.excu101.vortex.data.MutableStorageItemMapSet
-import io.github.excu101.vortex.data.StorageItemGroup
-import io.github.excu101.vortex.data.TrailData
+import io.github.excu101.vortex.data.*
 import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.provider.StorageProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,9 +38,9 @@ class StorageListViewModel @Inject constructor(
     val groups: StateFlow<List<StorageItemGroup>>
         get() = _groups.asStateFlow()
 
-    private val _selected: MutableStateFlow<MutableSet<FileUnit>> =
+    private val _selected: MutableStateFlow<MutableSet<StorageItem>> =
         MutableStateFlow(mutableSetOf())
-    val selected: StateFlow<Set<FileUnit>>
+    val selected: StateFlow<Set<StorageItem>>
         get() = _selected.asStateFlow()
 
     private val _actions: MutableStateFlow<MutableList<GroupAction>> =
@@ -57,15 +55,15 @@ class StorageListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            navigateTo(FileUnit(path))
+            navigateTo(StorageItem(path))
         }
     }
 
     fun choose(
-        items: Collection<FileUnit>,
+        items: Collection<StorageItem>,
         isSelected: Boolean = selected.value.containsAll(items),
     ) = intent {
-        val data = mutableSetOf<FileUnit>().apply {
+        val data = mutableSetOf<StorageItem>().apply {
             addAll(selected.value)
             addAll(items)
         }
@@ -73,9 +71,7 @@ class StorageListViewModel @Inject constructor(
     }
 
     fun selectAll() = intent {
-        _selected.new {
-            state.items.toMutableSet()
-        }
+
     }
 
     fun addActions(actions: List<GroupAction>) = intent {
@@ -87,15 +83,22 @@ class StorageListViewModel @Inject constructor(
         }
     }
 
-    fun navigateTo(unit: FileUnit) = intent {
+    fun navigateTo(item: StorageItem) = intent {
         val current = trail.value
 
-        if (unit.isDirectory) {
-            handle[TRAIL_KEY] = current.navigateTo(unit)
-            val list = provider.provideList(unit.path).sortedBy { it.name }
+        if (item.value.isDirectory) {
+            handle[TRAIL_KEY] = current.navigateTo(item.value)
+            val props = item.value.path.properties()
+
+            val folders = props.dirs.map { StorageItem(it) }
+            val files = props.files.map { StorageItem(it) }
+
             state {
                 StorageScreenState(
-                    items = list
+                    sections = listOf(
+                        Section(item = "Folders (${props.dirsCount})" to folders),
+                        Section(item = "Files (${props.filesCount})" to files)
+                    )
                 )
             }
         }
