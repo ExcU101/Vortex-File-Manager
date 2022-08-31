@@ -34,4 +34,8 @@ object EmptyFileSystemProvider : FileSystemProvider() {
     override fun createDirectory(path: Path, mode: Int) {
 
     }
+
+    override fun getFileStore(path: Path): FileStore {
+        TODO("Not yet implemented")
+    }
 }

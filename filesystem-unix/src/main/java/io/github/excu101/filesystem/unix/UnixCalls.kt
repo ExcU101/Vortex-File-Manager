@@ -2,6 +2,7 @@ package io.github.excu101.filesystem.unix
 
 import io.github.excu101.filesystem.unix.attr.UnixDirentStructure
 import io.github.excu101.filesystem.unix.attr.UnixStatusStructure
+import io.github.excu101.filesystem.unix.attr.UnixStructureFileSystemStatus
 import io.github.excu101.filesystem.unix.error.UnixException
 import java.io.FileDescriptor
 
@@ -13,20 +14,14 @@ internal object UnixCalls {
 
     external fun rename(source: ByteArray, dest: ByteArray)
 
-    @Throws(UnixException::class)
     external fun stat(path: ByteArray): UnixStatusStructure
 
-    @Throws(UnixException::class)
     external fun lstat(path: ByteArray): UnixStatusStructure
 
     external fun removeDirectory(path: ByteArray)
 
-    /**
-     * @throws io.github.excu101.filesystem.unix.error.UnixUnlinkException
-     **/
     external fun unlink(path: ByteArray)
 
-    @Throws(UnixException::class)
     external fun openDir(path: ByteArray): Long
 
     external fun open(path: ByteArray, flags: Int, mode: Int): FileDescriptor
@@ -38,5 +33,7 @@ internal object UnixCalls {
     external fun close(descriptor: Int)
 
     external fun closeDir(pointer: Long)
+
+    external fun statVfs(path: ByteArray): UnixStructureFileSystemStatus
 
 }

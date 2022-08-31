@@ -1,6 +1,6 @@
-package io.github.excu101.vortex.ui.component.header
+package io.github.excu101.vortex.ui.component.header.text
 
-import io.github.excu101.vortex.data.TextHeaderItem
+import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.ui.component.adapter.holder.ViewHolder
 
 class TextHeaderViewHolder(private val root: TextHeaderView) : ViewHolder<TextHeaderItem>(root) {

@@ -104,5 +104,5 @@ class UnixAttributes private constructor(private val structure: UnixStatusStruct
         )
 
     override val size: Size
-        get() = Size(size = structure.size)
+        get() = Size(bytes = structure.size)
 }

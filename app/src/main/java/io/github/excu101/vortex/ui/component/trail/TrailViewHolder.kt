@@ -1,16 +1,18 @@
 package io.github.excu101.vortex.ui.component.trail
 
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import io.github.excu101.vortex.data.TrailItem
 import io.github.excu101.vortex.ui.component.adapter.holder.ViewHolder
 
 class TrailViewHolder(private val root: TrailItemView) : ViewHolder<TrailItem>(root) {
 
-    override fun bind(item: TrailItem) {
-        root.setTitle(value = item.value.path.getName().toString())
-        root.setArrowVisibility(!item.isLast)
-        root.updateSelection(item.isSelected)
+    override fun bind(item: TrailItem): Unit = with(root) {
+        setTitle(value = item.value.name)
+        setArrowVisibility(!item.isLast)
+    }
+
+    fun updateSelection(isSelected: Boolean): Unit = with(root) {
+        updateSelection(isSelected)
     }
 
     override fun unbind() {

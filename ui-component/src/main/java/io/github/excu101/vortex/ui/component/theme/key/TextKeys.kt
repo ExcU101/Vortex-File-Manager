@@ -1,5 +1,7 @@
 package io.github.excu101.vortex.ui.component.theme.key
 
+const val specialSymbol = "%s"
+
 const val fileListFilesCountKey = "fileListFilesCount"
 const val fileListDirectoriesCountKey = "fileListDirectoriesCount"
 

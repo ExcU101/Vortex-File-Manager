@@ -1,6 +1,7 @@
 package io.github.excu101.filesystem.unix
 
 import io.github.excu101.filesystem.fs.DirectoryStream
+import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.FileSystemProvider
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.EmptyAttrs
@@ -77,6 +78,10 @@ class UnixFileSystemProvider : FileSystemProvider() {
     } catch (exception: SystemCallException) {
         notify(exception)
         DirectoryStream // returns
+    }
+
+    override fun getFileStore(path: Path): FileStore {
+        return UnixFileStore(path)
     }
 
     override val scheme: String

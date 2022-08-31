@@ -5,7 +5,7 @@ data class UnixStructureFileSystemStatus(
     val fundamentBlockSize: Long,
     val totalBlocks: Long,
     val freeBlocks: Long,
-    val freeNonRootBlocks: Long,
+    val availableBlocks: Long,
     val totalFiles: Long, // inode
     val freeFiles: Long, // inode
     val freeNonRootFiles: Long, // inode

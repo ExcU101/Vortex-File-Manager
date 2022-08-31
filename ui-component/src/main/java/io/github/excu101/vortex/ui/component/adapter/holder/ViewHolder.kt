@@ -6,13 +6,17 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class ViewHolder<T>(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
 
-    abstract fun bind(item: T)
+    abstract fun bind(item: T) // Bind itemView with given item (data)
 
-    abstract fun unbind()
+    abstract fun unbind() // Unbind view, when it's recycled
 
     open fun bindListener(listener: View.OnClickListener) {}
 
     open fun bindLongListener(listener: View.OnLongClickListener) {}
+
+    open fun bindSelectionListener(listener: View.OnClickListener) {}
+
+    open fun bindSelectionLongListener(listener: View.OnLongClickListener) {}
 
     open fun unbindListeners() {}
 

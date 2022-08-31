@@ -1,4 +1,4 @@
-package io.github.excu101.vortex.ui.component.header
+package io.github.excu101.vortex.ui.component.header.text
 
 import android.content.Context
 import android.widget.FrameLayout
@@ -12,8 +12,11 @@ class TextHeaderView(
     context: Context,
 ) : FrameLayout(context) {
 
+    private val desireHeight = 48.dp
+
     private val title = TextView(context).apply {
         setTextColor(ThemeColor(fileItemTitleTextColorKey))
+        textSize = 14F
     }
 
     init {

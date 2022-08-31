@@ -48,6 +48,7 @@ class StorageListView : RecyclerView, CoordinatorLayout.AttachedBehavior {
         setHasFixedSize(true)
         setAdapter(adapter)
         isNestedScrollingEnabled = true
+        clipToPadding = false
         layoutManager = LinearLayoutManager(context, VERTICAL, false)
     }
 

@@ -1,4 +1,4 @@
-package io.github.excu101.vortex.ui.component.storage
+package io.github.excu101.vortex.ui.component.storage.standard
 
 import android.content.Context
 import android.content.res.ColorStateList.valueOf
@@ -44,9 +44,9 @@ class StorageItemView(context: Context) : FrameLayout(context) {
         }
 
     var infoColor: Int
-        get() = title.currentTextColor
+        get() = info.currentTextColor
         set(value) {
-            title.setTextColor(value)
+            info.setTextColor(value)
         }
 
     var backgroundElevation: Float
@@ -187,11 +187,11 @@ class StorageItemView(context: Context) : FrameLayout(context) {
         setBackground(background)
     }
 
-    fun setOnIconClickListener(listener: OnClickListener) {
+    fun setOnIconClickListener(listener: OnClickListener?) {
         icon.setOnClickListener(listener)
     }
 
-    fun setOnIconLongClickListener(listener: OnLongClickListener) {
+    fun setOnIconLongClickListener(listener: OnLongClickListener?) {
         icon.setOnLongClickListener(listener)
     }
 

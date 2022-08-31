@@ -32,11 +32,17 @@ fun ThemeText(key: String): String {
     return Theme<String, Text>(key)
 }
 
+fun ReplacerThemeText(key: String, old: String, new: String): String {
+    return ThemeText(key).replace(old, new)
+}
+
 fun ThemeText(key: String, default: Text): String {
     return Theme.getOrReplace(key, default).value
 }
 
 object Theme {
+
+    var isRtlEnabled: Boolean = false
 
     private val icons: HashMap<String, Icon> = hashMapOf()
 

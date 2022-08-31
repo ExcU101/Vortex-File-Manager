@@ -2,7 +2,6 @@
 #include "dirent.h"
 #include "string"
 #include "errno.h"
-#include "sys/errno.h"
 #include "../log.h"
 #include "classes.cpp"
 #include "dirent.h"
@@ -20,7 +19,7 @@ static char *fromByteArrayToPath(
         JNIEnv *env,
         jbyteArray path
 ) {
-    jbyte *segments = env->GetByteArrayElements(path, nullptr);
+    jbyte *segments = env->GetByteArrayElements(path, NULL);
     jsize jLength = env->GetArrayLength(path);
     auto length = (size_t) jLength;
     char *cPath = (char *) malloc(length + 1);
@@ -284,14 +283,16 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_mkdir(
 
 static jobject doStatVfs(JNIEnv *env, const struct statvfs64 *statvfs) {
     static jmethodID constructor(nullptr);
+
     if (!constructor) {
         constructor = findUnixFileSystemStatusStructureInitMethod(env);
     }
+
     jlong blockSize = statvfs->f_bsize;
     jlong fundamentBlockSize = statvfs->f_frsize;
     jlong totalBlocks = statvfs->f_blocks;
     jlong freeBlocks = statvfs->f_bfree;
-    jlong freeNonRootBlocks = statvfs->f_bavail;
+    jlong availableBlocks = statvfs->f_bavail;
     jlong totalFiles = statvfs->f_files;
     jlong freeFiles = statvfs->f_ffree;
     jlong freeNonRootFiles = statvfs->f_favail;
@@ -306,7 +307,7 @@ static jobject doStatVfs(JNIEnv *env, const struct statvfs64 *statvfs) {
             fundamentBlockSize,
             totalBlocks,
             freeBlocks,
-            freeNonRootBlocks,
+            availableBlocks,
             totalFiles,
             freeFiles,
             freeNonRootFiles,
@@ -316,20 +317,21 @@ static jobject doStatVfs(JNIEnv *env, const struct statvfs64 *statvfs) {
     );
 }
 
-
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_io_github_excu101_filesystem_linux_LinuxCalls_statvfs(
+Java_io_github_excu101_filesystem_unix_UnixCalls_statVfs(
         JNIEnv *env,
         jobject thiz,
         jbyteArray path
 ) {
     clearErrno();
-    struct statvfs64 *statvfs = {};
+    struct statvfs64 statvfs = {};
     char *cPath = fromByteArrayToPath(env, path);
-    statusFileSystem(cPath, statvfs);
+    statusFileSystem(cPath, &statvfs);
 
-    return doStatVfs(env, statvfs);
+    free(cPath);
+
+    return doStatVfs(env, &statvfs);
 }
 extern "C"
 JNIEXPORT void JNICALL
@@ -343,6 +345,9 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_rename(
     char *cSource = fromByteArrayToPath(env, source);
     char *cDest = fromByteArrayToPath(env, dest);
     renameFile(cSource, cDest);
+
+    free(cSource);
+    free(cDest);
 }
 
 extern "C"

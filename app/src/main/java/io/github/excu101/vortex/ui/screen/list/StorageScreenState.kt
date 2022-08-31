@@ -1,11 +1,10 @@
 package io.github.excu101.vortex.ui.screen.list
 
-import io.github.excu101.filesystem.fs.FileUnit
-import io.github.excu101.vortex.data.Section
-import io.github.excu101.vortex.data.StorageItem
+import io.github.excu101.vortex.data.Sections
+import io.github.excu101.vortex.data.storage.StorageItem
 
 class StorageScreenState(
-    val sections: List<Section<String, StorageItem>> = listOf(),
+    val sections: Sections<String, StorageItem> = Sections(),
     val isLoading: Boolean = false,
     val loadingTitle: String? = null,
     val error: Throwable? = null,
@@ -13,7 +12,7 @@ class StorageScreenState(
 
     companion object {
         fun loading(title: String? = null) = StorageScreenState(
-            sections = listOf(),
+            sections = Sections(),
             isLoading = true,
             loadingTitle = title,
             error = null

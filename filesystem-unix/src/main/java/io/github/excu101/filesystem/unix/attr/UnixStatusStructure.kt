@@ -17,5 +17,4 @@ data class UnixStatusStructure(
     val lastModifiedTimeNanos: Long,
     val lastAccessTimeNanos: Long,
     val creationTimeNanos: Long,
-) {
-}
+)

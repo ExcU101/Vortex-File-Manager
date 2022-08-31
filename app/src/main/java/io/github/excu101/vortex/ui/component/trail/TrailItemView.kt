@@ -22,13 +22,14 @@ import io.github.excu101.vortex.ui.component.theme.key.*
 
 class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner {
 
-    private val roundedBackground = MaterialShapeDrawable().apply {
-        shapeAppearanceModel = Builder()
+    private val roundedBackground = MaterialShapeDrawable(
+        Builder()
             .setTopLeftCorner(ROUNDED, 100F)
             .setTopRightCorner(ROUNDED, 100F)
             .setBottomLeftCorner(ROUNDED, 100F)
             .setBottomRightCorner(ROUNDED, 100F)
             .build()
+    ).apply {
         fillColor = valueOf(ThemeColor(trailSurfaceColorKey))
     }
 

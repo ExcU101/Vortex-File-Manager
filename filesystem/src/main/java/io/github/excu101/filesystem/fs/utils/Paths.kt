@@ -25,6 +25,8 @@ fun File.asPath() = FileProvider.parsePath(input = path)
 
 fun Path.asFile() = File(this.toString())
 
+infix fun Path.resolve(other: String) = resolve(system.getPath(other))
+
 fun Path.startsWith(prefix: String) = startsWith(system.getPath(first = prefix))
 
 fun Path.properties(): DirectoryProperties = DirectoryPropertiesImpl(directory = this)
@@ -39,6 +41,9 @@ fun <P : Path> DirectoryStream<P>.toList(): List<P> {
         return@use list
     }
 }
+
+inline val Path.store
+    get() = system.provider.getFileStore(path = this)
 
 inline val Path.list
     get() = system.provider.newDirectorySteam(this).toList()

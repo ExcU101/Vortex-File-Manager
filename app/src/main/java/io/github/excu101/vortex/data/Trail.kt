@@ -1,28 +1,30 @@
 package io.github.excu101.vortex.data
 
 import android.os.Parcelable
-import io.github.excu101.filesystem.fs.FileUnit
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.vortex.base.utils.logIt
+import io.github.excu101.vortex.data.storage.StorageItem
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class TrailData(
+data class Trail(
     val items: List<TrailItem>,
 ) : Parcelable {
 
     val currentSelected: Int
-        get() = items.indexOfFirst {
+        get() = items.indexOfLast {
             it.isSelected
         }
 
+    val current: TrailItem
+        get() = items[currentSelected]
+
     companion object {
 
-        fun parse(unit: FileUnit): TrailData {
-            return parse(path = unit.path)
+        fun parse(item: StorageItem): Trail {
+            return parse(path = item.value)
         }
 
-        fun parse(path: Path): TrailData {
+        fun parse(path: Path): Trail {
             val segments = parseSegments(path)
             val result = mutableListOf<TrailItem>()
 
@@ -32,14 +34,14 @@ data class TrailData(
 
                 result.add(
                     TrailItem(
-                        value = FileUnit(item),
+                        value = StorageItem(path),
                         isSelected = isSelected,
                         isLast = index == segments.lastIndex
                     )
                 )
             }
 
-            return TrailData(
+            return Trail(
                 items = result,
             )
         }
@@ -56,24 +58,24 @@ data class TrailData(
             return segments.reversed()
         }
 
-        private fun MutableList<Path>.toUnits() = map { FileUnit(it) }
+        private fun MutableList<Path>.toItems() = map { StorageItem(it) }
     }
 
     fun navigateTo(
-        unit: FileUnit,
-        selected: FileUnit? = null,
+        item: StorageItem,
+        selected: StorageItem? = null,
         withPrefixChecking: Boolean = true,
-    ): TrailData {
-        val segments = parseSegments(unit.path)
+    ): Trail {
+        val segments = parseSegments(item.value)
         val result = mutableListOf<TrailItem>()
 
         for (index in segments.indices) {
-            val item = segments[index]
+            val path = segments[index]
 
             result.add(
                 TrailItem(
-                    value = FileUnit(item),
-                    isSelected = (selected?.path ?: unit.path) == item,
+                    value = StorageItem(path),
+                    isSelected = (selected?.value ?: item.value) == path,
                     isLast = index == segments.lastIndex
                 )
             )
@@ -88,7 +90,7 @@ data class TrailData(
     fun navigationTo(
         newItems: List<TrailItem>,
         withPrefixChecking: Boolean,
-    ): TrailData {
+    ): Trail {
         val result = mutableListOf<TrailItem>()
 
         result.addAll(newItems)
@@ -106,7 +108,11 @@ data class TrailData(
             }
         }
 
-        return TrailData(items = result)
+        return Trail(items = result)
+    }
+
+    fun navigateBack(): Trail {
+        return navigationTo(newItems = items - items.last(), true)
     }
 
 }

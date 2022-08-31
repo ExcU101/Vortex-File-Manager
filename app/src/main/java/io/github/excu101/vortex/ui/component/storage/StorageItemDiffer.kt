@@ -1,7 +1,7 @@
 package io.github.excu101.vortex.ui.component.storage
 
 import androidx.recyclerview.widget.DiffUtil
-import io.github.excu101.vortex.data.StorageItem
+import io.github.excu101.vortex.data.storage.StorageItem
 
 object StorageItemDiffer : DiffUtil.ItemCallback<StorageItem>() {
     override fun areItemsTheSame(oldItem: StorageItem, newItem: StorageItem): Boolean {

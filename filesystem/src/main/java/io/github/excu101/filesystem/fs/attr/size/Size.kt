@@ -5,7 +5,7 @@ import java.text.DecimalFormat
 
 class Size(val memory: BigInteger) {
 
-    constructor(size: Long) : this(size.toBigInteger())
+    constructor(bytes: Long) : this(bytes.toBigInteger())
 
     companion object {
         private infix fun Int.pow(n: Int): BigInteger {
@@ -44,7 +44,7 @@ class Size(val memory: BigInteger) {
     fun isEmpty(): Boolean = memory > BigInteger.ZERO
 
     fun toBinaryType(): String {
-//        if (memory < 0) throw IllegalArgumentException("Invalid file size: $memory")
+        if (memory < 0.toBigInteger()) throw IllegalArgumentException("Invalid file size: $memory")
 
         val type = BinaryPrefixes.values().fold(BinaryPrefixes.B) { prev, current ->
             if (memory > current.value) {
@@ -58,7 +58,7 @@ class Size(val memory: BigInteger) {
     }
 
     fun toSiType(): String {
-//        if (memory < 0) throw IllegalArgumentException("Invalid file size: $memory")
+        if (memory < 0.toBigInteger()) throw IllegalArgumentException("Invalid file size: $memory")
 
         val type = SiPrefixes.values().fold(SiPrefixes.B) { prev, current ->
             if (memory > current.value) {
