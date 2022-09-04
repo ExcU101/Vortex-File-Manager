@@ -8,6 +8,4 @@ interface Item<T> : DataHolder<T> {
 
     val type: Int
 
-    override fun equals(other: Any?): Boolean
-
 }

@@ -9,12 +9,18 @@ import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
 import io.github.excu101.filesystem.unix.path.UnixPath
 import io.github.excu101.filesystem.unix.utils.*
+import java.io.File
+import java.nio.file.FileVisitor
 
-class UnixAttributes private constructor(private val structure: UnixStatusStructure) : PosixAttrs {
+class UnixAttributes private constructor(
+    private val root: UnixPath,
+    private val structure: UnixStatusStructure,
+) : PosixAttrs {
 
     companion object {
         fun from(path: UnixPath, followLinks: Boolean): UnixAttributes {
             return UnixAttributes(
+                root = path,
                 structure = if (followLinks) {
                     UnixCalls.stat(path.bytes)
                 } else {
@@ -25,6 +31,7 @@ class UnixAttributes private constructor(private val structure: UnixStatusStruct
     }
 
     private var _perms = mutableSetOf<PosixPermission>()
+    private val bytes: Long
 
     init {
         if (structure.mode and S_IRUSR > 0) {
@@ -55,6 +62,12 @@ class UnixAttributes private constructor(private val structure: UnixStatusStruct
         }
         if (structure.mode and S_IOTH > 0) {
             _perms += PosixPermission.Other.EXECUTE_OTHER
+        }
+
+        bytes = if (isDirectory) {
+            File(root.toString()).walkTopDown().map { it.length() }.sum()
+        } else {
+            structure.size
         }
     }
 
@@ -104,5 +117,5 @@ class UnixAttributes private constructor(private val structure: UnixStatusStruct
         )
 
     override val size: Size
-        get() = Size(bytes = structure.size)
+        get() = Size(bytes = bytes)
 }

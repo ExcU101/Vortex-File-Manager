@@ -3,6 +3,7 @@ package io.github.excu101.vortex.ui
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity.BOTTOM
+import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.appcompat.app.AppCompatActivity
@@ -12,18 +13,23 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.R
-import io.github.excu101.vortex.databinding.ActivityMainBinding
 import io.github.excu101.vortex.ui.component.action.ActionDialog
 import io.github.excu101.vortex.ui.component.bar.Bar
 import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
+import io.github.excu101.vortex.ui.screen.list.StorageListFragment
+
+private const val rootId = 1
+private const val storageListTag = "STORAGE_LIST"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private var binding: ActivityMainBinding? = null
+    private var root: CoordinatorLayout? = null
+    private var navigator: FragmentContainerView? = null
 
     var bar: Bar? = null
 
@@ -31,7 +37,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        root = CoordinatorLayout(this).apply {
+            id = rootId
+            layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         bar = Bar(context = this).apply {
             layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
@@ -39,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         drawer = ActionDialog(context = this)
-        binding?.root?.addView(bar)
+        root?.addView(bar)
         ViewCompat.setOnApplyWindowInsetsListener(bar!!) { view, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.updatePadding(
@@ -47,13 +56,19 @@ class MainActivity : AppCompatActivity() {
             )
             insets
         }
-        setContentView(binding?.root)
+        supportFragmentManager.beginTransaction()
+            .replace(
+                rootId,
+                StorageListFragment(),
+                storageListTag
+            ).commit()
+        setContentView(root)
     }
 
     override fun onStart() {
         super.onStart()
-        binding?.apply {
-            root.background = ColorDrawable(ThemeColor(backgroundColorKey))
+        root?.apply {
+            background = ColorDrawable(ThemeColor(backgroundColorKey))
             bar?.navigationIcon = getDrawable(this@MainActivity, R.drawable.ic_menu_24)
             bar?.setNavigationClickListener { view ->
                 drawer?.show()
@@ -63,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding = null
+        root = null
         bar = null
         drawer = null
     }

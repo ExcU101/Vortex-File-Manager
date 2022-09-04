@@ -29,10 +29,6 @@ class ActionAdapter : SelectionListAdapterImpl<ActionHeaderItem, ActionHeaderVie
         return false
     }
 
-    override fun select(item: ActionHeaderItem) {
-
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActionHeaderViewHolder {
         return ActionHeaderViewHolder(root = ActionHeaderView(parent.context))
     }

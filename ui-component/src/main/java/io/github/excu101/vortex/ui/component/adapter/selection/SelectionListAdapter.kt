@@ -18,13 +18,4 @@ abstract class SelectionListAdapter<T, VH : RecyclerView.ViewHolder>(
 
     fun position(item: T): Int = currentList.indexOf(item)
 
-    open fun select(position: Int) = select(item = item(position))
-
-
-    abstract fun select(item: T)
-
-    open fun select(items: Collection<T>) {
-        items.forEach(this::select)
-    }
-
 }

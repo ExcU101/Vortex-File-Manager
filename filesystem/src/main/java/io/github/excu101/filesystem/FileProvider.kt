@@ -31,6 +31,10 @@ object FileProvider {
         return systems.last().provider.readAttrs(path, BasicAttrs::class).isDirectory
     }
 
+    fun isFile(path: Path): Boolean {
+        return systems.last().provider.readAttrs(path, BasicAttrs::class).isFile
+    }
+
     fun <T : BasicAttrs> readAttrs(path: Path, type: KClass<T>): T {
         return systems.last().provider.readAttrs(path, type)
     }

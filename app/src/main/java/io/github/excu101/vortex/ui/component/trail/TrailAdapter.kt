@@ -1,14 +1,26 @@
 package io.github.excu101.vortex.ui.component.trail
 
 import android.view.ViewGroup
-import io.github.excu101.vortex.data.TrailItem
+import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.adapter.selection.SelectionListAdapterImpl
 
-class TrailAdapter : SelectionListAdapterImpl<TrailItem, TrailViewHolder>(
-    differ = TrailDiffer
+class TrailAdapter : SelectionListAdapterImpl<PathItem, TrailViewHolder>(
+    differ = TrailDiffer()
 ) {
-    override val selectedCount: Int
-        get() = 1
+    init {
+        setHasStableIds(true)
+    }
+
+    private var selected: Int = -1
+
+    fun updateSelected(index: Int) {
+        val old = selected
+        selected = index
+        notifyItemChanged(index)
+        notifyItemChanged(old)
+    }
+
+    override fun getItemId(position: Int) = item(position).hashCode().toLong()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrailViewHolder {
         return TrailViewHolder(root = TrailItemView(context = parent.context))
@@ -16,8 +28,9 @@ class TrailAdapter : SelectionListAdapterImpl<TrailItem, TrailViewHolder>(
 
     override fun onBindViewHolder(holder: TrailViewHolder, position: Int) {
         val item = item(position)
-        holder.bind(item)
-        holder.updateSelection(isSelected(item))
+        holder.bind(item = item)
+        holder.isSelected = isSelected(position)
+        holder.isArrowVisible = isLast(position)
         holder.bindListener { view ->
             notify(view = view, item = item, position = position)
         }
@@ -31,12 +44,11 @@ class TrailAdapter : SelectionListAdapterImpl<TrailItem, TrailViewHolder>(
         holder.unbindListeners()
     }
 
-    override fun isSelected(position: Int) = isSelected(item(position))
+    fun isLast(position: Int) = position != currentList.lastIndex
 
-    fun isSelected(item: TrailItem) = item.isSelected
+    override fun isSelected(position: Int) = selected == position
 
-    override fun select(item: TrailItem) {
-
-    }
+    override val selectedCount: Int
+        get() = if (selected >= 0) 1 else 0
 
 }

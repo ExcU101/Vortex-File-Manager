@@ -60,7 +60,7 @@ fun initVortexDarkColorValues(): Theme {
     Theme[fileItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
     Theme[fileItemIconBackgroundSelectedColorKey] = Color.DarkGray
 
-    Theme[layoutProgressBarBackgroundColorKey] = Color.White
+    Theme[layoutProgressBarBackgroundColorKey] = Color(value = 0xFF212121)
     Theme[layoutProgressBarTintColorKey] = Color(value = 0xFF3062FF)
     Theme[layoutProgressTitleTextColorKey] = Color.White
     Theme[layoutProgressActionTintColorKey] = Color.White

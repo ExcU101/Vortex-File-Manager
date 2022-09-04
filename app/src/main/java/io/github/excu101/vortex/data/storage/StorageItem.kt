@@ -32,46 +32,36 @@ data class StorageItem(
         }
     }
 
-    val attrs: BasicAttrs
-        get() = if (value == StorageProvider.ANDROID_OBB || value == StorageProvider.ANDROID_DATA)
+    val attrs: BasicAttrs =
+        if (value == StorageProvider.ANDROID_OBB || value == StorageProvider.ANDROID_DATA)
             FileProvider.readAttrs<EmptyAttrs>(value)
         else
             FileProvider.readAttrs<UnixAttributes>(value)
 
-    val name: String
-        get() = value.getName().toString()
+    val name: String = value.getName().toString()
 
-    val parent: StorageItem?
-        get() = value.parent?.let(::StorageItem)
+    val parent: StorageItem? = value.parent?.let(::StorageItem)
 
-    val isDirectory: Boolean
-        get() = attrs.isDirectory
+    val isDirectory: Boolean = attrs.isDirectory
 
-    val isLink: Boolean
-        get() = attrs.isLink
+    val isLink: Boolean = attrs.isLink
 
-    val isFile: Boolean
-        get() = attrs.isFile
+    val isFile: Boolean = attrs.isFile
 
-    val creationTime: FileTime
-        get() = attrs.creationTime
+    val creationTime: FileTime = attrs.creationTime
 
-    val lastModifiedTime: FileTime
-        get() = attrs.lastModifiedTime
+    val lastModifiedTime: FileTime = attrs.lastModifiedTime
 
-    val lastAccessTime: FileTime
-        get() = attrs.lastAccessTime
+    val lastAccessTime: FileTime = attrs.lastAccessTime
 
-    val size: Size
-        get() = attrs.size
+    val size: Size = attrs.size
 
-    val mimeType: MimeType
-        get() = MimeType.fromName(name)
+    val mimeType: MimeType = MimeType.fromName(name)
 
-    override val id: Long
-        get() = value.hashCode().toLong()
+    override val id: Long = hashCode().toLong()
 
-    override val type: Int
-        get() = ItemViewTypes.STORAGE
+    override val type: Int = ItemViewTypes.STORAGE
+
+    override fun hashCode() = value.hashCode()
 
 }

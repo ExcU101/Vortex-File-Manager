@@ -1,19 +1,24 @@
 package io.github.excu101.vortex.ui.component.trail
 
 import android.view.View
-import io.github.excu101.vortex.data.TrailItem
+import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.adapter.holder.ViewHolder
 
-class TrailViewHolder(private val root: TrailItemView) : ViewHolder<TrailItem>(root) {
+class TrailViewHolder(private val root: TrailItemView) : ViewHolder<PathItem>(root) {
 
-    override fun bind(item: TrailItem): Unit = with(root) {
-        setTitle(value = item.value.name)
-        setArrowVisibility(!item.isLast)
+    override fun bind(item: PathItem): Unit = with(root) {
+        setTitle(value = item.name)
     }
 
-    fun updateSelection(isSelected: Boolean): Unit = with(root) {
-        updateSelection(isSelected)
-    }
+    var isArrowVisible: Boolean = false
+        set(value) {
+            root.setArrowVisibility(value)
+        }
+
+    var isSelected: Boolean = false
+        set(value) {
+            root.updateSelection(value)
+        }
 
     override fun unbind() {
         root.setTitle(null)

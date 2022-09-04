@@ -1,9 +1,9 @@
 package io.github.excu101.filesystem.unix.path
 
-import android.util.Log
 import io.github.excu101.filesystem.fs.FileSystem
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.UnixFileSystem
+import kotlin.math.min
 
 class UnixPath internal constructor(
     private val path: ByteArray,
@@ -140,22 +140,30 @@ class UnixPath internal constructor(
         return path.decodeToString()
     }
 
+    override fun hashCode(): Int {
+        return path.contentHashCode()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
+        if (other == null) return false
 
-
-        if (javaClass != other?.javaClass) {
-            Log.v("Loggable", "Not that class")
+        if (javaClass != other.javaClass) {
             return false
         }
+
         other as Path
-        return system.separator == other.system.separator &&
-                bytes.contentEquals(other.bytes) &&
-                isAbsolute == other.isAbsolute &&
-                system == other.system
+        return bytes contentEquals other.bytes
+                && isAbsolute == other.isAbsolute
+                && system == other.system
     }
 
     override fun compareTo(other: Path): Int {
+        val fLen = length
+        val sLen = other.length
+
+        val min = min(fLen, sLen)
+
         return other.length - length
     }
 

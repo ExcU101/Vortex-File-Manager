@@ -36,6 +36,8 @@ interface Path : Comparable<Path> {
 
     fun getName(index: Int = nameCount - 1): Path
 
+    override fun hashCode(): Int
+
     override fun toString(): String
 
     override fun equals(other: Any?): Boolean

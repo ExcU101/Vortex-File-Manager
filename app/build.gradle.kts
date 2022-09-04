@@ -34,10 +34,6 @@ android {
         }
     }
 
-    buildFeatures {
-        viewBinding = true
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -73,8 +69,6 @@ dependencies {
     implementation(Deps.AndroidX.Multidex)
     implementation(Deps.AndroidX.Appcompat)
     implementation(Deps.AndroidX.Collection)
-    implementation(Deps.AndroidX.NavigationFragment)
-    implementation(Deps.AndroidX.NavigationUi)
 
     implementation(Deps.Hilt.Android)
     kapt(Deps.Hilt.Compiler)

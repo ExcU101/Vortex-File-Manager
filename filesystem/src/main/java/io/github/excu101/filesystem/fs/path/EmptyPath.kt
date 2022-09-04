@@ -25,6 +25,7 @@ object EmptyPath : Path {
     override fun sub(from: Int, to: Int): Path = this
 
     override fun compareTo(other: Path): Int = 0
+    override fun hashCode(): Int = 0
 
     override fun toString(): String = ""
 

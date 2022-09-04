@@ -32,6 +32,8 @@ android {
 
 dependencies {
     implementation(Deps.Ui.RecyclerView)
+    implementation(Deps.Coroutines.Core)
+    implementation(Deps.Coroutines.Android)
     implementation(Deps.Ui.Material)
     implementation(project(Deps.Application.PluginSystem))
     implementation(project(Deps.Application.FileSystem))

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewPropertyAnimator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 
-class TrailBehavior : CoordinatorLayout.Behavior<TrailView> {
+class TrailBehavior : CoordinatorLayout.Behavior<TrailListView> {
 
     constructor() : super()
 

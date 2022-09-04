@@ -10,6 +10,8 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout.*
 import androidx.core.view.children
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
@@ -20,7 +22,7 @@ import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.*
 import kotlin.math.min
 
-class Bar(context: Context) : FrameLayout(context) {
+class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
 
     enum class Type {
         TOP,
@@ -36,6 +38,9 @@ class Bar(context: Context) : FrameLayout(context) {
     private val horizontalPadding = 16.dp
     private val verticalPadding = 8.dp
     private val titleHorizontalPadding = 32.dp
+    private val behavior = BarBehavior()
+
+    var hideOnScroll: Boolean = true
 
     private val background = MaterialShapeDrawable().apply {
         initializeElevationOverlay(context)
@@ -125,6 +130,16 @@ class Bar(context: Context) : FrameLayout(context) {
         super.onAttachedToWindow()
 
         MaterialShapeUtils.setParentAbsoluteElevation(this, background)
+    }
+
+    override fun getBehavior() = behavior
+
+    fun show() {
+        behavior.slideUp(child = this)
+    }
+
+    fun hide() {
+        behavior.slideDown(child = this)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

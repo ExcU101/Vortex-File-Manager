@@ -22,7 +22,7 @@ import io.github.excu101.vortex.ui.component.theme.key.trailHeightKey
 import io.github.excu101.vortex.ui.component.theme.key.trailSurfaceColorKey
 import kotlin.math.min
 
-class TrailView : RecyclerView,
+class TrailListView : RecyclerView,
     CoordinatorLayout.AttachedBehavior,
     View.OnApplyWindowInsetsListener {
 

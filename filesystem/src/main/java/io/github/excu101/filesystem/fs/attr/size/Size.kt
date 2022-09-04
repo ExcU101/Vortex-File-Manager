@@ -8,6 +8,8 @@ class Size(val memory: BigInteger) {
     constructor(bytes: Long) : this(bytes.toBigInteger())
 
     companion object {
+        const val simplePattern = "#"
+
         private infix fun Int.pow(n: Int): BigInteger {
             if (n <= 0) {
                 return BigInteger.ONE
@@ -39,6 +41,19 @@ class Size(val memory: BigInteger) {
         EB(PB.value.multiply(1000.toBigInteger())),
         ZB(EB.value.multiply(1000.toBigInteger())),
         YB(ZB.value.multiply(1000.toBigInteger())),
+    }
+
+    var pattern = simplePattern
+
+    operator fun plus(other: Size): Size {
+        return Size(memory = memory + other.memory)
+    }
+
+    operator fun minus(other: Size): Size {
+        if (other.memory > memory) {
+            return Size(memory = other.memory - memory)
+        }
+        return Size(memory = memory - other.memory)
     }
 
     fun isEmpty(): Boolean = memory > BigInteger.ZERO
@@ -76,7 +91,7 @@ class Size(val memory: BigInteger) {
     }
 
     private fun formatSize(divider: BigInteger, unitName: String): String {
-        return DecimalFormat("#")
+        return DecimalFormat(pattern)
             .format(memory.div(divider))
             .toString() + unitName
     }

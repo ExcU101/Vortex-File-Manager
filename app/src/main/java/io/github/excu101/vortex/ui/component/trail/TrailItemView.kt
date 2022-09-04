@@ -19,8 +19,14 @@ import io.github.excu101.vortex.R
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.foundtation.InnerPaddingOwner
 import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.toDp
 
 class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner {
+
+    companion object {
+        private const val TITLE_INDEX = 0
+        private const val ARROW_INDEX = 1
+    }
 
     private val roundedBackground = MaterialShapeDrawable(
         Builder()
@@ -47,7 +53,7 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
 
     init {
         minimumWidth = minWidth
-        minimumHeight = ThemeDimen(trailHeightKey).dp
+        minimumHeight = ThemeDimen(trailItemHeightKey).toDp()
         gravity = CENTER
         isClickable = true
         isFocusable = true
@@ -67,13 +73,13 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
 
     private fun ensureContainingTitle() {
         if (!contains(title)) {
-            addView(title)
+            addView(title, TITLE_INDEX)
         }
     }
 
     private fun ensureContainingArrow() {
         if (!contains(arrow)) {
-            addView(arrow)
+            addView(arrow, ARROW_INDEX)
         }
     }
 
@@ -102,5 +108,29 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
             arrow.setColorFilter(ThemeColor(trailItemArrowTintColorKey))
         }
     }
+
+//    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
+//        val widthSize = MeasureSpec.getSize(widthSpec)
+//        val widthMode = MeasureSpec.getMode(widthSpec)
+//        val heightSize = MeasureSpec.getSize(heightSpec)
+//        val heightMode = MeasureSpec.getMode(heightSpec)
+//
+//        val width = when (widthMode) {
+//            MeasureSpec.EXACTLY -> widthSize
+//            MeasureSpec.AT_MOST -> min(suggestedMinimumWidth, widthSize)
+//            else -> widthSize
+//        } + paddingStart + paddingEnd
+//
+//        val height = when (heightMode) {
+//            MeasureSpec.EXACTLY -> heightSize
+//            MeasureSpec.AT_MOST -> min(suggestedMinimumHeight, heightSize)
+//            else -> suggestedMinimumHeight
+//        } + paddingBottom + paddingTop
+//
+//        setMeasuredDimension(width, height)
+//
+//        val availableWidth = width - paddingStart - paddingRight
+//
+//    }
 
 }

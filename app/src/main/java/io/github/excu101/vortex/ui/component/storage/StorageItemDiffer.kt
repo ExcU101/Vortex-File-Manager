@@ -1,14 +1,26 @@
 package io.github.excu101.vortex.ui.component.storage
 
 import androidx.recyclerview.widget.DiffUtil
-import io.github.excu101.vortex.data.storage.StorageItem
+import io.github.excu101.vortex.ui.component.adapter.Item
 
-object StorageItemDiffer : DiffUtil.ItemCallback<StorageItem>() {
-    override fun areItemsTheSame(oldItem: StorageItem, newItem: StorageItem): Boolean {
-        return oldItem.id == newItem.id
+class StorageItemDiffer(
+    private val old: List<Item<*>>,
+    private val new: List<Item<*>>,
+) : DiffUtil.Callback() {
+
+    override fun getOldListSize() = old.size
+
+    override fun getNewListSize() = new.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return old[oldItemPosition].id == new[newItemPosition].id
     }
 
-    override fun areContentsTheSame(oldItem: StorageItem, newItem: StorageItem): Boolean {
-        return oldItem == newItem
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return old[oldItemPosition] == new[newItemPosition]
+    }
+
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        return super.getChangePayload(oldItemPosition, newItemPosition)
     }
 }

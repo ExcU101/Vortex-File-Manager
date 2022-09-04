@@ -30,6 +30,11 @@ fun ViewGroup.removeViewFrom(range: IntRange) {
     }
 }
 
+context (View)
+fun Int.toDp(): Int {
+    return dp
+}
+
 context(View)
 val Int.dp: Int
     get() = ceil(context.resources.displayMetrics.density * this).toInt()

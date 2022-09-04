@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.data.storage
 
-data class StorageItemGroup(
+data class PathItemGroup(
     val name: String,
-    val items: StorageItemMapSet,
+    val items: PathItemMapSet,
 )

@@ -5,8 +5,8 @@ object Versions {
     const val androidVer = "7.2.2"
 
     // AndroidX
-    const val coreVer = "1.9.0-beta01"
-    const val fragmentVer = "1.6.0-alpha01"
+    const val coreVer = "1.9.0-rc01"
+    const val fragmentVer = "1.6.0-alpha02"
     const val appcompatVer = "1.6.0-beta01"
     const val multidexVer = "2.0.1"
     const val collectionVer = "1.3.0-alpha02"
