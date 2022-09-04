@@ -111,6 +111,8 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
     override fun item(position: Int): T = adapterList[position]
 
     override fun replace(items: List<T>, differ: DiffUtil.Callback?) {
+        if (adapterList == items) return
+
         if (differ == null) {
             adapterList.clear()
             adapterList.addAll(items)

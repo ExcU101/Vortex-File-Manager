@@ -1,14 +1,11 @@
 package io.github.excu101.vortex.ui.screen.list
 
 import android.os.Bundle
+import android.view.*
 import android.view.Gravity.CENTER
-import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.WindowInsets
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.activity.addCallback
@@ -25,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.filesystem.fs.utils.properties
+import io.github.excu101.pluginsystem.model.Color.Companion.Transparent
 import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.base.utils.collectState
@@ -43,6 +41,7 @@ import io.github.excu101.vortex.ui.component.theme.key.specialSymbol
 import io.github.excu101.vortex.ui.component.trail.TrailListView
 import kotlinx.coroutines.launch
 import kotlin.LazyThreadSafetyMode.NONE
+
 
 @AndroidEntryPoint
 class StorageListFragment : Fragment() {
@@ -96,6 +95,9 @@ class StorageListFragment : Fragment() {
         root?.addView(trail)
         root?.addView(loading)
 
+        requireActivity().window.statusBarColor = Transparent.value
+        requireActivity().window.navigationBarColor = Transparent.value
+
         bar?.hideOnScroll = true
         bar?.setBackgroundColor(ThemeColor(mainBarSurfaceColorKey))
         return root
@@ -132,6 +134,10 @@ class StorageListFragment : Fragment() {
 
         listAdapter.registerLong { view, item, position ->
             when (view) {
+                is ImageView -> {
+                    true
+                }
+
                 is FrameLayout -> {
                     true
                 }

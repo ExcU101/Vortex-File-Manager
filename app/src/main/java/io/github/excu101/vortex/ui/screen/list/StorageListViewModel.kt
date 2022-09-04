@@ -1,21 +1,21 @@
 package io.github.excu101.vortex.ui.screen.list
 
+import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.excu101.pluginsystem.model.GroupAction
+import io.github.excu101.vortex.BuildConfig
 import io.github.excu101.vortex.base.utils.*
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.data.storage.MutablePathItemMapSet
-import io.github.excu101.vortex.data.storage.PathItemMapSet
-import io.github.excu101.vortex.data.storage.StorageItem
 import io.github.excu101.vortex.data.storage.PathItemGroup
+import io.github.excu101.vortex.data.storage.PathItemMapSet
 import io.github.excu101.vortex.data.trail.TrailNavigator
 import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.provider.StorageProvider
 import io.github.excu101.vortex.ui.component.adapter.Item
-import io.github.excu101.vortex.ui.screen.list.StorageScreenState.Companion.content
 import io.github.excu101.vortex.ui.screen.list.StorageScreenState.Companion.loading
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,12 +90,32 @@ class StorageListViewModel @Inject constructor(
 
     fun selectAll() = intent {
         handle[SELECTED_KEY] =
-            state.data.filterIsInstance<StorageItem>()
+            state.data.filterIsInstance<PathItem>()
     }
 
     fun addActions(actions: List<GroupAction>) = intent {
         _actions.applyValue {
             addAll(actions)
+        }
+    }
+
+    fun checkPermission() = intent {
+        state {
+            loading(title = "Checking permissions")
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (provider.requiresFullStorageAccess()) {
+                state {
+                    StorageScreenState(
+                        requiresAllFilePermission = true
+                    )
+                }
+            } else {
+                navigateTo(path)
+            }
+        } else {
+
         }
     }
 
@@ -117,13 +137,14 @@ class StorageListViewModel @Inject constructor(
     fun navigateTo(
         item: PathItem,
     ) = intent {
-//        state {
-//            loading("Getting content...")
-//        }
+        state {
+            loading("Navigating to ${item.name}...")
+        }
         val current = trail.value
 
         if (item.isDirectory) {
             handle[TRAIL_KEY] = current.navigateTo(item)
+            delay(500L)
             val content = parseContent(item)
 
             state {
@@ -136,7 +157,7 @@ class StorageListViewModel @Inject constructor(
 
     suspend fun parseContent(path: PathItem): MutableList<Item<*>> {
         val content = mutableListOf<Item<*>>()
-        val data = path.list()
+        val data = provider.provideList(path)
 
         val folders = data.filter { it.isDirectory }
         val files = data.filter { it.isFile }

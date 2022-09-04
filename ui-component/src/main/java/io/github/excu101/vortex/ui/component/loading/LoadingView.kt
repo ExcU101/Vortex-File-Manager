@@ -2,19 +2,25 @@ package io.github.excu101.vortex.ui.component.loading
 
 import android.content.Context
 import android.content.res.ColorStateList.valueOf
+import android.view.Gravity
+import android.view.Gravity.CENTER
 import android.view.View.MeasureSpec.*
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.dp
+import io.github.excu101.vortex.ui.component.sp
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarTintColorKey
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressTitleTextColorKey
 
-class LoadingView(context: Context) : FrameLayout(context) {
+class LoadingView(context: Context) : LinearLayout(context) {
 
     private val background = MaterialShapeDrawable().apply {
         fillColor = valueOf(ThemeColor(layoutProgressBarBackgroundColorKey))
@@ -25,10 +31,17 @@ class LoadingView(context: Context) : FrameLayout(context) {
         setIndicatorColor(ThemeColor(layoutProgressBarTintColorKey))
     }
     private val titleView = TextView(context).apply {
+        textSize = 18F
         setTextColor(ThemeColor(layoutProgressTitleTextColorKey))
+        textAlignment = TEXT_ALIGNMENT_CENTER
+        layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        setPadding(
+            0,
+            16.dp,
+            0,
+            0
+        )
     }
-
-    private val circularSize = 24.dp
 
     var title: CharSequence?
         get() = titleView.text
@@ -45,6 +58,8 @@ class LoadingView(context: Context) : FrameLayout(context) {
 
     init {
         setBackground(background)
+        orientation = VERTICAL
+        gravity = CENTER
 
         addView(progressView)
     }
@@ -52,45 +67,6 @@ class LoadingView(context: Context) : FrameLayout(context) {
     private fun ensureContainingTitle() {
         if (!containsTitleView) {
             addView(titleView)
-        }
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = getSize(widthMeasureSpec)
-        val height = getSize(heightMeasureSpec)
-
-        setMeasuredDimension(width, height)
-
-        val availableWidth = width
-        val availableHeight = width - 24.dp
-        progressView.measure(
-            makeMeasureSpec(24.dp, AT_MOST),
-            makeMeasureSpec(24.dp, AT_MOST)
-        )
-        titleView.measure(
-            makeMeasureSpec(availableWidth, AT_MOST),
-            makeMeasureSpec(availableHeight, AT_MOST)
-        )
-    }
-
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-
-        if (containsProgressView) {
-            progressView.layout(
-                measuredWidth / 2 - progressView.measuredWidth,
-                measuredHeight / 2 - progressView.measuredHeight,
-                measuredWidth / 2 + progressView.measuredWidth,
-                measuredHeight / 2 + progressView.measuredHeight,
-            )
-        }
-        if (containsTitleView) {
-            progressView.layout(
-                measuredWidth / 2 - titleView.measuredWidth,
-                measuredHeight / 2 + progressView.measuredHeight - titleView.measuredHeight,
-                measuredWidth / 2 + titleView.measuredWidth,
-                measuredHeight / 2 + progressView.measuredHeight + titleView.measuredHeight,
-            )
         }
     }
 

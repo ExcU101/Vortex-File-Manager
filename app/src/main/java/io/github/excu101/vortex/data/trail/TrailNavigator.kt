@@ -2,6 +2,7 @@ package io.github.excu101.vortex.data.trail
 
 import android.os.Parcelable
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.vortex.base.utils.logIt
 import io.github.excu101.vortex.data.PathItem
 import kotlinx.parcelize.Parcelize
 

@@ -10,6 +10,9 @@ import io.github.excu101.filesystem.fs.attr.mimetype.MimeType
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.toPath
+import io.github.excu101.filesystem.unix.UnixFileSystem
+import io.github.excu101.filesystem.unix.UnixFileSystemProvider
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.adapter.Item
 import io.github.excu101.vortex.ui.component.adapter.ViewHolderFactory
@@ -22,6 +25,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.WriteWith
+import java.lang.Exception
 
 @Parcelize
 class PathItem(
@@ -91,6 +95,16 @@ class PathItem(
         FileProvider.newDirStream(path = value).use { stream ->
             stream.map(::PathItem)
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PathItem
+        if (value != other.value) return false
+
+        return true
     }
 
     companion object : ViewHolderFactory<PathItem> {

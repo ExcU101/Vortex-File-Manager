@@ -140,23 +140,7 @@ class UnixPath internal constructor(
         return path.decodeToString()
     }
 
-    override fun hashCode(): Int {
-        return path.contentHashCode()
-    }
 
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other == null) return false
-
-        if (javaClass != other.javaClass) {
-            return false
-        }
-
-        other as Path
-        return bytes contentEquals other.bytes
-                && isAbsolute == other.isAbsolute
-                && system == other.system
-    }
 
     override fun compareTo(other: Path): Int {
         val fLen = length
@@ -165,6 +149,22 @@ class UnixPath internal constructor(
         val min = min(fLen, sLen)
 
         return other.length - length
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as UnixPath
+
+        if (!bytes.contentEquals(other.bytes)) return false
+        if (system != other.system) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return bytes.contentHashCode()
     }
 
 }
