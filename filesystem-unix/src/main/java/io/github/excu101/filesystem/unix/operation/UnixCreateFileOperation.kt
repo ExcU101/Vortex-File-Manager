@@ -5,7 +5,7 @@ import io.github.excu101.filesystem.fs.attr.Option
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
 
-class UnixCreateFileOperation(
+internal class UnixCreateFileOperation(
     private val path: Path,
     private val flags: Set<Option>,
     private val mode: Int,

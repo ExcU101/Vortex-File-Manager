@@ -11,6 +11,8 @@ class UnixPath internal constructor(
 ) : Path {
 
     private val points: List<Int>
+    private var cachedHash: Int? = null
+    private var cachedPath: String? = null
 
     init {
         val list = mutableListOf<Int>()
@@ -137,16 +139,16 @@ class UnixPath internal constructor(
     }
 
     override fun toString(): String {
-        return path.decodeToString()
+        if (cachedPath == null) {
+            cachedPath = path.decodeToString()
+        }
+        return cachedPath!!
     }
-
 
 
     override fun compareTo(other: Path): Int {
         val fLen = length
         val sLen = other.length
-
-        val min = min(fLen, sLen)
 
         return other.length - length
     }
@@ -164,7 +166,10 @@ class UnixPath internal constructor(
     }
 
     override fun hashCode(): Int {
-        return bytes.contentHashCode()
+        if (cachedHash == null) {
+            cachedHash = bytes.contentHashCode()
+        }
+        return cachedHash!!
     }
 
 }

@@ -9,7 +9,11 @@ abstract class FileOperation {
         get() = _observers
 
     abstract val id: Int
-    abstract suspend fun perform()
+    internal suspend fun call() {
+        perform()
+    }
+
+    protected abstract suspend fun perform()
 
     internal fun subscribe(observer: List<FileOperationObserver>) {
         _observers.addAll(observer)

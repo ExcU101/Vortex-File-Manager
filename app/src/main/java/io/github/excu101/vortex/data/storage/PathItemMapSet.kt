@@ -22,7 +22,7 @@ class MutablePathItemMapSet : PathItemMapSet() {
     }
 
     fun addAll(elements: Iterable<PathItem>) {
-        elements.forEach(::add)
+        mapper.putAll(elements.associateBy(extractor))
     }
 
     fun addAll(elements: Array<out PathItem>) {
@@ -30,12 +30,12 @@ class MutablePathItemMapSet : PathItemMapSet() {
     }
 
     fun remove(element: PathItem): Boolean {
-        return mapper.put(extractor(element), element) != null
+        return mapper.remove(extractor(element)) != null
     }
 
-//    fun clear() {
-//        mapper.clear()
-//    }
+    fun clear() {
+        mapper.clear()
+    }
 
     override fun get(path: Path): PathItem {
         return mapper[path] ?: PathItem(path)
@@ -46,7 +46,7 @@ class MutablePathItemMapSet : PathItemMapSet() {
     }
 
     override fun contains(element: PathItem): Boolean {
-        return extractor(element) in mapper
+        return mapper.containsKey(extractor(element))
     }
 
     override val size: Int
@@ -59,7 +59,7 @@ abstract class PathItemMapSet :
 
     abstract operator fun get(path: Path): PathItem
 
-    abstract override fun iterator(): MutableIterator<PathItem>
+    abstract override fun iterator(): Iterator<PathItem>
 
     abstract override val size: Int
 

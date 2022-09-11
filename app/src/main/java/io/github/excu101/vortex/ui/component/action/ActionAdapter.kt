@@ -1,41 +1,15 @@
 package io.github.excu101.vortex.ui.component.action
 
-import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import io.github.excu101.vortex.data.header.ActionHeaderItem
-import io.github.excu101.vortex.ui.component.adapter.diff.ListItemDiffer
-import io.github.excu101.vortex.ui.component.adapter.selection.SelectionListAdapterImpl
-import io.github.excu101.vortex.ui.component.header.action.ActionHeaderView
-import io.github.excu101.vortex.ui.component.header.action.ActionHeaderViewHolder
+import io.github.excu101.vortex.data.header.TextHeaderItem
+import io.github.excu101.vortex.ui.component.ItemViewTypes
+import io.github.excu101.vortex.ui.component.list.adapter.Item
+import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
+import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
 
-class ActionAdapter : SelectionListAdapterImpl<ActionHeaderItem, ActionHeaderViewHolder>(
-    differ = object : DiffUtil.ItemCallback<ActionHeaderItem>() {
-        override fun areItemsTheSame(
-            oldItem: ActionHeaderItem,
-            newItem: ActionHeaderItem,
-        ): Boolean = ListItemDiffer.areItemsTheSame(oldItem, newItem)
-
-
-        override fun areContentsTheSame(
-            oldItem: ActionHeaderItem,
-            newItem: ActionHeaderItem,
-        ): Boolean = ListItemDiffer.areContentsTheSame(oldItem, newItem)
-    }
+class ActionAdapter : ItemAdapter<Item<*>>(
+    ItemViewTypes.TEXT_HEADER to (TextHeaderItem as ViewHolderFactory<Item<*>>),
+    ItemViewTypes.ACTION_HEADER to (ActionHeaderItem as ViewHolderFactory<Item<*>>)
 ) {
-    override val selectedCount: Int
-        get() = 0
-
-    override fun isSelected(position: Int): Boolean {
-        return false
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActionHeaderViewHolder {
-        return ActionHeaderViewHolder(root = ActionHeaderView(parent.context))
-    }
-
-    override fun onBindViewHolder(holder: ActionHeaderViewHolder, position: Int) {
-        holder.bind(item(position))
-    }
-
 
 }

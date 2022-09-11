@@ -224,6 +224,10 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_readDir(
 ) {
     clearErrno();
 
+    if (!pointer) {
+        return nullptr;
+    }
+
     DIR *dir = (DIR *) pointer;
 
     struct dirent64 *directory = readdir64(dir);
@@ -379,6 +383,113 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_close(
 ) {
     closeFileDescriptor(descriptor);
 }
+
+struct count {
+    int files;
+    int folders;
+};
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectoryCountImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray path
+) {
+    clearErrno();
+    dirent64 *ent;
+    char *cPath = fromByteArrayToPath(env, path);
+    char subpath[PATH_MAX];
+    DIR *dir = opendir(cPath);
+    struct stat64 buffer = {};
+
+    if (dir == nullptr) return -1;
+    int count = 0;
+
+    while ((ent = readdir64(dir))) {
+        if (strlen(cPath) + 1 + strlen(ent->d_name) > PATH_MAX) {
+            return -1;
+        }
+
+        sprintf(subpath, "%s%c%s", cPath, '/', ent->d_name);
+        if (lstat64(subpath, &buffer)) {
+            return -1;
+        }
+
+        if (isDirectory(buffer.st_mode)) {
+            ++count;
+        }
+    }
+
+    closedir(dir);
+    free(cPath);
+
+    return count;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_getFileCountImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray path
+) {
+    clearErrno();
+    dirent64 *ent;
+    char *cPath = fromByteArrayToPath(env, path);
+    char subpath[PATH_MAX];
+    DIR *dir = opendir(cPath);
+    struct stat64 buffer = {};
+
+    if (dir == nullptr) return -1;
+    int count = 0;
+
+    while ((ent = readdir64(dir))) {
+        if (strlen(cPath) + 1 + strlen(ent->d_name) > PATH_MAX) {
+            return -1;
+        }
+
+        sprintf(subpath, "%s%c%s", cPath, '/', ent->d_name);
+        if (lstat64(subpath, &buffer)) {
+            return -1;
+        }
+
+        if (isRegularFile(buffer.st_mode)) {
+            ++count;
+        }
+    }
+
+    closedir(dir);
+    free(cPath);
+
+    return count;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_getCountImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray path
+) {
+    clearErrno();
+    struct dirent64 *ent;
+    char *cPath = fromByteArrayToPath(env, path);
+    DIR *dir = opendir(cPath);
+
+    if (dir == nullptr) return -1;
+    int count = 0;
+
+    while ((ent = readdir64(dir))) {
+        ++count;
+    }
+
+    closedir(dir);
+    free(cPath);
+
+    return count;
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_fs_operation_NativeCalls_close(

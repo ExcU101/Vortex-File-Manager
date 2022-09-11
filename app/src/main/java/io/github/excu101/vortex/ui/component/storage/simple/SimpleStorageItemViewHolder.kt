@@ -3,7 +3,7 @@ package io.github.excu101.vortex.ui.component.storage.simple
 import androidx.annotation.DrawableRes
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.ui.component.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 
 class SimpleStorageItemViewHolder(
     private val root: SimpleStorageItemView,

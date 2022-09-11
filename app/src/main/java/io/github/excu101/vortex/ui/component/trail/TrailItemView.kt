@@ -12,8 +12,11 @@ import androidx.core.view.contains
 import androidx.core.view.updatePadding
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.Builder
+import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.ui.component.dp
@@ -21,14 +24,15 @@ import io.github.excu101.vortex.ui.component.foundtation.InnerPaddingOwner
 import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.toDp
 
-class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner {
+class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner,
+    ThemeColorChangeListener {
 
     companion object {
         private const val TITLE_INDEX = 0
         private const val ARROW_INDEX = 1
     }
 
-    private val roundedBackground = MaterialShapeDrawable(
+    private val background = MaterialShapeDrawable(
         Builder()
             .setTopLeftCorner(ROUNDED, 100F)
             .setTopRightCorner(ROUNDED, 100F)
@@ -36,14 +40,18 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
             .setBottomRightCorner(ROUNDED, 100F)
             .build()
     ).apply {
-        fillColor = valueOf(ThemeColor(trailSurfaceColorKey))
+        initializeElevationOverlay(context)
+
+        setTint(ThemeColor(trailSurfaceColorKey))
     }
 
     private var rippleDrawable = RippleDrawable(
         valueOf(ThemeColor(trailItemTitleTextColorKey)),
-        roundedBackground,
+        background,
         null
     )
+
+    private var isItemSelected = false
 
     private val minWidth = 36.dp
 
@@ -57,7 +65,7 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
         gravity = CENTER
         isClickable = true
         isFocusable = true
-        background = rippleDrawable
+        setBackground(rippleDrawable)
     }
 
     private val title = TextView(context).apply {
@@ -98,7 +106,12 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
     }
 
     fun updateSelection(isSelected: Boolean) {
-        if (isSelected) {
+        isItemSelected = isSelected
+        updateSelectionState()
+    }
+
+    fun updateSelectionState() {
+        if (isItemSelected) {
             rippleDrawable.setColor(valueOf(ThemeColor(trailItemRippleSelectedTintColorKey)))
             title.setTextColor(ThemeColor(trailItemTitleSelectedTextColorKey))
             arrow.setColorFilter(ThemeColor(trailItemArrowSelectedTintColorKey))
@@ -107,6 +120,23 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
             title.setTextColor(ThemeColor(trailItemTitleTextColorKey))
             arrow.setColorFilter(ThemeColor(trailItemArrowTintColorKey))
         }
+    }
+
+    override fun onChanged() {
+        updateSelectionState()
+        background.setTint(ThemeColor(trailSurfaceColorKey))
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Theme.registerColorChangeListener(this)
+
+        MaterialShapeUtils.setParentAbsoluteElevation(this, background)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Theme.unregisterColorChangeListener(this)
     }
 
 //    override fun onMeasure(widthSpec: Int, heightSpec: Int) {

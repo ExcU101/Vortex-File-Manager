@@ -1,6 +1,8 @@
 package io.github.excu101.pluginsystem.ui.theme
 
 import android.graphics.drawable.Drawable
+import android.os.Build
+import android.util.Log
 import io.github.excu101.pluginsystem.model.*
 import io.github.excu101.pluginsystem.utils.EmptyDrawable
 
@@ -44,6 +46,10 @@ object Theme {
 
     var isRtlEnabled: Boolean = false
 
+    private val switcherCallbacks = mutableListOf<ThemeSwitcherCallback>()
+
+    private val colorChangeListeners = mutableListOf<ThemeColorChangeListener>()
+
     private val icons: HashMap<String, Icon> = hashMapOf()
 
     private val texts: HashMap<String, Text> = hashMapOf()
@@ -61,7 +67,7 @@ object Theme {
 
     fun getOrReplace(key: String, default: Color): Color {
         return colors[key] ?: run {
-            colors[key] = default
+            set(key, default)
             default
         }
     }
@@ -114,6 +120,7 @@ object Theme {
 
     operator fun set(key: String, value: Color) {
         colors[key] = value
+        notifyColorsChanged()
     }
 
     operator fun set(key: String, value: Dimen) {
@@ -126,6 +133,30 @@ object Theme {
 
     operator fun set(key: String, value: Icon) {
         icons[key] = value
+    }
+
+    fun registerColorChangeListener(listener: ThemeColorChangeListener) {
+        colorChangeListeners.add(listener)
+    }
+
+    fun unregisterColorChangeListener(listener: ThemeColorChangeListener) {
+        colorChangeListeners.remove(listener)
+    }
+
+    fun attachCallback(callback: ThemeSwitcherCallback) {
+        switcherCallbacks.add(callback)
+    }
+
+    fun detachCallback(callback: ThemeSwitcherCallback) {
+        switcherCallbacks.remove(callback)
+    }
+
+    fun switch() {
+        switcherCallbacks.forEach(ThemeSwitcherCallback::onSwitch)
+    }
+
+    fun notifyColorsChanged() {
+        colorChangeListeners.forEach(ThemeColorChangeListener::onChanged)
     }
 }
 

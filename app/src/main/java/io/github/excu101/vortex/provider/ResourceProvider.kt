@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import io.github.excu101.pluginsystem.utils.EmptyDrawable
 
 class ResourceProvider(private val context: Context) {
 
@@ -13,8 +14,8 @@ class ResourceProvider(private val context: Context) {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    fun getDrawable(@DrawableRes id: Int): Drawable? {
-        return context.getDrawable(id)
+    fun getDrawable(@DrawableRes id: Int): Drawable {
+        return context.getDrawable(id) ?: EmptyDrawable
     }
 
     inline operator fun <reified T> get(id: Int): T {

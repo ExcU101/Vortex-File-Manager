@@ -3,7 +3,7 @@ package io.github.excu101.vortex.ui.component.theme.key
 // Keys
 const val backgroundColorKey: String = "backgroundColor"
 const val surfaceColorKey: String = "surfaceColor"
-const val accentColorKey: String = "accentColorKey"
+const val accentColorKey: String = "accentColor"
 
 // MAIN SCREEN : Bar
 
@@ -24,14 +24,16 @@ const val mainBarTitleContextualTextColorKey = "mainBarTitleContextualTextColor"
 const val mainDrawerTitleColorKey = "mainDrawerTitleColor"
 const val mainDrawerBackgroundColorKey = "mainDrawerBackgroundColor"
 const val mainDrawerSurfaceColorKey = "mainDrawerSurfaceColor"
-const val mainDrawerActionIconTintColorKey = "mainDrawerActionIconTintColor"
-const val mainDrawerActionTitleTextColorKey = "mainDrawerActionTitleTextColor"
+
+const val mainDrawerItemBackgroundColorKey = "mainDrawerItemBackgroundColor"
+const val mainDrawerItemIconTintColorKey = "mainDrawerItemIconTintColor"
+const val mainDrawerItemTitleTextColorKey = "mainDrawerItemTitleTextColor"
 
 // MAIN SCREEN : Drawer (selected)
 
 const val mainDrawerItemSelectedBackgroundColorKey = "mainDrawerItemSelectedBackgroundColor"
-const val mainDrawerActionIconSelectedTintColorKey = "mainDrawerActionIconSelectedTintColor"
-const val mainDrawerActionTitleSelectedTextColorKey = "mainDrawerActionTitleSelectedTextColor"
+const val mainDrawerItemIconSelectedTintColorKey = "mainDrawerItemIconSelectedTintColor"
+const val mainDrawerItemTitleSelectedTextColorKey = "mainDrawerItemTitleSelectedTextColor"
 
 // FILE LIST SCREEN : Additional menu
 
@@ -66,6 +68,8 @@ const val fileItemSecondaryTextColorKey = "fileItemSecondaryTextColor"
 const val fileItemIndexTextColorKey = "fileItemIndexTextColor"
 const val fileItemIconTintColorKey = "fileItemIconTintColor"
 const val fileItemIconBackgroundColorKey = "fileItemIconBackgroundColor"
+
+const val fileItemSurfaceRippleColorKey = "fileItemSurfaceRippleColor"
 
 // FILE LIST SCREEN : File Item (selected)
 const val fileItemSurfaceSelectedColorKey = "fileItemSurfaceSelectedColor"

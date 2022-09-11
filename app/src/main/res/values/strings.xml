@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Vortex File Manager</string>
+    <string name="app_name">Vortex</string>
+    <string name="vortex_service_action_name">io.github.excu101.VORTEX_SERVICE</string>
 </resources>

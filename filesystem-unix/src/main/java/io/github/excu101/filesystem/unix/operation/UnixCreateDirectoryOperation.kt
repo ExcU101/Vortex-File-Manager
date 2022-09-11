@@ -6,7 +6,7 @@ import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.error.UnixException
 
-class UnixCreateDirectoryOperation(
+internal class UnixCreateDirectoryOperation(
     private val path: Path,
     private val mode: Int,
 ) : FileOperation() {

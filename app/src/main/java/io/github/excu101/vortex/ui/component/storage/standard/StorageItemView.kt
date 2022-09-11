@@ -1,33 +1,32 @@
 package io.github.excu101.vortex.ui.component.storage.standard
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.view.View.MeasureSpec.*
-import android.widget.FrameLayout
+import android.view.animation.AccelerateInterpolator
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.contains
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.Builder
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
+import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.ui.component.ThemeDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.*
 import kotlin.math.min
 
-class StorageItemView(context: Context) : FrameLayout(context) {
-
-    companion object {
-        const val TITLE_INDEX = 0
-        const val INFO_INDEX = 1
-        const val ICON_INDEX = 2
-    }
+class StorageItemView(context: Context) : ThemeFrameLayout(context) {
 
     private val largeInnerPadding = 16.dp
     private val middleInnerPadding = 8.dp
@@ -36,6 +35,24 @@ class StorageItemView(context: Context) : FrameLayout(context) {
     private val infoLeftPadding = ThemeDimen(fileItemInfoLeftPaddingKey).dp
 
     private val iconSize = 40.dp
+
+    private val shapeInAnimator: ValueAnimator? = ValueAnimator.ofFloat(0F, 500F).apply {
+        startDelay = 250L
+        duration = 250L
+        interpolator = AccelerateInterpolator()
+        addUpdateListener {
+            shape.setCornerSize(it.animatedValue as Float)
+        }
+    }
+
+    private val shapeOutAnimator: ValueAnimator? = ValueAnimator.ofFloat(500F, 0F).apply {
+        startDelay = 250L
+        duration = 250L
+        interpolator = AccelerateInterpolator()
+        addUpdateListener {
+            shape.setCornerSize(it.animatedValue as Float)
+        }
+    }
 
     var titleColor: Int
         get() = title.currentTextColor
@@ -64,11 +81,12 @@ class StorageItemView(context: Context) : FrameLayout(context) {
     val containsIcon: Boolean
         get() = contains(icon)
 
+    private var isItemSelected = false
+
     private val iconShape = MaterialShapeDrawable(
         Builder().setAllCorners(CornerFamily.ROUNDED, 500F).build()
     ).apply {
-
-        fillColor = valueOf(ThemeColor(fileItemIconBackgroundColorKey))
+        setTint(ThemeColor(fileItemIconBackgroundColorKey))
     }
 
     private val iconBackground = RippleDrawable(
@@ -78,13 +96,14 @@ class StorageItemView(context: Context) : FrameLayout(context) {
     )
 
     private val shape = MaterialShapeDrawable(
+
     ).apply {
         initializeElevationOverlay(context)
-        fillColor = valueOf(ThemeColor(fileItemSurfaceColorKey))
+        setTint(ThemeColor(fileItemSurfaceColorKey))
     }
 
     private val background = RippleDrawable(
-        valueOf(ThemeColor(fileItemIconTintColorKey)),
+        valueOf(ThemeColor(fileItemSurfaceRippleColorKey)),
         shape,
         null
     )
@@ -97,7 +116,7 @@ class StorageItemView(context: Context) : FrameLayout(context) {
         minimumHeight = iconSize
         isClickable = true
         isFocusable = true
-        imageTintList = valueOf(ThemeColor(fileItemIconTintColorKey))
+        setColorFilter(ThemeColor(fileItemIconTintColorKey))
     }
 
     private val title = TextView(context).apply {
@@ -114,7 +133,7 @@ class StorageItemView(context: Context) : FrameLayout(context) {
 
     private fun ensureContainingTitle() {
         if (!containsTitle) {
-            addView(title, TITLE_INDEX)
+            addView(title)
         }
     }
 
@@ -125,7 +144,7 @@ class StorageItemView(context: Context) : FrameLayout(context) {
 
     private fun ensureContainingInfo() {
         if (!containsInfo) {
-            addView(info, INFO_INDEX)
+            addView(info)
         }
     }
 
@@ -136,7 +155,7 @@ class StorageItemView(context: Context) : FrameLayout(context) {
 
     private fun ensureContainingIcon() {
         if (!containsIcon) {
-            addView(icon, ICON_INDEX)
+            addView(icon)
         }
     }
 
@@ -159,19 +178,32 @@ class StorageItemView(context: Context) : FrameLayout(context) {
     }
 
     fun updateSelection(isSelected: Boolean) {
-        if (isSelected) {
+        isItemSelected = isSelected
+        updateSelectionState()
+    }
+
+    private fun updateSelectionState() {
+        if (isItemSelected) {
             titleColor = ThemeColor(fileItemTitleSelectedTextColorKey)
             infoColor = ThemeColor(fileItemSecondarySelectedTextColorKey)
             icon.setColorFilter(ThemeColor(fileItemIconSelectedTintColorKey))
-            iconShape.fillColor = valueOf(ThemeColor(fileItemIconBackgroundSelectedColorKey))
-            shape.fillColor = valueOf(ThemeColor(fileItemSurfaceSelectedColorKey))
+            iconShape.setTint(ThemeColor(fileItemIconBackgroundSelectedColorKey))
+            shape.setTint(ThemeColor(fileItemSurfaceSelectedColorKey))
+
+//            shape.setCornerSize(500F)
         } else {
             titleColor = ThemeColor(fileItemTitleTextColorKey)
             infoColor = ThemeColor(fileItemSecondaryTextColorKey)
             icon.setColorFilter(ThemeColor(fileItemIconTintColorKey))
-            iconShape.fillColor = valueOf(ThemeColor(fileItemIconBackgroundColorKey))
-            shape.fillColor = valueOf(ThemeColor(fileItemSurfaceColorKey))
+            iconShape.setTint(ThemeColor(fileItemIconBackgroundColorKey))
+            shape.setTint(ThemeColor(fileItemSurfaceColorKey))
+
+//            shape.setCornerSize(0F)
         }
+    }
+
+    override fun onChanged() {
+        updateSelectionState()
     }
 
     override fun onAttachedToWindow() {
@@ -183,7 +215,7 @@ class StorageItemView(context: Context) : FrameLayout(context) {
     init {
         isClickable = true
         isFocusable = true
-        minimumHeight = ThemeDimen(fileItemHeightKey).dp
+        minimumHeight = ThemeDp(fileItemHeightKey)
         setBackground(background)
     }
 
@@ -222,7 +254,7 @@ class StorageItemView(context: Context) : FrameLayout(context) {
             title.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(24.dp, AT_MOST))
         }
         if (containsInfo) {
-            info.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(16.dp, AT_MOST))
+            info.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(20.dp, AT_MOST))
         }
     }
 

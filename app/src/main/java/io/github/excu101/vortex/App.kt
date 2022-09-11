@@ -1,8 +1,6 @@
 package io.github.excu101.vortex
 
 import android.content.res.Configuration.*
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode
 import androidx.multidex.MultiDexApplication
 import dagger.hilt.android.HiltAndroidApp
 import io.github.excu101.pluginsystem.common.DefaultOperationsPlugin
@@ -31,6 +29,7 @@ class App : MultiDexApplication() {
 
         initVortexDimenValues()
         initVortexTextValues()
+
         PluginManager.activate(DefaultOperationsPlugin())
     }
 

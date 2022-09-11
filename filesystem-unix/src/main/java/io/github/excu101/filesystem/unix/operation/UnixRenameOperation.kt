@@ -5,7 +5,7 @@ import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.UnixCalls
 
-class UnixRenameOperation(
+internal class UnixRenameOperation(
     private val source: Path,
     private val dest: Path,
 ) : FileOperation() {

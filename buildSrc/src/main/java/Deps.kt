@@ -8,9 +8,6 @@ object Deps {
         const val Core = "androidx.core:core-ktx:${Versions.coreVer}"
         const val Fragment = "androidx.fragment:fragment-ktx:${Versions.fragmentVer}"
         const val Collection = "androidx.collection:collection-ktx:${Versions.collectionVer}"
-        const val NavigationFragment =
-            "androidx.navigation:navigation-fragment-ktx:${Versions.navigationVer}"
-        const val NavigationUi = "androidx.navigation:navigation-ui-ktx:${Versions.navigationVer}"
     }
 
     object Ui {

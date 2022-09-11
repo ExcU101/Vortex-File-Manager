@@ -3,6 +3,7 @@ package io.github.excu101.filesystem.unix
 import io.github.excu101.filesystem.fs.FileSystem
 import io.github.excu101.filesystem.fs.FileSystemProvider
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.FileSystemHelper
 import io.github.excu101.filesystem.unix.path.UnixPath
 
 class UnixFileSystem(
@@ -42,6 +43,10 @@ class UnixFileSystem(
 
     override val scheme: String
         get() = "file"
+
+    override val helper: FileSystemHelper = UnixFileSystemHelper()
+
+    override val containsHelper: Boolean = true
 
     override fun isOpen(): Boolean = true
 

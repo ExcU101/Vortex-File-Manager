@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -25,15 +26,20 @@ fun <T : Any> T.snackIt(
     view: View,
     message: String = "",
     duration: Int = Snackbar.LENGTH_SHORT,
+    anchorView: View? = null,
+    animationMode: Int = BaseTransientBottomBar.ANIMATION_MODE_SLIDE,
 ): T {
-    Snackbar.make(view, message + this.toString(), duration).show()
+    Snackbar.make(view, message + this.toString(), duration)
+        .setAnimationMode(animationMode)
+        .setAnchorView(anchorView)
+        .show()
     return this
 }
 
-suspend fun <T> MutableStateFlow<T>.applyValue(block: T.() -> Unit) {
+suspend inline fun <T> MutableStateFlow<T>.applyValue(block: T.() -> Unit) {
     emit(value.apply(block))
 }
 
-suspend fun <T> MutableStateFlow<T>.new(block: T.() -> T) {
+suspend inline fun <T> MutableStateFlow<T>.new(block: T.() -> T) {
     emit(block(value))
 }

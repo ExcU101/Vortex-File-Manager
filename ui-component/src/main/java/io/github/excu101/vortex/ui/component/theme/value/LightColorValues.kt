@@ -23,12 +23,13 @@ fun initVortexLightColorValues(): Theme {
     Theme[mainDrawerTitleColorKey] = Color.DarkGray
     Theme[mainDrawerBackgroundColorKey] = Color.White
     Theme[mainDrawerSurfaceColorKey] = Color.White
-    Theme[mainDrawerActionIconTintColorKey] = Color.Black
-    Theme[mainDrawerActionTitleTextColorKey] = Color.Black
+    Theme[mainDrawerItemBackgroundColorKey] = Color.White
+    Theme[mainDrawerItemIconTintColorKey] = Color.Black
+    Theme[mainDrawerItemTitleTextColorKey] = Color.Black
 
     Theme[mainDrawerItemSelectedBackgroundColorKey] = Color(value = 0x4D3062FF)
-    Theme[mainDrawerActionIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
-    Theme[mainDrawerActionTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
+    Theme[mainDrawerItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
+    Theme[mainDrawerItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
 
     Theme[fileAdditionalSurfaceColorKey] = Color.White
     Theme[fileAdditionalTitleTextColorKey] = Color.Black
@@ -54,6 +55,7 @@ fun initVortexLightColorValues(): Theme {
     Theme[fileItemIndexTextColorKey] = Color.Gray
     Theme[fileItemIconTintColorKey] = Color.White
     Theme[fileItemIconBackgroundColorKey] = Color.DarkGray
+    Theme[fileItemSurfaceRippleColorKey] = Color(value = 0x4D000000)
 
     Theme[fileItemSurfaceSelectedColorKey] = Color(value = 0x4D2962FF)
     Theme[fileItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)

@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
+import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.foundtation.MarginItemDecoration
@@ -24,7 +26,7 @@ import kotlin.math.min
 
 class TrailListView : RecyclerView,
     CoordinatorLayout.AttachedBehavior,
-    View.OnApplyWindowInsetsListener {
+    View.OnApplyWindowInsetsListener, ThemeColorChangeListener {
 
     constructor(context: Context) : super(context) {
         behavior = TrailBehavior()
@@ -66,6 +68,7 @@ class TrailListView : RecyclerView,
 
     private val shape = MaterialShapeDrawable().apply {
         initializeElevationOverlay(context)
+
         setTint(ThemeColor(trailSurfaceColorKey))
     }
 
@@ -79,17 +82,17 @@ class TrailListView : RecyclerView,
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        Theme.registerColorChangeListener(listener = this)
 
         MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
     }
 
-    override fun getAdapter(): TrailAdapter = trailAdapter
-
-    override fun setLayoutManager(layout: LayoutManager?) {
-        super.setLayoutManager(trailLayoutManager)
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Theme.unregisterColorChangeListener(listener = this)
     }
 
-    override fun getLayoutManager() = trailLayoutManager
+    override fun getAdapter(): TrailAdapter = trailAdapter
 
     init {
         minimumWidth = MATCH_PARENT
@@ -137,5 +140,9 @@ class TrailListView : RecyclerView,
     fun slideUp() = behavior.slideUp(view = this)
 
     fun slideDown() = behavior.slideDown(view = this)
+
+    override fun onChanged() {
+        shape.setTint(ThemeColor(trailSurfaceColorKey))
+    }
 
 }

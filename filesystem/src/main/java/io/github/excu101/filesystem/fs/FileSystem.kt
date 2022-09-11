@@ -1,14 +1,20 @@
 package io.github.excu101.filesystem.fs
 
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.FileSystemHelper
 
 abstract class FileSystem(
-    open val provider: FileSystemProvider
+    open val provider: FileSystemProvider,
 ) {
 
     abstract val separator: Byte
 
     abstract val scheme: String
+
+    abstract val helper: FileSystemHelper?
+
+    open val containsHelper: Boolean
+        get() = helper != null
 
     abstract fun isOpen(): Boolean
 

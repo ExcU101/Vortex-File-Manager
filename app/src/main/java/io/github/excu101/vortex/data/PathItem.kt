@@ -10,13 +10,10 @@ import io.github.excu101.filesystem.fs.attr.mimetype.MimeType
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.fs.utils.toPath
-import io.github.excu101.filesystem.unix.UnixFileSystem
-import io.github.excu101.filesystem.unix.UnixFileSystemProvider
 import io.github.excu101.vortex.ui.component.ItemViewTypes
-import io.github.excu101.vortex.ui.component.adapter.Item
-import io.github.excu101.vortex.ui.component.adapter.ViewHolderFactory
-import io.github.excu101.vortex.ui.component.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.list.adapter.Item
+import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.storage.standard.StorageItemView
 import io.github.excu101.vortex.ui.component.storage.standard.StorageItemViewHolder
 import io.github.excu101.vortex.utils.PathParceler
@@ -25,21 +22,20 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.WriteWith
-import java.lang.Exception
 
 @Parcelize
 class PathItem(
     override val value: @WriteWith<PathParceler> Path,
 ) : Item<Path>, Parcelable {
 
-    @IgnoredOnParcel
-    val path: String = value.toString()
+    val path: String
+        get() = value.toString()
 
-    @IgnoredOnParcel
-    override val id: Long = hashCode().toLong()
+    override val id: Long
+        get() = hashCode().toLong()
 
-    @IgnoredOnParcel
-    override val type: Int = ItemViewTypes.STORAGE
+    override val type: Int
+        get() = ItemViewTypes.STORAGE
 
     @IgnoredOnParcel
     private val attrs = try {
@@ -54,38 +50,38 @@ class PathItem(
     @IgnoredOnParcel
     val mimeType: MimeType = MimeType.fromName(name)
 
-    @IgnoredOnParcel
-    val isHidden: Boolean = value.isHidden
+    val isHidden: Boolean
+        get() = value.isHidden
 
-    @IgnoredOnParcel
-    val isAbsolute: Boolean = value.isAbsolute
+    val isAbsolute: Boolean
+        get() = value.isAbsolute
 
-    @IgnoredOnParcel
-    val isEmpty: Boolean = value.isEmpty
+    val isEmpty: Boolean
+        get() = value.isEmpty
 
-    @IgnoredOnParcel
-    val isDirectory: Boolean = attrs.isDirectory
+    val isDirectory: Boolean
+        get() = attrs.isDirectory
 
-    @IgnoredOnParcel
-    val isFile: Boolean = attrs.isFile
+    val isFile: Boolean
+        get() = attrs.isFile
 
-    @IgnoredOnParcel
-    val isLink: Boolean = attrs.isLink
+    val isLink: Boolean
+        get() = attrs.isLink
 
-    @IgnoredOnParcel
-    val isOther: Boolean = attrs.isOther
+    val isOther: Boolean
+        get() = attrs.isOther
 
-    @IgnoredOnParcel
-    val lastModifiedTime: FileTime = attrs.lastModifiedTime
+    val lastModifiedTime: FileTime
+        get() = attrs.lastModifiedTime
 
-    @IgnoredOnParcel
-    val lastAccessTime: FileTime = attrs.lastAccessTime
+    val lastAccessTime: FileTime
+        get() = attrs.lastAccessTime
 
-    @IgnoredOnParcel
-    val creationTime: FileTime = attrs.creationTime
+    val creationTime: FileTime
+        get() = attrs.creationTime
 
-    @IgnoredOnParcel
-    val size: Size = attrs.size
+    val size: Size
+        get() = attrs.size
 
     override fun hashCode(): Int {
         return value.hashCode()

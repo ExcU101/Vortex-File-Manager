@@ -1,19 +1,24 @@
 package io.github.excu101.vortex.data.trail
 
-import android.os.Parcelable
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.vortex.base.utils.logIt
 import io.github.excu101.vortex.data.PathItem
-import kotlinx.parcelize.Parcelize
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-@Parcelize
-class TrailNavigator(
-    val items: List<PathItem> = listOf(),
-    val selectedIndex: Int = items.lastIndex,
-) : Iterable<PathItem>, Parcelable {
+class TrailNavigator : Iterable<PathItem> {
 
+    private val _items = MutableStateFlow(mutableListOf<PathItem>())
+    val items: StateFlow<List<PathItem>>
+        get() = _items.asStateFlow()
+
+    private val _selectedIndex = MutableStateFlow(-1)
+    val selectedIndex: StateFlow<Int>
+        get() = _selectedIndex.asStateFlow()
+
+    private var _selectedItem = MutableStateFlow<PathItem?>(null)
     val selectedItem: PathItem?
-        get() = items.getOrNull(selectedIndex)
+        get() = items.value.getOrNull(selectedIndex.value)
 
     companion object {
         private fun parseSegments(path: Path): MutableList<PathItem> {
@@ -30,7 +35,7 @@ class TrailNavigator(
         }
     }
 
-    fun navigateTo(
+    suspend fun navigateTo(
         item: PathItem,
         withPrefixChecking: Boolean = true,
     ) = navigateTo(
@@ -38,11 +43,12 @@ class TrailNavigator(
         withPrefixChecking = withPrefixChecking
     )
 
-    fun navigateTo(
+    suspend fun navigateTo(
         segments: MutableList<PathItem>,
         selectedIndex: Int = segments.lastIndex,
         withPrefixChecking: Boolean = true,
-    ): TrailNavigator {
+    ) {
+        val items = _items.value
         if (withPrefixChecking) {
             var hasPrefix = true
             for (index in segments.indices) {
@@ -56,15 +62,16 @@ class TrailNavigator(
                 }
             }
         }
-        return TrailNavigator(segments, selectedIndex)
+        _items.emit(segments)
+        _selectedIndex.emit(selectedIndex)
     }
 
-    fun navigateUp(): TrailNavigator {
-        return navigateTo(segments = take(selectedIndex).toMutableList())
+    suspend fun navigateUp() {
+        navigateTo(segments = take(selectedIndex.value).toMutableList())
     }
 
     override fun iterator(): Iterator<PathItem> {
-        return items.iterator()
+        return items.value.iterator()
     }
 
 }

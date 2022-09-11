@@ -3,9 +3,9 @@ package io.github.excu101.vortex.data.header
 import android.view.View
 import android.view.ViewGroup
 import io.github.excu101.vortex.ui.component.ItemViewTypes
-import io.github.excu101.vortex.ui.component.adapter.Item
-import io.github.excu101.vortex.ui.component.adapter.ViewHolderFactory
-import io.github.excu101.vortex.ui.component.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.list.adapter.Item
+import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.header.text.TextHeaderView
 import io.github.excu101.vortex.ui.component.header.text.TextHeaderViewHolder
 

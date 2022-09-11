@@ -24,6 +24,12 @@ static bool isDirectory(int mode) {
     return S_ISDIR(mode);
 }
 
+static bool isDirectory(char *path) {
+    struct stat64 *buffer = {};
+    STATUS64(path, buffer);
+    return isDirectory(buffer->st_mode);
+}
+
 static bool isRegularFile(int mode) {
     return S_ISREG(mode);
 }

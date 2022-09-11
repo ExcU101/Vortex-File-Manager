@@ -1,5 +1,7 @@
 package io.github.excu101.vortex.ui.component.bar
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.Drawable
@@ -7,22 +9,25 @@ import android.graphics.drawable.RippleDrawable
 import android.view.View
 import android.view.View.MeasureSpec.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout.*
+import androidx.coordinatorlayout.widget.CoordinatorLayout.AttachedBehavior
 import androidx.core.view.children
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 import com.google.android.material.shape.MaterialShapeUtils
+import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
+import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
+import io.github.excu101.vortex.ui.component.menu.ActionListener
+import io.github.excu101.vortex.ui.component.menu.MenuLayout
 import io.github.excu101.vortex.ui.component.theme.key.*
 import kotlin.math.min
 
-class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
+class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     enum class Type {
         TOP,
@@ -36,7 +41,7 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
         }
 
     private val horizontalPadding = 16.dp
-    private val verticalPadding = 8.dp
+    private val verticalPadding = 16.dp
     private val titleHorizontalPadding = 32.dp
     private val behavior = BarBehavior()
 
@@ -45,7 +50,7 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
     private val background = MaterialShapeDrawable().apply {
         initializeElevationOverlay(context)
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_ALWAYS
-        fillColor = valueOf(ThemeColor(key = mainBarSurfaceColorKey))
+        setTint(ThemeColor(mainBarSurfaceColorKey))
     }
 
     private val navigationIconView = ImageView(context).apply {
@@ -66,6 +71,10 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
         setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
     }
 
+    private val menuView = MenuLayout(context).apply {
+
+    }
+
     var navigationIcon: Drawable?
         get() = navigationIconView.drawable
         set(value) {
@@ -73,18 +82,51 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
             navigationIconView.setImageDrawable(value)
         }
 
+    var animatesTitleChanges: Boolean = true
+    var animatesSubtitleChanges: Boolean = true
+
+    private val titleAnimator = AnimatorSet().apply {
+        interpolator = FastOutSlowInInterpolator()
+        playTogether(ObjectAnimator.ofFloat(titleView, View.ALPHA, 1F, 0F, 1F))
+    }
+
+    private val subtitleAnimator = AnimatorSet().apply {
+        interpolator = FastOutSlowInInterpolator()
+        playTogether(ObjectAnimator.ofFloat(subtitleView, View.ALPHA, 1F, 0F, 1F))
+    }
+
+    private var textWidth = 0
+
     var title: CharSequence?
         get() = titleView.text
         set(value) {
             ensureContainingTitle()
-            titleView.text = value
+            if (animatesTitleChanges) {
+                titleView.animate().alpha(0F).setDuration(150L).withEndAction {
+                    titleView.text = value
+                    titleView.animate().alpha(1F).setDuration(150L).start()
+                }.start()
+            } else {
+                titleView.text = value
+            }
         }
 
     var subtitle: CharSequence?
         get() = subtitleView.text
         set(value) {
+            if (value == null) {
+                removeView(subtitleView)
+                return
+            }
             ensureContainingSubtitle()
-            subtitleView.text = value
+            if (animatesSubtitleChanges) {
+                subtitleView.animate().alpha(0F).setDuration(150L).withEndAction {
+                    subtitleView.text = value
+                    subtitleView.animate().alpha(1F).setDuration(150L).start()
+                }.start()
+            } else {
+                subtitleView.text = value
+            }
         }
 
     val containsTitle: Boolean
@@ -96,11 +138,15 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
     val containsNavigationIcon: Boolean
         get() = navigationIconView in children
 
+    val containsMenu: Boolean
+        get() = menuView in children
+
     init {
+        setBackground(background)
         elevation = 16F
         minimumWidth = MATCH_PARENT
         minimumHeight = ThemeDimen(mainBarHeightKey).dp
-        setBackground(background)
+
     }
 
     private fun ensureContainingTitle() {
@@ -122,13 +168,18 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
         }
     }
 
+    private fun ensureContainingMenu() {
+        if (!containsMenu) {
+            addView(menuView)
+        }
+    }
+
     fun setNavigationClickListener(listener: OnClickListener) {
         navigationIconView.setOnClickListener(listener)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-
         MaterialShapeUtils.setParentAbsoluteElevation(this, background)
     }
 
@@ -140,6 +191,29 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
 
     fun hide() {
         behavior.slideDown(child = this)
+    }
+
+    fun addItem(action: Action) {
+        ensureContainingMenu()
+        menuView.addItem(action)
+    }
+
+    fun replaceItems(actions: List<Action>) {
+        ensureContainingMenu()
+        menuView.replaceItems(actions)
+    }
+
+    fun removeItem(action: Action) {
+        ensureContainingMenu()
+        menuView.removeItem(action)
+    }
+
+    fun addActionListener(listener: ActionListener) {
+        menuView.addListener(listener)
+    }
+
+    fun removeActionListener(listener: ActionListener) {
+        menuView.removeListener(listener)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -182,6 +256,23 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
                 makeMeasureSpec(20.dp, AT_MOST)
             )
         }
+        if (containsMenu) {
+            textWidth = if (titleView.measuredWidth > subtitleView.measuredWidth) {
+                titleView.measuredWidth
+            } else {
+                subtitleView.measuredWidth
+            }
+            val paddings = if (containsTitle && containsNavigationIcon) {
+                titleHorizontalPadding
+            } else {
+                0
+            }
+            val menuWidth = availableWidth - navigationIconView.measuredWidth - textWidth - paddings
+            menuView.measure(
+                makeMeasureSpec(menuWidth, AT_MOST),
+                56.dp
+            )
+        }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -192,9 +283,9 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
         if (containsNavigationIcon) {
             navigationIconView.layout(
                 widthPosition,
-                16.dp,
-                (widthPosition + navigationIconView.measuredWidth),
-                16.dp + navigationIconView.measuredHeight
+                heightPosition,
+                widthPosition + navigationIconView.measuredWidth,
+                heightPosition + navigationIconView.measuredHeight
             )
             widthPosition += navigationIconView.measuredWidth
         }
@@ -206,24 +297,48 @@ class Bar(context: Context) : FrameLayout(context), AttachedBehavior {
         if (containsSubtitle) {
             subtitleView.layout(
                 widthPosition,
-                heightPosition + titleView.lineHeight,
+                8.dp + titleView.lineHeight,
                 widthPosition + subtitleView.measuredWidth,
-                heightPosition + titleView.lineHeight + subtitleView.lineHeight
+                8.dp + titleView.lineHeight + subtitleView.lineHeight
             )
         }
 
         if (containsTitle) {
+            if (!containsSubtitle) {
+                titleView.layout(
+                    widthPosition,
+                    heightPosition,
+                    widthPosition + titleView.measuredWidth,
+                    heightPosition + titleView.lineHeight
+                )
+            } else {
+                titleView.layout(
+                    widthPosition,
+                    8.dp,
+                    widthPosition + titleView.measuredWidth,
+                    8.dp + titleView.lineHeight
+                )
 
-            titleView.layout(
-                widthPosition,
-                heightPosition,
-                widthPosition + titleView.measuredWidth,
-                heightPosition + titleView.lineHeight
-            )
-            widthPosition += titleView.measuredWidth
+            }
         }
 
+        widthPosition += textWidth
 
+        if (containsMenu) {
+            menuView.layout(
+                widthPosition,
+                0,
+                widthPosition + menuView.measuredWidth,
+                measuredHeight - paddingBottom
+            )
+        }
+    }
+
+    override fun onChanged() {
+        background.setTint(ThemeColor(mainBarSurfaceColorKey))
+        titleView.setTextColor(ThemeColor(mainBarTitleTextColorKey))
+        subtitleView.setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
+        navigationIconView.setColorFilter(ThemeColor(mainBarNavigationIconTintColorKey))
     }
 
 }

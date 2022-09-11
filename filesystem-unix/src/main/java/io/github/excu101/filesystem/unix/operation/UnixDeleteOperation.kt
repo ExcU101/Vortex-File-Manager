@@ -7,7 +7,7 @@ import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.UnixCalls
 
-class UnixDeleteOperation(
+internal class UnixDeleteOperation(
     private val data: Collection<Path>,
 ) : FileOperation() {
 

@@ -1,5 +1,6 @@
 package io.github.excu101.filesystem.unix
 
+import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.attr.UnixDirentStructure
 import io.github.excu101.filesystem.unix.attr.UnixStatusStructure
 import io.github.excu101.filesystem.unix.attr.UnixStructureFileSystemStatus
@@ -35,5 +36,17 @@ internal object UnixCalls {
     external fun closeDir(pointer: Long)
 
     external fun statVfs(path: ByteArray): UnixStructureFileSystemStatus
+
+    internal fun getCount(path: Path): Int = getCountImpl(path.bytes)
+
+    private external fun getCountImpl(path: ByteArray): Int
+
+    internal fun getDirectoryCount(path: Path): Int = getDirectoryCountImpl(path.bytes)
+
+    private external fun getDirectoryCountImpl(path: ByteArray): Int
+
+    fun getFileCount(path: Path): Int = getFileCountImpl(path.bytes)
+
+    private external fun getFileCountImpl(path: ByteArray): Int
 
 }

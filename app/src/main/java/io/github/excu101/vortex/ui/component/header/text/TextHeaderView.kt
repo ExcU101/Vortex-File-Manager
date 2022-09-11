@@ -1,16 +1,16 @@
 package io.github.excu101.vortex.ui.component.header.text
 
 import android.content.Context
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.view.updatePadding
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.fileItemTitleTextColorKey
 
 class TextHeaderView(
     context: Context,
-) : FrameLayout(context) {
+) : ThemeFrameLayout(context) {
 
     private val desireHeight = 48.dp
 
@@ -26,6 +26,10 @@ class TextHeaderView(
 
     fun setTitle(value: String? = null) {
         title.text = value
+    }
+
+    override fun onChanged() {
+        title.setTextColor(ThemeColor(fileItemTitleTextColorKey))
     }
 
 }

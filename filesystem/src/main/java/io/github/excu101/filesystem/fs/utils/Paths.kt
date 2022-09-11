@@ -47,3 +47,15 @@ inline val Path.store
 
 inline val Path.list
     get() = system.provider.newDirectorySteam(this).toList()
+
+inline val Path.scheme
+    get() = system.scheme
+
+inline val Path.count: Int
+    get() = system.helper?.getCount(this) ?: -1
+
+inline val Path.directoryCount: Int
+    get() = system.helper?.getDirectoryCount(this) ?: -1
+
+inline val Path.fileCount: Int
+    get() = system.helper?.getFileCount(this) ?: -1

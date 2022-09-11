@@ -3,7 +3,7 @@ package io.github.excu101.vortex.ui.component.trail
 import android.animation.Animator
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import io.github.excu101.vortex.ui.component.adapter.animation.ItemAnimator
+import io.github.excu101.vortex.ui.component.list.adapter.animation.ItemAnimator
 
 object TrailItemAnimator : ItemAnimator() {
 

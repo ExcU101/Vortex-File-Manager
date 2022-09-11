@@ -20,7 +20,7 @@ abstract class FileSystemProvider {
         observers: List<FileOperationObserver>,
     ) = CoroutineScope(IO).launch {
         operation.subscribe(observers)
-        operation.perform()
+        operation.call()
     }
 
     abstract fun <T : BasicAttrs> readAttrs(source: Path, type: KClass<T>): T

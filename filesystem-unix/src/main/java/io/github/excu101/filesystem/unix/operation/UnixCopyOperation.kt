@@ -4,7 +4,7 @@ import io.github.excu101.filesystem.IdRegister
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
 
-class UnixCopyOperation(
+internal class UnixCopyOperation(
     private val sources: Set<Path>,
     private val dest: Path,
 ) : FileOperation() {

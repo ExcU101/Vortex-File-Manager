@@ -72,12 +72,11 @@ class UnixFileSystemProvider : FileSystemProvider() {
         UnixDirectoryStream(
             dir = path as UnixPath, UnixCalls.openDir(path.bytes),
             onError = { error ->
-                notify(error = error)
+                throw error
             }
         )
     } catch (exception: SystemCallException) {
-        notify(exception)
-        DirectoryStream // returns
+        throw exception
     }
 
     override fun getFileStore(path: Path): FileStore {

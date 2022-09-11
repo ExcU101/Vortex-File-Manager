@@ -1,14 +1,20 @@
 package io.github.excu101.vortex.ui.component.trail
 
+import android.view.View
 import android.view.ViewGroup
+import io.github.excu101.vortex.base.utils.logIt
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.ui.component.adapter.selection.SelectionListAdapterImpl
+import io.github.excu101.vortex.ui.component.ItemViewTypes
+import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
+import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 
-class TrailAdapter : SelectionListAdapterImpl<PathItem, TrailViewHolder>(
-    differ = TrailDiffer()
+class TrailAdapter : ItemAdapter<PathItem>(
+    ItemViewTypes.TRAIL to Factory
 ) {
+
     init {
-        setHasStableIds(true)
+        viewTypes.logIt()
     }
 
     private var selected: Int = -1
@@ -20,35 +26,31 @@ class TrailAdapter : SelectionListAdapterImpl<PathItem, TrailViewHolder>(
         notifyItemChanged(old)
     }
 
-    override fun getItemId(position: Int) = item(position).hashCode().toLong()
+    override fun getItemViewType(position: Int): Int = ItemViewTypes.TRAIL
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrailViewHolder {
-        return TrailViewHolder(root = TrailItemView(context = parent.context))
+    override fun onBindViewHolder(holder: ViewHolder<PathItem>, position: Int) {
+        super.onBindViewHolder(holder, position)
+        holder as TrailViewHolder
+        holder.isArrowVisible = position != itemCount - 1
     }
-
-    override fun onBindViewHolder(holder: TrailViewHolder, position: Int) {
-        val item = item(position)
-        holder.bind(item = item)
-        holder.isSelected = isSelected(position)
-        holder.isArrowVisible = isLast(position)
-        holder.bindListener { view ->
-            notify(view = view, item = item, position = position)
-        }
-        holder.bindLongListener { view ->
-            notifyLong(view = view, item = item, position = position)
-        }
-    }
-
-    override fun onViewRecycled(holder: TrailViewHolder) {
-        holder.unbind()
-        holder.unbindListeners()
-    }
-
-    fun isLast(position: Int) = position != currentList.lastIndex
 
     override fun isSelected(position: Int) = selected == position
 
-    override val selectedCount: Int
+    override fun isSelected(item: PathItem): Boolean {
+        return isSelected(position(item))
+    }
+
+    val selectedCount: Int
         get() = if (selected >= 0) 1 else 0
+
+    private object Factory : ViewHolderFactory<PathItem> {
+        override fun produceView(parent: ViewGroup): View {
+            return TrailItemView(parent.context)
+        }
+
+        override fun produceViewHolder(child: View): ViewHolder<PathItem> {
+            return TrailViewHolder(child as TrailItemView)
+        }
+    }
 
 }

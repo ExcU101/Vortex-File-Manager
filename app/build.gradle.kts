@@ -15,6 +15,12 @@ kapt {
 android {
     compileSdk = AndroidConfigure.targetSdk
 
+    sourceSets {
+        getByName("main") {
+            aidl.srcDirs("src/main/aidl")
+        }
+    }
+
     defaultConfig {
         applicationId = AndroidConfigure.applicationId
         minSdk = AndroidConfigure.minSdk

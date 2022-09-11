@@ -6,7 +6,9 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
+import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 @Suppress(names = ["FunctionName"])
 inline fun AnimatableColor(
@@ -36,8 +38,13 @@ fun Int.toDp(): Int {
 }
 
 context(View)
+fun ThemeDp(key: String): Int {
+    return ThemeDimen(key).dp
+}
+
+context(View)
 val Int.dp: Int
-    get() = ceil(context.resources.displayMetrics.density * this).toInt()
+    get() = ceil(context.resources.displayMetrics.density * this).roundToInt()
 
 context(View)
 val Float.dp: Float

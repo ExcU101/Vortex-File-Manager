@@ -1,7 +1,7 @@
 package io.github.excu101.vortex.ui.component.storage
 
 import androidx.recyclerview.widget.DiffUtil
-import io.github.excu101.vortex.ui.component.adapter.Item
+import io.github.excu101.vortex.ui.component.list.adapter.Item
 
 class StorageItemDiffer(
     private val old: List<Item<*>>,

@@ -3,9 +3,6 @@ package io.github.excu101.pluginsystem.common
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.unix.UnixFileSystem
 import io.github.excu101.filesystem.unix.UnixFileSystemProvider
-import io.github.excu101.filesystem.unix.operation.UnixCopyOperation
-import io.github.excu101.filesystem.unix.operation.UnixDeleteOperation
-import io.github.excu101.filesystem.unix.operation.UnixRenameOperation
 import io.github.excu101.pluginsystem.dsl.registers
 import io.github.excu101.pluginsystem.model.Plugin
 
@@ -24,7 +21,8 @@ class DefaultOperationsPlugin : Plugin {
     }
 
     override fun activate() = registers {
-        FileProvider.install(system = UnixFileSystem(UnixFileSystemProvider()))
+        FileProvider.installDefault(system = UnixFileSystem(UnixFileSystemProvider()))
+//        FileProvider.install(system = UnixFileSystem(UnixFileSystemProvider()))
         registerGroup {
             name = "Vortex operations"
         }

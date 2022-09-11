@@ -11,6 +11,8 @@ import android.view.WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type.navigationBars
+import androidx.core.view.updatePadding
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.builder
@@ -31,7 +33,9 @@ open class BottomSheetDialog(context: Context) : Dialog(context) {
         WindowCompat.setDecorFitsSystemWindows(requireWindow(), false)
         requireWindow().addFlags(FLAG_LAYOUT_IN_SCREEN or FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         ViewCompat.setOnApplyWindowInsetsListener(container) { view, insets ->
-            container.insets = insets.toWindowInsets()
+            container.updatePadding(
+                bottom = insets.getInsets(navigationBars()).bottom
+            )
             WindowInsetsCompat.CONSUMED
         }
     }

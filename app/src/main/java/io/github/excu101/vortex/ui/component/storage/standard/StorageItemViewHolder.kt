@@ -1,20 +1,16 @@
 package io.github.excu101.vortex.ui.component.storage.standard
 
-import android.os.StatFs
 import android.view.View
-import androidx.annotation.DrawableRes
-import io.github.excu101.filesystem.fs.attr.size.Size
-import io.github.excu101.filesystem.fs.utils.properties
+import io.github.excu101.filesystem.fs.utils.count
 import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.ui.component.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.theme.key.fileListItemCountKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListItemEmptyKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListItemsCountKey
 import io.github.excu101.vortex.ui.component.theme.key.specialSymbol
-import java.nio.file.Files
 
 class StorageItemViewHolder(
     private val root: StorageItemView,
@@ -22,11 +18,15 @@ class StorageItemViewHolder(
 
     override fun bind(item: PathItem): Unit = with(root) {
         setTitle(item.name)
-        setInfo(parseInfo(item))
-        setIcon(parseIcon(item))
+        parseIconRes(item) {
+            setIcon(it)
+        }
+        parseInfo(item) {
+            setInfo(it)
+        }
     }
 
-    fun bindSelection(isSelected: Boolean) = with(root) {
+    override fun bindSelection(isSelected: Boolean): Unit = with(root) {
         updateSelection(isSelected = isSelected)
     }
 
@@ -43,6 +43,7 @@ class StorageItemViewHolder(
 
     override fun bindLongListener(listener: View.OnLongClickListener): Unit = with(root) {
         setOnIconLongClickListener(listener)
+        setOnLongClickListener(listener)
     }
 
     override fun bindSelectionListener(listener: View.OnClickListener): Unit = with(root) {
@@ -60,14 +61,21 @@ class StorageItemViewHolder(
         setOnIconLongClickListener(null)
     }
 
-    @DrawableRes
-    private fun parseIcon(value: PathItem): Int {
-        return if (value.isDirectory) R.drawable.ic_folder_24 else R.drawable.ic_file_24
+    private inline fun parseIconRes(
+        item: PathItem,
+        onResult: (id: Int) -> Unit,
+    ) {
+        val icon = if (item.isDirectory) R.drawable.ic_folder_24 else R.drawable.ic_file_24
+        onResult(icon)
     }
 
-    private fun parseInfo(item: PathItem): String {
+    private inline fun parseInfo(
+        item: PathItem,
+        onResult: (String) -> Unit,
+    ) {
         val content = if (item.isDirectory) {
-            when (val count = item.value.properties().count) {
+            when (val count = item.value.count) {
+                -1 -> ThemeText(fileListItemEmptyKey)
                 0 -> ThemeText(fileListItemEmptyKey)
                 1 -> ThemeText(fileListItemCountKey)
                 else -> ReplacerThemeText(
@@ -79,9 +87,19 @@ class StorageItemViewHolder(
         } else {
             item.lastModifiedTime.toString()
         }
-        val size = item.size
+        val size = if (item.isFile) item.size.toString() else ""
 
-        return "$content | $size"
+        var result = ""
+
+        if (content.isNotEmpty()) {
+            result += content
+        }
+
+        if (size.isNotEmpty()) {
+            result += " | $size"
+        }
+
+        onResult.invoke(result)
     }
 
 }

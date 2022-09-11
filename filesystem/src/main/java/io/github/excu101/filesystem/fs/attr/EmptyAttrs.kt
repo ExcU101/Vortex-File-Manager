@@ -21,5 +21,5 @@ object EmptyAttrs : BasicAttrs {
     override val creationTime: FileTime
         get() = FileTime(Instant.of(seconds = 0L, nanos = 0L))
     override val size: Size
-        get() = Size(bytes = 0L)
+        get() = Size(memory = 0L)
 }
