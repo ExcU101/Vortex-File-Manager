@@ -21,3 +21,4 @@ include(
     ":pluginsystem-common",
     ":ui-component"
 )
+include(":vortex-service")

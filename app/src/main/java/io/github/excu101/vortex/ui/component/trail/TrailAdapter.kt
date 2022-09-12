@@ -2,7 +2,6 @@ package io.github.excu101.vortex.ui.component.trail
 
 import android.view.View
 import android.view.ViewGroup
-import io.github.excu101.vortex.base.utils.logIt
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
@@ -12,10 +11,6 @@ import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 class TrailAdapter : ItemAdapter<PathItem>(
     ItemViewTypes.TRAIL to Factory
 ) {
-
-    init {
-        viewTypes.logIt()
-    }
 
     private var selected: Int = -1
 

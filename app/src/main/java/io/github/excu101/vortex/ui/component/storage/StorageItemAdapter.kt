@@ -1,16 +1,10 @@
 package io.github.excu101.vortex.ui.component.storage
 
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.MenuProvider
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.Selection
 import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.data.storage.MutablePathItemMapSet
 import io.github.excu101.vortex.data.storage.PathItemMapSet
-import io.github.excu101.vortex.data.storage.storageItemMapSet
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter

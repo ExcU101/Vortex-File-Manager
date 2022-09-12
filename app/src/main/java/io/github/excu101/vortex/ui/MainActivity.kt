@@ -26,7 +26,6 @@ import io.github.excu101.pluginsystem.ui.theme.*
 import io.github.excu101.vortex.IVortexService
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.base.utils.snackIt
-import io.github.excu101.vortex.service.VortexService
 import io.github.excu101.vortex.ui.component.action.ActionDialog
 import io.github.excu101.vortex.ui.component.bar.Bar
 import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
@@ -35,6 +34,8 @@ import io.github.excu101.vortex.ui.component.theme.key.vortexServiceDisconnected
 import io.github.excu101.vortex.ui.component.theme.value.initVortexDarkColorValues
 import io.github.excu101.vortex.ui.component.theme.value.initVortexLightColorValues
 import io.github.excu101.vortex.ui.screen.list.StorageListFragment
+import io.github.excu101.vortex.utils.vortexPackageName
+import io.github.excu101.vortex.utils.vortexServiceActionName
 import kotlin.math.sqrt
 
 private val rootId = View.generateViewId()
@@ -49,18 +50,24 @@ class MainActivity : AppCompatActivity(),
     private var root: CoordinatorLayout? = null
     private var navigator: FragmentContainerView? = null
 
-    private var service: IVortexService? = null
-    private var isServiceBounded = false
+    var service: IVortexService? = null
+        private set
+    var isServiceBounded = false
+        private set
 
     // Test data
     var isDarkTheme = true
 
     var bar: Bar? = null
+        private set
 
     var drawer: ActionDialog? = null
+        private set
 
     private val intentService by lazy {
-        Intent(this, VortexService::class.java)
+        Intent(vortexServiceActionName).apply {
+            `package` = vortexPackageName
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -175,8 +182,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-        val binder = IVortexService.Stub.asInterface(service)
-        this.service = binder
+//        val binder = IVortexService.Stub.asInterface(service)
+//        this.service = binder
         isServiceBounded = true
         notifyConnection()
     }

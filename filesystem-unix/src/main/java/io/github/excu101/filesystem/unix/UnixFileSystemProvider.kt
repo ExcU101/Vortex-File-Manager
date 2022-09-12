@@ -71,9 +71,6 @@ class UnixFileSystemProvider : FileSystemProvider() {
     override fun newDirectorySteam(path: Path): DirectoryStream<Path> = try {
         UnixDirectoryStream(
             dir = path as UnixPath, UnixCalls.openDir(path.bytes),
-            onError = { error ->
-                throw error
-            }
         )
     } catch (exception: SystemCallException) {
         throw exception

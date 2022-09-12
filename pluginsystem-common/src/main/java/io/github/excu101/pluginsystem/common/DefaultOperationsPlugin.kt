@@ -22,7 +22,6 @@ class DefaultOperationsPlugin : Plugin {
 
     override fun activate() = registers {
         FileProvider.installDefault(system = UnixFileSystem(UnixFileSystemProvider()))
-//        FileProvider.install(system = UnixFileSystem(UnixFileSystemProvider()))
         registerGroup {
             name = "Vortex operations"
         }

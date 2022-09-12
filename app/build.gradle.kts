@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.AndroidSourceSet
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
@@ -14,12 +15,6 @@ kapt {
 
 android {
     compileSdk = AndroidConfigure.targetSdk
-
-    sourceSets {
-        getByName("main") {
-            aidl.srcDirs("src/main/aidl")
-        }
-    }
 
     defaultConfig {
         applicationId = AndroidConfigure.applicationId
@@ -93,4 +88,5 @@ dependencies {
     implementation(project(Deps.Application.PluginSystem))
     implementation(project(Deps.Application.PluginSystemCommon))
     implementation(project(Deps.Application.UiComponent))
+    implementation(project(Deps.Application.VortexService))
 }

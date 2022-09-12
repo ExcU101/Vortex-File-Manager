@@ -41,8 +41,8 @@
         <service
             android:name=".service.VortexService"
             android:enabled="true"
-            android:process=":remote"
-            android:exported="true">
+            android:exported="true"
+            android:process=":remote">
             <intent-filter>
                 <action android:name="@string/vortex_service_action_name" />
             </intent-filter>

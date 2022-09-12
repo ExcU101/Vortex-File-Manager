@@ -12,7 +12,6 @@ class UnixDirectoryStream internal constructor(
     private val dir: UnixPath,
     private val pointer: Long,
     private val filter: DirectoryStream.Filter<UnixPath> = DirectoryStream.Filter.acceptAll(),
-    private val onError: (Throwable) -> Unit,
 ) : DirectoryStream<Path> {
 
     private var iterator: LinuxPathIterator? = null
@@ -31,7 +30,7 @@ class UnixDirectoryStream internal constructor(
             try {
                 UnixCalls.closeDir(pointer = pointer)
             } catch (exception: SystemCallException) {
-                onError(exception)
+                throw exception
             }
             isClosed = true
         }
@@ -43,7 +42,7 @@ class UnixDirectoryStream internal constructor(
         }
         synchronized(locker) {
             if (isClosed) {
-                onError(DirectoryAlreadyClosedException())
+                throw DirectoryAlreadyClosedException()
             }
             if (iterator == null) {
 
@@ -60,7 +59,7 @@ class UnixDirectoryStream internal constructor(
         override fun next(): UnixPath {
             synchronized(locker) {
                 if (!hasNext()) {
-                    onError(Throwable("Doesn't have next"))
+                    throw Throwable("Doesn't have next")
                 }
                 val path = nextPath!!
                 nextPath = null
@@ -86,8 +85,7 @@ class UnixDirectoryStream internal constructor(
                 val dirent = try {
                     UnixCalls.readDir(pointer = pointer) ?: return null
                 } catch (exception: SystemCallException) {
-                    onError(exception)
-                    return null
+                    throw exception
                 }
 
                 if (dirent.name.contentEquals(DOT) || dirent.name.contentEquals(DOUBLE_DOT)) {
@@ -104,8 +102,7 @@ class UnixDirectoryStream internal constructor(
                 val accepted = try {
                     filter.accept(path)
                 } catch (exception: IOException) {
-                    onError(exception)
-                    false
+                    throw exception
                 }
                 if (!accepted) continue
 

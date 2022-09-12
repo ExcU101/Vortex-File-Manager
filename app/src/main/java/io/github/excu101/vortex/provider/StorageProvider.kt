@@ -6,12 +6,9 @@ import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.os.Environment
-import android.os.Environment.getExternalStorageDirectory
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.checkSelfPermission
 import io.github.excu101.filesystem.FileProvider.newDirStream
-import io.github.excu101.filesystem.fs.utils.asPath
-import io.github.excu101.filesystem.fs.utils.resolve
 import io.github.excu101.vortex.data.PathItem
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext

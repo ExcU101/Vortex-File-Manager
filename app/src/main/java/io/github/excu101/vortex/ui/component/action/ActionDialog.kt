@@ -12,10 +12,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.vortex.R
 import io.github.excu101.vortex.data.header.ActionHeaderItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.menu.ActionListener

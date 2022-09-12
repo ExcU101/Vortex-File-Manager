@@ -3,7 +3,6 @@ package io.github.excu101.vortex.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import io.github.excu101.vortex.base.utils.logIt
 import io.github.excu101.vortex.service.VortexLifecycleOwner.VortexLifecycle
 import io.github.excu101.vortex.service.VortexLifecycleOwner.VortexLifecycle.*
 import io.github.excu101.vortex.service.impl.VortexServiceBinder
@@ -14,11 +13,14 @@ class VortexService : Service() {
 
     private val owners = mutableListOf<VortexLifecycleOwner>()
     private val observers = mutableListOf<VortexLifecycleObserver>()
-    private val providers = mutableListOf<VortexServiceProvider>()
 
     override fun onBind(intent: Intent?): IBinder {
         return binder
     }
+
+//    fun registerProvider(provider: VortexServiceProvider) {
+//        binder.getService().registerProvider(provider)
+//    }
 
     override fun onCreate() {
         super.onCreate()
@@ -38,7 +40,6 @@ class VortexService : Service() {
     private fun notify(event: VortexLifecycle) {
         for (observer in observers) {
             observer.onChange(event)
-            event.logIt()
         }
     }
 

@@ -33,8 +33,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-
-class StorageListViewModel  @Inject  constructor(
+class StorageListViewModel @Inject constructor(
     private val provider: StorageProvider,
     private val resources: ResourceProvider,
     private val actions: StorageActionProvider,
@@ -42,8 +41,6 @@ class StorageListViewModel  @Inject  constructor(
 ) : ViewModelContainerHandler<StorageScreenState, StorageScreenSideEffect>(
     loading()
 ) {
-
-    private val wrapper: StorageServiceWrapper = StorageServiceWrapper()
 
     companion object {
         private const val TRAIL_KEY = "trail"
@@ -152,7 +149,6 @@ class StorageListViewModel  @Inject  constructor(
 
     fun checkPermission() = intent {
         state { loading(title = "Checking permissions") }
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (provider.requiresFullStorageAccess()) {

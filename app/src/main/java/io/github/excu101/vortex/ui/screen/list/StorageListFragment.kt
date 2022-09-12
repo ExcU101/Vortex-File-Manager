@@ -40,6 +40,7 @@ import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
 import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
+import io.github.excu101.vortex.IVortexService
 import io.github.excu101.vortex.R.drawable.ic_add_24
 import io.github.excu101.vortex.base.utils.collectEffect
 import io.github.excu101.vortex.base.utils.collectState
@@ -47,6 +48,7 @@ import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.header.ActionHeaderItem
 import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.provider.contract.FullStorageAccessContract
+import io.github.excu101.vortex.ui.MainActivity
 import io.github.excu101.vortex.ui.component.animation.fade
 import io.github.excu101.vortex.ui.component.bar
 import io.github.excu101.vortex.ui.component.drawer
@@ -66,13 +68,16 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class StorageListFragment : Fragment(), ActionListener, ThemeColorChangeListener {
+class StorageListFragment : Fragment(),
+    ActionListener,
+    ThemeColorChangeListener {
 
     private val viewModel by viewModels<StorageListViewModel>()
 
     private val create by lazy {
         PathCreateDialog(requireContext())
     }
+    private var service: IVortexService? = null
 
     private var root: CoordinatorLayout? = null
     private var list: StorageListView? = null
@@ -100,6 +105,7 @@ class StorageListFragment : Fragment(), ActionListener, ThemeColorChangeListener
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        service = (requireActivity() as MainActivity).service
         bar?.addItem(createAction)
         bar?.addActionListener(listener = this)
         drawer?.registerListener(listener = this)

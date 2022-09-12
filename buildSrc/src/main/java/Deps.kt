@@ -44,6 +44,7 @@ object Deps {
         val PluginSystem = mapOf("path" to ":pluginsystem")
         val PluginSystemCommon = mapOf("path" to ":pluginsystem-common")
         val UiComponent = mapOf("path" to ":ui-component")
+        val VortexService = mapOf("path" to ":vortex-service")
     }
 
     object UnitTest {
