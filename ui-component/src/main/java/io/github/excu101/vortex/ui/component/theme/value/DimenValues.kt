@@ -9,7 +9,7 @@ fun initVortexDimenValues() {
 
     Theme[trailHeightKey] = Dimen(value = 48)
     Theme[trailItemHeightKey] = Dimen(value = 48)
-    Theme[trailElevationKey] = Dimen(value = 8)
+    Theme[trailElevationKey] = Dimen(value = 4)
 
     Theme[fileItemHeightKey] = Dimen(value = 56)
     Theme[fileItemTitleLeftPaddingKey] = Dimen(value = 32)

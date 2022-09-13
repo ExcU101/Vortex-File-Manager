@@ -17,10 +17,6 @@ import io.github.excu101.vortex.ui.component.theme.key.layoutProgressTitleTextCo
 
 class LoadingView(context: Context) : ThemeLinearLayout(context) {
 
-    private val background = MaterialShapeDrawable().apply {
-        setTint(ThemeColor(layoutProgressBarBackgroundColorKey))
-    }
-
     private val progressView = CircularProgressIndicator(context).apply {
         isIndeterminate = true
         setIndicatorColor(ThemeColor(layoutProgressBarTintColorKey))
@@ -52,7 +48,6 @@ class LoadingView(context: Context) : ThemeLinearLayout(context) {
         get() = titleView in children
 
     init {
-        setBackground(background)
         orientation = VERTICAL
         gravity = CENTER
 
@@ -66,7 +61,7 @@ class LoadingView(context: Context) : ThemeLinearLayout(context) {
     }
 
     override fun onChanged() {
-        background.setTint(ThemeColor(layoutProgressBarBackgroundColorKey))
+//        background.setTint(ThemeColor(layoutProgressBarBackgroundColorKey))
         progressView.setIndicatorColor(ThemeColor(layoutProgressBarTintColorKey))
         titleView.setTextColor(ThemeColor(layoutProgressTitleTextColorKey))
     }

@@ -35,6 +35,28 @@ internal class GroupScopeImpl(override var title: String) : GroupScope {
     )
 }
 
+interface ActionScope {
+    var title: String
+    var icon: Drawable
+}
+
+@PublishedApi
+internal class ActionScopeImpl : ActionScope {
+    override var title: String = ""
+    override var icon: Drawable = EmptyDrawable
+
+    @PublishedApi
+    internal fun toAction(): Action = Action(title, icon)
+}
+
+inline fun GroupScope.item(scope: ActionScope.() -> Unit) {
+    item(ActionScopeImpl().apply(scope).toAction())
+}
+
+inline fun MutableList<GroupAction>.groupItem(title: String, block: GroupScope.() -> Unit) {
+    add(group(title, block))
+}
+
 inline fun group(title: String, block: GroupScope.() -> Unit): GroupAction {
     return GroupScopeImpl(title).apply(block).toGroup()
 }

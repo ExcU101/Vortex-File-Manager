@@ -23,7 +23,6 @@ inline fun AnimatableColor(
     _animator.start()
 }
 
-
 class Position(val x: Int, val y: Int)
 
 fun ViewGroup.removeViewFrom(range: IntRange) {

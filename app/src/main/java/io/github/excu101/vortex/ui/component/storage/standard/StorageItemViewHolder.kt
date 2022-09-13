@@ -7,17 +7,19 @@ import io.github.excu101.pluginsystem.ui.theme.ThemeText
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.ui.component.theme.key.fileListItemCountKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListItemEmptyKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListItemsCountKey
-import io.github.excu101.vortex.ui.component.theme.key.specialSymbol
+import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.utils.parseThemeType
 
 class StorageItemViewHolder(
     private val root: StorageItemView,
 ) : ViewHolder<PathItem>(root) {
 
     override fun bind(item: PathItem): Unit = with(root) {
-        setTitle(item.name)
+        setTitle(ReplacerThemeText(
+            key = fileListItemNameKey,
+            old = specialSymbol,
+            new = item.name
+        ))
         parseIconRes(item) {
             setIcon(it)
         }
@@ -89,6 +91,8 @@ class StorageItemViewHolder(
         }
         val size = if (item.isFile) item.size.toString() else ""
 
+        val mimeType = if (item.isFile) item.mimeType.parseThemeType() else ""
+
         var result = ""
 
         if (content.isNotEmpty()) {
@@ -97,6 +101,10 @@ class StorageItemViewHolder(
 
         if (size.isNotEmpty()) {
             result += " | $size"
+        }
+
+        if (mimeType.isNotEmpty()) {
+            result += " | $mimeType"
         }
 
         onResult.invoke(result)

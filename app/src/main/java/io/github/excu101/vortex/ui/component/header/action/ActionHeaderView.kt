@@ -13,6 +13,7 @@ import com.google.android.material.shape.MaterialShapeUtils
 import io.github.excu101.pluginsystem.model.Color
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.pluginsystem.utils.EmptyDrawable
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconTintColorKey
@@ -28,7 +29,6 @@ class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
 
     private val shape = MaterialShapeDrawable().apply {
         initializeElevationOverlay(context)
-
         setTint(ThemeColor(mainDrawerItemBackgroundColorKey))
     }
 
@@ -44,6 +44,7 @@ class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
 
     private val titleView = TextView(context).apply {
         textSize = 16F
+        setTextColor(ThemeColor(mainDrawerItemTitleTextColorKey))
     }
 
     var icon: Drawable?
@@ -51,6 +52,9 @@ class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
         set(value) {
             iconView.setImageDrawable(value)
         }
+
+    private val isEmptyIcon: Boolean
+        get() = iconView.drawable == EmptyDrawable
 
     var title: CharSequence?
         get() = titleView.text
@@ -97,10 +101,12 @@ class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
         setMeasuredDimension(width, height)
         val availableWidth = width - iconHorizontalPadding
 
-        iconView.measure(
-            makeMeasureSpec(iconSize, AT_MOST),
-            makeMeasureSpec(iconSize, AT_MOST)
-        )
+        if (!isEmptyIcon) {
+            iconView.measure(
+                makeMeasureSpec(iconSize, AT_MOST),
+                makeMeasureSpec(iconSize, AT_MOST)
+            )
+        }
         titleView.measure(
             makeMeasureSpec(availableWidth, EXACTLY),
             makeMeasureSpec(iconSize, AT_MOST)
@@ -108,17 +114,24 @@ class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        iconView.layout(
-            iconHorizontalPadding,
-            height / 2 - iconView.measuredHeight,
-            iconHorizontalPadding + iconSize,
-            height / 2 + iconView.measuredHeight
-        )
+        var widthLeft = iconHorizontalPadding
+        if (!isEmptyIcon) {
+            iconView.layout(
+                widthLeft,
+                height / 2 - iconView.measuredHeight,
+                widthLeft + iconSize,
+                height / 2 + iconView.measuredHeight
+            )
+            widthLeft += iconSize
+        }
 
+        if (!isEmptyIcon) {
+            widthLeft += titleHorizontalPadding
+        }
         titleView.layout(
-            iconHorizontalPadding + iconSize + titleHorizontalPadding,
+            widthLeft,
             height / 2 - titleView.lineHeight,
-            iconHorizontalPadding + iconSize + titleHorizontalPadding + titleView.measuredWidth,
+            widthLeft + titleView.measuredWidth,
             height / 2 + titleView.lineHeight
         )
     }

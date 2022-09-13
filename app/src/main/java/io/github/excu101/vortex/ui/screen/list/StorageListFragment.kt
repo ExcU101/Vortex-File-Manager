@@ -36,10 +36,7 @@ import io.github.excu101.filesystem.fs.utils.directoryCount
 import io.github.excu101.filesystem.fs.utils.fileCount
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.Color.Companion.Transparent
-import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
-import io.github.excu101.pluginsystem.ui.theme.Theme
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
+import io.github.excu101.pluginsystem.ui.theme.*
 import io.github.excu101.vortex.IVortexService
 import io.github.excu101.vortex.R.drawable.ic_add_24
 import io.github.excu101.vortex.base.utils.collectEffect
@@ -57,10 +54,7 @@ import io.github.excu101.vortex.ui.component.list.scroll.FastScroller
 import io.github.excu101.vortex.ui.component.loading.LoadingView
 import io.github.excu101.vortex.ui.component.menu.ActionListener
 import io.github.excu101.vortex.ui.component.storage.StorageListView
-import io.github.excu101.vortex.ui.component.theme.key.fileListDirectoriesCountKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListFilesCountKey
-import io.github.excu101.vortex.ui.component.theme.key.specialSymbol
-import io.github.excu101.vortex.ui.component.theme.key.trailSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.trail.TrailListView
 import io.github.excu101.vortex.ui.component.warning.WarningView
 import io.github.excu101.vortex.ui.screen.create.PathCreateDialog
@@ -108,6 +102,9 @@ class StorageListFragment : Fragment(),
         service = (requireActivity() as MainActivity).service
         bar?.addItem(createAction)
         bar?.addActionListener(listener = this)
+        bar?.setNavigationClickListener { view ->
+            viewModel.openDefaultDrawerActions()
+        }
         drawer?.registerListener(listener = this)
         root = container?.let {
             CoordinatorLayout(it.context).apply {
@@ -164,6 +161,9 @@ class StorageListFragment : Fragment(),
         requireActivity().window.navigationBarColor = Transparent.value
 
         bar?.hideOnScroll = true
+        bar?.setOnClickListener {
+
+        }
 
         Theme.registerColorChangeListener(listener = this)
 
@@ -205,14 +205,14 @@ class StorageListFragment : Fragment(),
         listAdapter.registerLong { view, item, position ->
             when (view) {
                 is ImageView -> {
-                    viewModel.showDrawer()
+                    viewModel.openDrawerActions()
                     true
                 }
 
                 is FrameLayout -> {
                     item as PathItem
                     if (item in viewModel.selected.value) {
-                        viewModel.showDrawer()
+                        viewModel.openDrawerActions()
                     } else {
                         viewModel.select(item = item)
                     }
@@ -296,9 +296,6 @@ class StorageListFragment : Fragment(),
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.collectEffect { effect ->
-                    if (effect.drawerActions.isNotEmpty()) {
-                        drawer?.actions = effect.drawerActions
-                    }
                     if (effect.showDrawer) {
                         drawer?.show()
                     }
@@ -377,6 +374,11 @@ class StorageListFragment : Fragment(),
 
     override fun onCall(action: Action) {
         when (action.title) {
+
+            ThemeText(fileListSortActionTitleKey) -> {
+                viewModel.showSortDialog()
+            }
+
             "Delete" -> {
                 viewModel.delete()
             }

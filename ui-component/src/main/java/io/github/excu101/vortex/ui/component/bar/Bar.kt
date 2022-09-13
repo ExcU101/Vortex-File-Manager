@@ -45,11 +45,14 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
     private val titleHorizontalPadding = 32.dp
     private val behavior = BarBehavior()
 
+    private val desireHeight = ThemeDimen(mainBarHeightKey).dp
+
     var hideOnScroll: Boolean = true
 
-    private val background = MaterialShapeDrawable().apply {
-        initializeElevationOverlay(context)
+    private val shape = MaterialShapeDrawable().apply {
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_ALWAYS
+        initializeElevationOverlay(context)
+        setUseTintColorForShadow(true)
         setTint(ThemeColor(mainBarSurfaceColorKey))
     }
 
@@ -142,11 +145,13 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         get() = menuView in children
 
     init {
-        setBackground(background)
-        elevation = 16F
-        minimumWidth = MATCH_PARENT
-        minimumHeight = ThemeDimen(mainBarHeightKey).dp
+        background = shape
+        elevation = 4F.dp
+    }
 
+    override fun setElevation(elevation: Float) {
+        super.setElevation(elevation)
+        MaterialShapeUtils.setElevation(this, elevation)
     }
 
     private fun ensureContainingTitle() {
@@ -180,7 +185,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        MaterialShapeUtils.setParentAbsoluteElevation(this, background)
+        MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
     }
 
     override fun getBehavior() = behavior
@@ -224,15 +229,15 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
         val width = when (widthMode) {
             EXACTLY -> widthSize
-            AT_MOST -> min(suggestedMinimumWidth, widthSize)
-            else -> widthSize
+            AT_MOST -> min(MATCH_PARENT, widthSize)
+            else -> MATCH_PARENT
         } + paddingStart + paddingRight
 
 
         val height = when (heightMode) {
             EXACTLY -> heightSize
-            AT_MOST -> min(suggestedMinimumHeight, heightSize)
-            else -> suggestedMinimumHeight
+            AT_MOST -> min(desireHeight, heightSize)
+            else -> desireHeight
         } + paddingTop + paddingBottom
 
         setMeasuredDimension(width, height)
@@ -335,7 +340,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
     }
 
     override fun onChanged() {
-        background.setTint(ThemeColor(mainBarSurfaceColorKey))
+        shape.setTint(ThemeColor(mainBarSurfaceColorKey))
         titleView.setTextColor(ThemeColor(mainBarTitleTextColorKey))
         subtitleView.setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
         navigationIconView.setColorFilter(ThemeColor(mainBarNavigationIconTintColorKey))

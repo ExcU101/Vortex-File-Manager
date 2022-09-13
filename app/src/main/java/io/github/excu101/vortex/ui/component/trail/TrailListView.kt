@@ -12,6 +12,7 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_NEVER
 import com.google.android.material.shape.MaterialShapeUtils
 import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
@@ -67,9 +68,10 @@ class TrailListView : RecyclerView,
     private val trailLayoutManager = LinearLayoutManager(context, HORIZONTAL, false)
 
     private val shape = MaterialShapeDrawable().apply {
-        initializeElevationOverlay(context)
-
         setTint(ThemeColor(trailSurfaceColorKey))
+        shadowCompatibilityMode = SHADOW_COMPAT_MODE_NEVER
+        elevation = 0f
+        setUseTintColorForShadow(false)
     }
 
     override fun getElevation(): Float = shape.elevation
@@ -77,7 +79,7 @@ class TrailListView : RecyclerView,
     override fun setElevation(elevation: Float) {
         super.setElevation(elevation)
 
-        MaterialShapeUtils.setElevation(this, elevation)
+//        MaterialShapeUtils.setElevation(this, elevation)
     }
 
     override fun onAttachedToWindow() {

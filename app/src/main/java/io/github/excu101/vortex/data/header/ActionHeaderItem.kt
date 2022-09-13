@@ -1,5 +1,6 @@
 package io.github.excu101.vortex.data.header
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import io.github.excu101.pluginsystem.model.Action
@@ -13,6 +14,8 @@ import io.github.excu101.vortex.ui.component.header.action.ActionHeaderViewHolde
 data class ActionHeaderItem(
     override val value: Action,
 ) : Item<Action> {
+
+    constructor(title: String, icon: Drawable) : this(Action(title, icon))
 
     override val id: Long
         get() = hashCode().toLong()

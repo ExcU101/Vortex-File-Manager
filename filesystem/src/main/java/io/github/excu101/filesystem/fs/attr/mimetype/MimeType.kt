@@ -11,7 +11,6 @@ interface MimeType {
 
     companion object {
         fun fromName(name: String): MimeType {
-            if (name.isEmpty()) return EmptyMimeType
             if (name.length <= 1) return EmptyMimeType
 
             return from(name.substringAfterLast(".", name))
@@ -31,6 +30,7 @@ interface MimeType {
                     get() = subtype.startsWith("x-")
                 override val isVendor: Boolean
                     get() = subtype.startsWith("vnd")
+
                 override fun toString(): String = "$type/$subtype"
             }
         }

@@ -113,9 +113,6 @@ class MainActivity : AppCompatActivity(),
         super.onStart()
         root?.apply {
             bar?.navigationIcon = getDrawable(this@MainActivity, R.drawable.ic_menu_24)
-            bar?.setNavigationClickListener { view ->
-                drawer?.show()
-            }
             Theme.notifyColorsChanged()
         }
     }

@@ -5,26 +5,22 @@ import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.RippleDrawable
 import android.view.Gravity.CENTER
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
-import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
-import com.google.android.material.shape.ShapeAppearanceModel.Builder
-import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
-import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
+import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.R
+import io.github.excu101.vortex.ui.component.ThemeDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.foundtation.InnerPaddingOwner
 import io.github.excu101.vortex.ui.component.theme.key.*
-import io.github.excu101.vortex.ui.component.toDp
 
-class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner,
+class TrailItemView(context: Context) : ThemeLinearLayout(context), InnerPaddingOwner,
     ThemeColorChangeListener {
 
     companion object {
@@ -32,40 +28,37 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
         private const val ARROW_INDEX = 1
     }
 
-    private val background = MaterialShapeDrawable(
-        Builder()
-            .setTopLeftCorner(ROUNDED, 100F)
-            .setTopRightCorner(ROUNDED, 100F)
-            .setBottomLeftCorner(ROUNDED, 100F)
-            .setBottomRightCorner(ROUNDED, 100F)
-            .build()
-    ).apply {
-        initializeElevationOverlay(context)
-
+    private val shape = MaterialShapeDrawable().apply {
         setTint(ThemeColor(trailSurfaceColorKey))
+        initializeElevationOverlay(context)
+        setUseTintColorForShadow(true)
     }
 
-    private var rippleDrawable = RippleDrawable(
+
+    private var background = RippleDrawable(
         valueOf(ThemeColor(trailItemTitleTextColorKey)),
-        background,
+        shape,
         null
     )
 
     private var isItemSelected = false
 
     private val minWidth = 36.dp
+    private val desireHeight = ThemeDp(trailItemHeightKey)
 
     override val innerLargePadding = 16.dp
     override val innerMediumPadding = 8.dp
     override val innerSmallPadding = 4.dp
 
     init {
-        minimumWidth = minWidth
-        minimumHeight = ThemeDimen(trailItemHeightKey).toDp()
         gravity = CENTER
         isClickable = true
         isFocusable = true
-        setBackground(rippleDrawable)
+        setBackground(background)
+    }
+
+    override fun setElevation(elevation: Float) {
+        MaterialShapeUtils.setElevation(this, elevation)
     }
 
     private val title = TextView(context).apply {
@@ -112,11 +105,11 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
 
     fun updateSelectionState() {
         if (isItemSelected) {
-            rippleDrawable.setColor(valueOf(ThemeColor(trailItemRippleSelectedTintColorKey)))
+            background.setColor(valueOf(ThemeColor(trailItemRippleSelectedTintColorKey)))
             title.setTextColor(ThemeColor(trailItemTitleSelectedTextColorKey))
             arrow.setColorFilter(ThemeColor(trailItemArrowSelectedTintColorKey))
         } else {
-            rippleDrawable.setColor(valueOf(ThemeColor(trailItemRippleTintColorKey)))
+            background.setColor(valueOf(ThemeColor(trailItemRippleTintColorKey)))
             title.setTextColor(ThemeColor(trailItemTitleTextColorKey))
             arrow.setColorFilter(ThemeColor(trailItemArrowTintColorKey))
         }
@@ -124,20 +117,14 @@ class TrailItemView(context: Context) : LinearLayout(context), InnerPaddingOwner
 
     override fun onChanged() {
         updateSelectionState()
-        background.setTint(ThemeColor(trailSurfaceColorKey))
+        shape.setTint(ThemeColor(trailSurfaceColorKey))
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Theme.registerColorChangeListener(this)
-
-        MaterialShapeUtils.setParentAbsoluteElevation(this, background)
+        MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        Theme.unregisterColorChangeListener(this)
-    }
 
 //    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
 //        val widthSize = MeasureSpec.getSize(widthSpec)

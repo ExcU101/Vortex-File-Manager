@@ -1,6 +1,5 @@
 package io.github.excu101.filesystem.fs.attr.size
 
-import java.math.BigInteger
 import java.text.DecimalFormat
 
 class Size(val memory: Long) {

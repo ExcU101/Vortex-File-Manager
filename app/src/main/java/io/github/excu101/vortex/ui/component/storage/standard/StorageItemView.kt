@@ -12,8 +12,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.contains
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
@@ -33,6 +31,7 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
 
     private val titleLeftPadding = ThemeDimen(fileItemTitleLeftPaddingKey).dp
     private val infoLeftPadding = ThemeDimen(fileItemInfoLeftPaddingKey).dp
+    private val desireHeight = ThemeDp(fileItemHeightKey)
 
     private val iconSize = 40.dp
 
@@ -98,7 +97,9 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
     private val shape = MaterialShapeDrawable(
 
     ).apply {
+        shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
         initializeElevationOverlay(context)
+        setUseTintColorForShadow(true)
         setTint(ThemeColor(fileItemSurfaceColorKey))
     }
 
@@ -189,16 +190,12 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
             icon.setColorFilter(ThemeColor(fileItemIconSelectedTintColorKey))
             iconShape.setTint(ThemeColor(fileItemIconBackgroundSelectedColorKey))
             shape.setTint(ThemeColor(fileItemSurfaceSelectedColorKey))
-
-//            shape.setCornerSize(500F)
         } else {
             titleColor = ThemeColor(fileItemTitleTextColorKey)
             infoColor = ThemeColor(fileItemSecondaryTextColorKey)
             icon.setColorFilter(ThemeColor(fileItemIconTintColorKey))
             iconShape.setTint(ThemeColor(fileItemIconBackgroundColorKey))
             shape.setTint(ThemeColor(fileItemSurfaceColorKey))
-
-//            shape.setCornerSize(0F)
         }
     }
 
@@ -215,8 +212,8 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
     init {
         isClickable = true
         isFocusable = true
-        minimumHeight = ThemeDp(fileItemHeightKey)
         setBackground(background)
+        elevation = 4F
     }
 
     fun setOnIconClickListener(listener: OnClickListener?) {
@@ -225,6 +222,11 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
 
     fun setOnIconLongClickListener(listener: OnLongClickListener?) {
         icon.setOnLongClickListener(listener)
+    }
+
+    override fun setElevation(elevation: Float) {
+        super.setElevation(elevation)
+        shape.elevation = elevation
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -240,8 +242,8 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
         }
         val height = when (heightMode) {
             EXACTLY -> heightSize
-            AT_MOST -> min(suggestedMinimumHeight, heightSize)
-            else -> suggestedMinimumHeight
+            AT_MOST -> min(desireHeight, heightSize)
+            else -> desireHeight
         }
 
         setMeasuredDimension(width, height)
@@ -259,27 +261,29 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        var widthLeft = largeInnerPadding
         if (containsIcon) {
             icon.layout(
-                largeInnerPadding,
+                widthLeft,
                 middleInnerPadding,
-                largeInnerPadding + icon.measuredWidth,
+                widthLeft + icon.measuredWidth,
                 height - middleInnerPadding
             )
+            widthLeft += icon.measuredWidth
         }
         if (containsTitle) {
             title.layout(
-                largeInnerPadding + icon.measuredWidth + titleLeftPadding,
+                widthLeft + titleLeftPadding,
                 middleInnerPadding,
-                largeInnerPadding + icon.measuredWidth + titleLeftPadding + title.measuredWidth,
-                middleInnerPadding + title.lineHeight
+                widthLeft + titleLeftPadding + title.measuredWidth,
+                middleInnerPadding + 3.dp + title.lineHeight
             )
         }
         if (containsInfo) {
             info.layout(
-                largeInnerPadding + infoLeftPadding + icon.measuredWidth,
+                widthLeft + infoLeftPadding,
                 middleInnerPadding + title.lineHeight,
-                largeInnerPadding + infoLeftPadding + icon.measuredWidth + info.measuredWidth,
+                widthLeft + infoLeftPadding + info.measuredWidth,
                 middleInnerPadding + title.lineHeight + info.lineHeight
             )
         }

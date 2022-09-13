@@ -15,7 +15,6 @@ import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.base.utils.*
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.data.header.ActionHeaderItem
 import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.data.storage.MutablePathItemMapSet
 import io.github.excu101.vortex.data.storage.PathItemGroup
@@ -26,6 +25,7 @@ import io.github.excu101.vortex.provider.StorageProvider
 import io.github.excu101.vortex.provider.storage.StorageActionProvider
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.screen.list.StorageScreenState.Companion.loading
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -80,6 +80,12 @@ class StorageListViewModel @Inject constructor(
     init {
         initActions()
         checkPermission()
+    }
+
+    fun openDefaultDrawerActions() = intent {
+        _drawerGroups.emit(actions.defaultDrawerGroups().toMutableList())
+        delay(100L) // TODO <- REMOVE THIS!!!
+        side(StorageScreenSideEffect(showDrawer = true))
     }
 
     fun select(
@@ -190,26 +196,28 @@ class StorageListViewModel @Inject constructor(
         }
     }
 
-    fun showDrawer() = intent {
-        side(
-            StorageScreenSideEffect(
-                showDrawer = true,
-                drawerActions = listOf(
-                    TextHeaderItem("Default"),
-                    ActionHeaderItem(
-                        Action(
-                            title = "Delete",
-                            icon = resources.getDrawable(R.drawable.ic_delete_24)
-                        )
-                    )
-                )
-            )
-        )
+    fun openDrawerActions() = intent {
+        if (selected.value.size == 1) {
+            _drawerGroups.emit(actions.onSinglePathItem().toMutableList())
+            delay(100L)
+            side(StorageScreenSideEffect(showDrawer = true))
+        } else if (selected.value.size > 1) {
+            _drawerGroups.emit(actions.onMultiPathItem().toMutableList())
+            delay(100L)
+            side(StorageScreenSideEffect(showDrawer = true))
+        }
+    }
+
+    fun showSortDialog() = intent {
+        _drawerGroups.emit(actions.sortActions().toMutableList())
+        delay(100L)
+        side(StorageScreenSideEffect(showDrawer = true))
     }
 
     fun navigateTo(
         item: PathItem,
     ) = intent {
+        val current = state
         state {
             loading(title = "Navigating to ${item.name}...")
         }
@@ -243,6 +251,10 @@ class StorageListViewModel @Inject constructor(
                         data = content
                     )
                 }
+            }
+        } else {
+            state {
+                current
             }
         }
     }

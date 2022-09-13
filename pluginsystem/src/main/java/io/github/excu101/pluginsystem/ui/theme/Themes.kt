@@ -1,8 +1,6 @@
 package io.github.excu101.pluginsystem.ui.theme
 
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.util.Log
 import io.github.excu101.pluginsystem.model.*
 import io.github.excu101.pluginsystem.utils.EmptyDrawable
 
@@ -110,13 +108,23 @@ object Theme {
             Color::class -> getColor(key = key)
             Dimen::class -> getDp(key = key)
             Text::class -> getText(key = key)
-            Drawable::class -> getIcon(key = key)
+            Icon::class -> getIcon(key = key)
             else -> throw Throwable("Unsupported type")
         } as DataHolder<H>
         return holder.value
     }
 
     inline operator fun <H, reified T : DataHolder<H>> get(key: () -> String) = get<H, T>(key())
+
+    inline operator fun <H, reified T : DataHolder<H>> set(key: String, holder: T) {
+        when (T::class) {
+            Color::class -> set(key, holder as Color)
+            Dimen::class -> set(key, holder as Dimen)
+            Text::class -> set(key, holder as Text)
+            Icon::class -> set(key, holder as Icon)
+            else -> throw Throwable("Unsupported type")
+        }
+    }
 
     operator fun set(key: String, value: Color) {
         colors[key] = value

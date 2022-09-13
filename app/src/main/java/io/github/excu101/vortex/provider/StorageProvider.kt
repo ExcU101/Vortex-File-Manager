@@ -2,12 +2,15 @@ package io.github.excu101.vortex.provider
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import android.os.Environment
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.core.content.getSystemService
 import io.github.excu101.filesystem.FileProvider.newDirStream
 import io.github.excu101.vortex.data.PathItem
 import kotlinx.coroutines.Dispatchers.IO
@@ -39,6 +42,12 @@ class StorageProvider @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.R)
     fun requiresFullStorageAccess(): Boolean {
         return !Environment.isExternalStorageManager()
+    }
+
+    fun copyPath(item: PathItem) {
+        val service = context.getSystemService<ClipboardManager>()
+
+        service?.setPrimaryClip(ClipData.newPlainText("Path", item.path))
     }
 
     suspend fun provideList(item: PathItem): List<PathItem> = withContext(workContext) {

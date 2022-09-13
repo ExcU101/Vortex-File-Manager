@@ -23,6 +23,7 @@ fun initVortexLightColorValues(): Theme {
     Theme[mainDrawerTitleColorKey] = Color.DarkGray
     Theme[mainDrawerBackgroundColorKey] = Color.White
     Theme[mainDrawerSurfaceColorKey] = Color.White
+
     Theme[mainDrawerItemBackgroundColorKey] = Color.White
     Theme[mainDrawerItemIconTintColorKey] = Color.Black
     Theme[mainDrawerItemTitleTextColorKey] = Color.Black

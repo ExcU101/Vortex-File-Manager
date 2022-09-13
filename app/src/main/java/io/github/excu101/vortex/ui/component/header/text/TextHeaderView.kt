@@ -7,6 +7,8 @@ import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.fileItemTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerTitleColorKey
 
 class TextHeaderView(
     context: Context,
@@ -15,12 +17,13 @@ class TextHeaderView(
     private val desireHeight = 48.dp
 
     private val title = TextView(context).apply {
-        setTextColor(ThemeColor(fileItemTitleTextColorKey))
+        setTextColor(ThemeColor(mainDrawerTitleColorKey))
         textSize = 14F
     }
 
     init {
         updatePadding(16.dp, top = 16.dp, bottom = 16.dp)
+        setBackgroundColor(ThemeColor(mainDrawerBackgroundColorKey))
         addView(title)
     }
 
@@ -29,7 +32,8 @@ class TextHeaderView(
     }
 
     override fun onChanged() {
-        title.setTextColor(ThemeColor(fileItemTitleTextColorKey))
+        title.setTextColor(ThemeColor(mainDrawerTitleColorKey))
+        setBackgroundColor(ThemeColor(mainDrawerBackgroundColorKey))
     }
 
 }

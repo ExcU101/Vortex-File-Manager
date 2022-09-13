@@ -97,5 +97,6 @@ val audioMimeTypes = mapOf(
 
 val textMimeType = mapOf(
     "s" to "text/x-asm",
-    "java" to "text/x-java-source"
+    "java" to "text/x-java-source",
+    "txt" to "text/plain"
 )

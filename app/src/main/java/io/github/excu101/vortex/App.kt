@@ -1,14 +1,13 @@
 package io.github.excu101.vortex
 
 import android.content.res.Configuration.*
+import android.os.Build
 import androidx.multidex.MultiDexApplication
 import dagger.hilt.android.HiltAndroidApp
 import io.github.excu101.pluginsystem.common.DefaultOperationsPlugin
 import io.github.excu101.pluginsystem.provider.PluginManager
-import io.github.excu101.vortex.ui.component.theme.value.initVortexDarkColorValues
-import io.github.excu101.vortex.ui.component.theme.value.initVortexDimenValues
-import io.github.excu101.vortex.ui.component.theme.value.initVortexLightColorValues
-import io.github.excu101.vortex.ui.component.theme.value.initVortexTextValues
+import io.github.excu101.vortex.base.utils.logIt
+import io.github.excu101.vortex.ui.component.theme.value.*
 
 @HiltAndroidApp
 class App : MultiDexApplication() {
@@ -28,7 +27,20 @@ class App : MultiDexApplication() {
         }
 
         initVortexDimenValues()
-        initVortexTextValues()
+
+        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.configuration.locales[0]
+        } else {
+            resources.configuration.locale
+        }
+
+        when (locale.language.logIt()) {
+            "en" -> initVortexTextValuesEN()
+            "ua" -> initVortexTextValuesUA()
+            "ru" -> initVortexTextValuesRU()
+            "de" -> initVortexTextValuesDE()
+            else -> initVortexTextValuesCustom(lines = emptyList())
+        }
 
         PluginManager.activate(DefaultOperationsPlugin())
     }

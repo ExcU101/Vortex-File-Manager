@@ -5,11 +5,12 @@ import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
 import io.github.excu101.pluginsystem.utils.group
+import io.github.excu101.pluginsystem.utils.groupItem
+import io.github.excu101.pluginsystem.utils.item
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.provider.ActionProvider
 import io.github.excu101.vortex.provider.ResourceProvider
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.*
 import javax.inject.Inject
 
 class StorageActionProvider @Inject constructor(
@@ -21,18 +22,71 @@ class StorageActionProvider @Inject constructor(
     }
 
     fun onSinglePathItem(): List<GroupAction> = buildList {
-        add(group(title = "Default") {
-            item(action(title = "Rename", icon = R.drawable.ic_edit_24))
-            item(action(title = "Copy", icon = R.drawable.ic_copy_24))
-            item(action(title = "Cut", icon = R.drawable.ic_cut_24))
-            item(action(title = "Delete", icon = R.drawable.ic_delete_24))
-        })
+        groupItem(ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
+            item {
+                title = ThemeText(fileListOperationRenameActionTitleKey)
+                icon = resources.getDrawable(R.drawable.ic_edit_24)
+            }
+            item {
+                title = ThemeText(fileListOperationCopyActionTitleKey)
+                icon = resources.getDrawable(R.drawable.ic_copy_24)
+            }
+            item {
+                title = ThemeText(fileListOperationCutActionTitleKey)
+                icon = resources.getDrawable(R.drawable.ic_cut_24)
+            }
+            item {
+                title = ThemeText(fileListOperationDeleteActionTitleKey)
+                icon = resources.getDrawable(R.drawable.ic_delete_24)
+            }
+        }
     }
 
     fun onMultiPathItem(): List<GroupAction> = buildList {
-        add(group(title = "Default") {
-            item(action(title = "Delete", icon = R.drawable.ic_delete_24))
-        })
+        groupItem(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
+            item {
+                title = ThemeText(fileListOperationDeleteActionTitleKey)
+                icon = resources.getDrawable(R.drawable.ic_delete_24)
+            }
+        }
+    }
+
+    fun sortActions(): List<GroupAction> {
+        return buildList {
+            groupItem(title = ThemeText(fileListGroupViewActionTitleKey)) {
+                item {
+                    title = ThemeText(fileListViewColumnActionTitleKey)
+                    icon = resources.getDrawable(R.drawable.ic_view_column_24)
+                }
+            }
+            groupItem(title = ThemeText(fileListGroupSortActionTitleKey)) {
+                item {
+                    title = ThemeText(fileListSortNameActionTitleKey)
+                }
+                item {
+                    title = ThemeText(fileListSortSizeActionTitleKey)
+                }
+                item {
+                    title = ThemeText(fileListSortLastModifiedTimeActionTitleKey)
+                }
+                item {
+                    title = ThemeText(fileListSortLastAccessTimeActionTitleKey)
+                }
+                item {
+                    title = ThemeText(fileListSortCreationTimeActionTitleKey)
+                }
+            }
+            groupItem(title = ThemeText(fileListGroupSortActionTitleKey)) {
+                item {
+                    title = ThemeText(fileListFilterOnlyFoldersActionTitleKey)
+                    icon = resources.getDrawable(R.drawable.ic_folder_24)
+                }
+                item {
+                    title = ThemeText(fileListFilterOnlyFilesActionTitleKey)
+                    icon = resources.getDrawable(R.drawable.ic_file_24)
+                }
+            }
+        }
     }
 
     override fun defaultBarActions(): List<Action> {
