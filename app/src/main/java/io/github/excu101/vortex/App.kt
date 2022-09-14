@@ -34,13 +34,15 @@ class App : MultiDexApplication() {
             resources.configuration.locale
         }
 
-        when (locale.language.logIt()) {
-            "en" -> initVortexTextValuesEN()
-            "ua" -> initVortexTextValuesUA()
-            "ru" -> initVortexTextValuesRU()
-            "de" -> initVortexTextValuesDE()
-            else -> initVortexTextValuesCustom(lines = emptyList())
-        }
+//        when (locale.language.logIt()) {
+//            "en" -> initVortexTextValuesEN()
+//            "ua" -> initVortexTextValuesUA()
+//            "ru" -> initVortexTextValuesRU()
+//            "de" -> initVortexTextValuesDE()
+//            else -> initVortexTextValuesCustom(lines = emptyList())
+//        }
+
+        initVortexTextValuesUA()
 
         PluginManager.activate(DefaultOperationsPlugin())
     }

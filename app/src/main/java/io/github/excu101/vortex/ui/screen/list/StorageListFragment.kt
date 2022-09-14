@@ -280,14 +280,13 @@ class StorageListFragment : Fragment(),
                 viewModel.selected.collect { selected ->
                     if (viewModel.selectionModeEnabled) {
                         bar?.subtitle = null
-                        bar?.title = "Selected ${selected.size}"
+                        bar?.title = ReplacerThemeText(fileListSelectionTitleKey, specialSymbol,  selected.size.toString())
                     } else {
                         viewModel.current?.let {
                             wrapBarTitle(it)
                             wrapBarSubtitle(it)
                         }
                     }
-
                     listAdapter.replace(selected)
                 }
             }

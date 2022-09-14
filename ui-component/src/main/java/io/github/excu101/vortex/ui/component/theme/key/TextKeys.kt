@@ -32,6 +32,7 @@ const val fileListFilterOnlyFoldersActionTitleKey = "fileListFilterOnlyFoldersAc
 // List
 const val fileListFilesCountKey = "fileListFilesCount"
 const val fileListDirectoriesCountKey = "fileListDirectoriesCount"
+const val fileListSelectionTitleKey = "fileListSelectionTitle"
 
 // Item
 const val fileListItemMimeTypeApplicationKey = "fileListItemMimeTypeApplication"
