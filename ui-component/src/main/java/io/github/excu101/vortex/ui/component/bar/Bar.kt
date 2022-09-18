@@ -100,6 +100,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     private var textWidth = 0
 
+
     var title: CharSequence?
         get() = titleView.text
         set(value) {

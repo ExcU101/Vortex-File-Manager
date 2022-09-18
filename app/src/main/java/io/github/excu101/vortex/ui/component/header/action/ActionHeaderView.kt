@@ -25,6 +25,7 @@ class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
     private val desireHeight = 48.dp
     private val iconHorizontalPadding = 16.dp
     private val titleHorizontalPadding = 32.dp
+    private val additionalTitleViewHeight = 2.dp
     private val iconSize = 24.dp
 
     private val shape = MaterialShapeDrawable().apply {
@@ -130,9 +131,9 @@ class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
         }
         titleView.layout(
             widthLeft,
-            height / 2 - titleView.lineHeight,
+            (height - titleView.lineHeight) / 2,
             widthLeft + titleView.measuredWidth,
-            height / 2 + titleView.lineHeight
+            (height - titleView.lineHeight) / 2 + titleView.lineHeight + additionalTitleViewHeight
         )
     }
 

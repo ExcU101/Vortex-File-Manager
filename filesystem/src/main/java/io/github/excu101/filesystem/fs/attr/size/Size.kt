@@ -42,6 +42,8 @@ class Size(val memory: Long) {
 
     var pattern = simplePattern
 
+    var name: String = "B"
+
     operator fun plus(other: Size): Size {
         return Size(memory = memory + other.memory)
     }
@@ -88,6 +90,7 @@ class Size(val memory: Long) {
     }
 
     private fun formatSize(divider: Long, unitName: String): String {
+        name = unitName
         return DecimalFormat(pattern)
             .format(memory / divider)
             .toString() + unitName

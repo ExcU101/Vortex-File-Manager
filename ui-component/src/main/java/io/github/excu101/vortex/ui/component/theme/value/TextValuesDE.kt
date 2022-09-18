@@ -9,8 +9,8 @@ fun initVortexTextValuesDE() {
     Theme[fileListMoreActionTitleKey] = Text(value = "Mehr")
     Theme[fileListSortActionTitleKey] = Text(value = "Sortieren")
 
-    Theme[fileListFilesCountKey] = Text(value = "Dateien: $specialSymbol")
-    Theme[fileListDirectoriesCountKey] = Text(value = "Ordner: $specialSymbol")
+    Theme[fileListFilesCountTitleKey] = Text(value = "Dateien: $specialSymbol")
+    Theme[fileListDirectoriesCountTitleKey] = Text(value = "Ordner: $specialSymbol")
 
     Theme[fileListItemNameKey] = Text(value = specialSymbol)
     Theme[fileListItemsCountKey] = Text(value = "Objekte: $specialSymbol")

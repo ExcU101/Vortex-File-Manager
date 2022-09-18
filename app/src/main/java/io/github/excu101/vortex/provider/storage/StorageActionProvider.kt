@@ -8,6 +8,7 @@ import io.github.excu101.pluginsystem.utils.group
 import io.github.excu101.pluginsystem.utils.groupItem
 import io.github.excu101.pluginsystem.utils.item
 import io.github.excu101.vortex.R
+import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.provider.ActionProvider
 import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.ui.component.theme.key.*
@@ -19,6 +20,15 @@ class StorageActionProvider @Inject constructor(
 
     private fun action(title: String, @DrawableRes icon: Int): Action {
         return Action(title = title, icon = resources.getDrawable(icon))
+    }
+
+    fun trailActions(): List<GroupAction> = buildList {
+        groupItem(title = "Default") {
+            item {
+                title = ThemeText(fileListTrailCopyPathActionTitleKey)
+                icon = resources.getDrawable(R.drawable.ic_copy_24)
+            }
+        }
     }
 
     fun onSinglePathItem(): List<GroupAction> = buildList {
@@ -84,6 +94,24 @@ class StorageActionProvider @Inject constructor(
                 item {
                     title = ThemeText(fileListFilterOnlyFilesActionTitleKey)
                     icon = resources.getDrawable(R.drawable.ic_file_24)
+                }
+            }
+        }
+    }
+
+    fun moreActions(vararg items: PathItem): List<GroupAction> {
+        return buildList {
+            groupItem("Default") {
+                if (items.isEmpty()) {
+                    item {
+                        title = "Select all"
+                    }
+                }
+                item {
+                    title = "Navigate back"
+                }
+                item {
+                    title = "Info" // Current selected path item (aka directory)
                 }
             }
         }

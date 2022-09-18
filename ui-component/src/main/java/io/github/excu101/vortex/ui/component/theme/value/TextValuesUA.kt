@@ -32,8 +32,12 @@ fun initVortexTextValuesUA() {
     Theme[fileListFilterOnlyFoldersActionTitleKey] = Text(value = "Тільки папки")
     Theme[fileListFilterOnlyFilesActionTitleKey] = Text(value = "Тільки файли")
 
-    Theme[fileListFilesCountKey] = Text(value = "Файли: $specialSymbol")
-    Theme[fileListDirectoriesCountKey] = Text(value = "Папки: $specialSymbol")
+    Theme[fileListFilesCountTitleKey] = Text(value = "Файли: $specialSymbol")
+    Theme[fileListDirectoriesCountTitleKey] = Text(value = "Папки: $specialSymbol")
+    Theme[fileListSelectionTitleKey] = Text(value = "Виділено $specialSymbol")
+
+    Theme[fileListFilesCountSectionKey] = Text(value = "Файли ($specialSymbol)")
+    Theme[fileListDirectoriesCountSectionKey] = Text(value = "Папки ($specialSymbol)")
 
     Theme[fileListItemMimeTypeApplicationKey] = Text(value = "Додаток")
     Theme[fileListItemMimeTypeImageKey] = Text(value = "Зображення")
@@ -67,7 +71,4 @@ fun initVortexTextValuesUA() {
 
     Theme[vortexServiceConnectedKey] = Text(value = "Vortex Service підключено!")
     Theme[vortexServiceDisconnectedKey] = Text(value = "Vortex Service відключено!")
-
-    //Title
-    Theme[fileListSelectionTitleKey] = Text(value = "Виділено $specialSymbol")
 }

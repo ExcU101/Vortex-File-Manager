@@ -8,6 +8,7 @@ import io.github.excu101.vortex.R
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.utils.convertToThemeText
 import io.github.excu101.vortex.utils.parseThemeType
 
 class StorageItemViewHolder(
@@ -83,13 +84,18 @@ class StorageItemViewHolder(
                 else -> ReplacerThemeText(
                     key = fileListItemsCountKey,
                     old = specialSymbol,
-                    new = "$count"
+                    new = count.toString()
                 )
             }
         } else {
             item.lastModifiedTime.toString()
         }
-        val size = if (item.isFile) item.size.toString() else ""
+
+        val size = if (item.isFile) ReplacerThemeText(
+            key = fileListItemSizeKey,
+            old = specialSymbol,
+            new = item.size.convertToThemeText()
+        ) else ""
 
         val mimeType = if (item.isFile) item.mimeType.parseThemeType() else ""
 

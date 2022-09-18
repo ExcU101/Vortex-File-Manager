@@ -3,7 +3,7 @@ package io.github.excu101.vortex.ui.screen.list
 import android.os.Build
 import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
-import android.os.Environment
+import android.os.Environment.getExternalStorageDirectory
 import android.view.Gravity.CENTER
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +38,6 @@ import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.Color.Companion.Transparent
 import io.github.excu101.pluginsystem.ui.theme.*
 import io.github.excu101.vortex.IVortexService
-import io.github.excu101.vortex.R.drawable.ic_add_24
 import io.github.excu101.vortex.base.utils.collectEffect
 import io.github.excu101.vortex.base.utils.collectState
 import io.github.excu101.vortex.data.PathItem
@@ -55,6 +54,7 @@ import io.github.excu101.vortex.ui.component.loading.LoadingView
 import io.github.excu101.vortex.ui.component.menu.ActionListener
 import io.github.excu101.vortex.ui.component.storage.StorageListView
 import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.trail.TrailItemView
 import io.github.excu101.vortex.ui.component.trail.TrailListView
 import io.github.excu101.vortex.ui.component.warning.WarningView
 import io.github.excu101.vortex.ui.screen.create.PathCreateDialog
@@ -80,10 +80,6 @@ class StorageListFragment : Fragment(),
     private var warning: WarningView? = null
     private var scroller: FastScroller? = null
 
-    private val createAction by lazy {
-        Action("Create new", requireContext().getDrawable(ic_add_24)!!)
-    }
-
     @RequiresApi(R)
     private val storageAccessLauncher: ActivityResultLauncher<Unit> =
         registerForActivityResult(FullStorageAccessContract()) { isGranted ->
@@ -100,7 +96,6 @@ class StorageListFragment : Fragment(),
         savedInstanceState: Bundle?,
     ): View? {
         service = (requireActivity() as MainActivity).service
-        bar?.addItem(createAction)
         bar?.addActionListener(listener = this)
         bar?.setNavigationClickListener { view ->
             viewModel.openDefaultDrawerActions()
@@ -188,6 +183,16 @@ class StorageListFragment : Fragment(),
         trailAdapter.register { view, item, position ->
             viewModel.navigateTo(item = item)
             bar?.show()
+        }
+
+        trailAdapter.registerLong { view, item, position ->
+            when (view) {
+                is TrailItemView -> {
+                    viewModel.openDrawerTrailsActions()
+                    true
+                }
+                else -> false
+            }
         }
 
         listAdapter.register { view, item, position ->
@@ -280,7 +285,11 @@ class StorageListFragment : Fragment(),
                 viewModel.selected.collect { selected ->
                     if (viewModel.selectionModeEnabled) {
                         bar?.subtitle = null
-                        bar?.title = ReplacerThemeText(fileListSelectionTitleKey, specialSymbol,  selected.size.toString())
+                        bar?.title = ReplacerThemeText(
+                            fileListSelectionTitleKey,
+                            specialSymbol,
+                            selected.size.toString()
+                        )
                     } else {
                         viewModel.current?.let {
                             wrapBarTitle(it)
@@ -339,9 +348,7 @@ class StorageListFragment : Fragment(),
             owner = viewLifecycleOwner,
             enabled = isBackPressEnabled
         ) {
-            if (viewModel.navigator.selectedItem == PathItem(Environment.getExternalStorageDirectory()
-                    .asPath())
-            ) {
+            if (viewModel.navigator.selectedItem == PathItem(getExternalStorageDirectory().asPath())) {
                 isBackPressEnabled = false
             } else {
                 viewModel.navigateBack()
@@ -357,13 +364,13 @@ class StorageListFragment : Fragment(),
 
     private fun wrapBarSubtitle(item: PathItem) {
         val folders = ReplacerThemeText(
-            fileListDirectoriesCountKey,
+            fileListDirectoriesCountTitleKey,
             specialSymbol,
             item.value.directoryCount.toString()
         )
 
         val files = ReplacerThemeText(
-            fileListFilesCountKey,
+            fileListFilesCountTitleKey,
             specialSymbol,
             item.value.fileCount.toString()
         )
@@ -374,22 +381,28 @@ class StorageListFragment : Fragment(),
     override fun onCall(action: Action) {
         when (action.title) {
 
-            ThemeText(fileListSortActionTitleKey) -> {
-                viewModel.showSortDialog()
+            ThemeText(fileListMoreActionTitleKey) -> {
+                viewModel.openDrawerMoreActions()
             }
 
-            "Delete" -> {
+            ThemeText(fileListSortActionTitleKey) -> {
+                viewModel.openDrawerSortActions()
+            }
+
+            ThemeText(fileListTrailCopyPathActionTitleKey) -> {
+
+            }
+
+            ThemeText(fileListOperationDeleteActionTitleKey) -> {
                 viewModel.delete()
             }
+
+            ThemeText(fileListOperationRenameActionTitleKey) -> {
+
+            }
+
             "Add new" -> {
 
-            }
-            "Rename" -> {
-
-            }
-
-            createAction.title -> {
-                create.show()
             }
         }
         drawer?.hide()

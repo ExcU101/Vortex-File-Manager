@@ -9,8 +9,6 @@
 #include "attrs.cpp"
 #include "operations.cpp"
 
-namespace Unix {}
-
 static void clearErrno() {
     errno = 0;
 }

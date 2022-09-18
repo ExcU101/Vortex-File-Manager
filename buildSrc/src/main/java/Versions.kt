@@ -1,7 +1,7 @@
 object Versions {
 
     // AGP
-    const val androidVer = "7.2.2"
+    const val androidVer = "7.3.0"
 
     // AndroidX
     const val coreVer = "1.9.0"
@@ -14,7 +14,6 @@ object Versions {
 
     //UI
     const val materialVer = "1.7.0-beta01"
-
 
     // DI
     const val hiltVer = "2.43.2"
@@ -30,5 +29,5 @@ object Versions {
     const val detektVer = "1.21.0"
 
     // C++
-    const val cmakeVer = "3.18.1"
+    const val cmakeVer = "3.22.1"
 }

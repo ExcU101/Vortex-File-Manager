@@ -32,8 +32,12 @@ fun initVortexTextValuesEN() {
     Theme[fileListFilterOnlyFoldersActionTitleKey] = Text(value = "Only folders")
     Theme[fileListFilterOnlyFilesActionTitleKey] = Text(value = "Only files")
 
-    Theme[fileListFilesCountKey] = Text(value = "Files: $specialSymbol")
-    Theme[fileListDirectoriesCountKey] = Text(value = "Folders: $specialSymbol")
+    Theme[fileListFilesCountTitleKey] = Text(value = "Files: $specialSymbol")
+    Theme[fileListDirectoriesCountTitleKey] = Text(value = "Folders: $specialSymbol")
+    Theme[fileListSelectionTitleKey] = Text(value = "Selected $specialSymbol")
+
+    Theme[fileListFilesCountSectionKey] = Text(value = "Files ($specialSymbol)")
+    Theme[fileListDirectoriesCountSectionKey] = Text(value = "Folders ($specialSymbol)")
 
     Theme[fileListItemMimeTypeApplicationKey] = Text(value = "Application")
     Theme[fileListItemMimeTypeImageKey] = Text(value = "Image")
@@ -52,7 +56,11 @@ fun initVortexTextValuesEN() {
     Theme[fileListItemSizeZiBKey] = Text(value = "ZB")
     Theme[fileListItemSizeYiBKey] = Text(value = "YB")
 
+    // Item
     Theme[fileListItemNameKey] = Text(value = specialSymbol)
+    Theme[fileListItemSizeKey] = Text(value = specialSymbol)
+
+    // Item : Directory Content
     Theme[fileListItemsCountKey] = Text(value = "Items $specialSymbol")
     Theme[fileListItemCountKey] = Text(value = "One item")
     Theme[fileListItemEmptyKey] = Text(value = "Empty")

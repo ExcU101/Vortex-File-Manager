@@ -4,10 +4,13 @@ import android.animation.ValueAnimator
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
+import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import kotlin.math.ceil
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Suppress(names = ["FunctionName"])
@@ -34,6 +37,36 @@ fun ViewGroup.removeViewFrom(range: IntRange) {
 context (View)
 fun Int.toDp(): Int {
     return dp
+}
+
+context (ViewGroup)
+fun ThemeColorChangeListener.themeMeasure(
+    widthSpec: Int,
+    heightSpec: Int,
+    widthKey: String? = null,
+    heightKey: String? = null,
+): Pair<Int, Int> {
+    val widthSize = MeasureSpec.getSize(widthSpec)
+    val widthMode = MeasureSpec.getMode(widthSpec)
+    val heightSize = MeasureSpec.getSize(heightSpec)
+    val heightMode = MeasureSpec.getMode(heightSpec)
+
+    val desireWidth = widthKey?.let { ThemeDp(it) } ?: widthSize
+    val desireHeight = heightKey?.let { ThemeDp(it) } ?: heightSize
+
+    val width = when (widthMode) {
+        MeasureSpec.EXACTLY -> widthSize
+        MeasureSpec.AT_MOST -> min(desireWidth, widthSize)
+        else -> desireWidth
+    } + paddingRight + paddingLeft
+
+    val height = when (heightMode) {
+        MeasureSpec.EXACTLY -> heightSize
+        MeasureSpec.AT_MOST -> min(desireHeight, heightSize)
+        else -> desireHeight
+    } + paddingTop + paddingBottom
+
+    return width to height
 }
 
 context(View)

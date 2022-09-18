@@ -30,11 +30,14 @@ const val fileListFilterOnlyFilesActionTitleKey = "fileListFilterOnlyFilesAction
 const val fileListFilterOnlyFoldersActionTitleKey = "fileListFilterOnlyFoldersActionTitle"
 
 // List
-const val fileListFilesCountKey = "fileListFilesCount"
-const val fileListDirectoriesCountKey = "fileListDirectoriesCount"
+const val fileListFilesCountTitleKey = "fileListFilesCountTitle"
+const val fileListDirectoriesCountTitleKey = "fileListDirectoriesCountTitle"
 const val fileListSelectionTitleKey = "fileListSelectionTitle"
 
-// Item
+const val fileListFilesCountSectionKey = "fileListFilesCountSection"
+const val fileListDirectoriesCountSectionKey = "fileListDirectoriesCountSection"
+
+// Item : MimeType
 const val fileListItemMimeTypeApplicationKey = "fileListItemMimeTypeApplication"
 const val fileListItemMimeTypeImageKey = "fileListItemMimeTypeImage"
 const val fileListItemMimeTypeVideoKey = "fileListItemMimeTypeVideo"
@@ -52,8 +55,12 @@ const val fileListItemSizeEiBKey = "fileListItemSizeEiB"
 const val fileListItemSizeZiBKey = "fileListItemSizeZiB"
 const val fileListItemSizeYiBKey = "fileListItemSizeYiB"
 
-
+// Item
 const val fileListItemNameKey = "fileListItemName"
+
+const val fileListItemSizeKey = "fileListItemSize"
+
+// Item : Directory Content
 const val fileListItemsCountKey = "fileListItemsCount"
 const val fileListItemCountKey = "fileListItemCount"
 const val fileListItemEmptyKey = "fileListItemEmpty"

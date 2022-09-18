@@ -12,6 +12,7 @@ import io.github.excu101.filesystem.fs.utils.asPath
 import io.github.excu101.filesystem.unix.utils.unixDelete
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.GroupAction
+import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.base.utils.*
 import io.github.excu101.vortex.data.PathItem
@@ -24,6 +25,9 @@ import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.provider.StorageProvider
 import io.github.excu101.vortex.provider.storage.StorageActionProvider
 import io.github.excu101.vortex.ui.component.list.adapter.Item
+import io.github.excu101.vortex.ui.component.theme.key.fileListDirectoriesCountSectionKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListFilesCountSectionKey
+import io.github.excu101.vortex.ui.component.theme.key.specialSymbol
 import io.github.excu101.vortex.ui.screen.list.StorageScreenState.Companion.loading
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -196,6 +200,12 @@ class StorageListViewModel @Inject constructor(
         }
     }
 
+    fun openDrawerTrailsActions() = intent {
+        _drawerGroups.emit(actions.trailActions().toMutableList())
+        delay(100L)
+        side(StorageScreenSideEffect(showDrawer = true))
+    }
+
     fun openDrawerActions() = intent {
         if (selected.value.size == 1) {
             _drawerGroups.emit(actions.onSinglePathItem().toMutableList())
@@ -208,8 +218,14 @@ class StorageListViewModel @Inject constructor(
         }
     }
 
-    fun showSortDialog() = intent {
+    fun openDrawerSortActions() = intent {
         _drawerGroups.emit(actions.sortActions().toMutableList())
+        delay(100L)
+        side(StorageScreenSideEffect(showDrawer = true))
+    }
+
+    fun openDrawerMoreActions(vararg items: PathItem = selected.value.toTypedArray()) = intent {
+        _drawerGroups.emit(actions.moreActions(items = items).toMutableList())
         delay(100L)
         side(StorageScreenSideEffect(showDrawer = true))
     }
@@ -266,12 +282,26 @@ class StorageListViewModel @Inject constructor(
         val files = data.filter { it.isFile }
 
         if (folders.isNotEmpty()) {
-            content.add(TextHeaderItem("Folders (${folders.size})"))
+            content.add(
+                TextHeaderItem(
+                    value = ReplacerThemeText(
+                        key = fileListDirectoriesCountSectionKey,
+                        old = specialSymbol,
+                        new = folders.size.toString()
+                    )
+                )
+            )
             content.addAll(folders)
         }
 
         if (files.isNotEmpty()) {
-            content.add(TextHeaderItem("Files (${files.size})"))
+            content.add(TextHeaderItem(
+                value = ReplacerThemeText(
+                    key = fileListFilesCountSectionKey,
+                    old = specialSymbol,
+                    new = files.size.toString()
+                )
+            ))
             content.addAll(files)
         }
 

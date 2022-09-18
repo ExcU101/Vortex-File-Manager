@@ -9,8 +9,8 @@ fun initVortexTextValuesRU() {
     Theme[fileListMoreActionTitleKey] = Text(value = "Больше")
     Theme[fileListSortActionTitleKey] = Text(value = "Сортировка")
 
-    Theme[fileListFilesCountKey] = Text(value = "Файлы: $specialSymbol")
-    Theme[fileListDirectoriesCountKey] = Text(value = "Папки: $specialSymbol")
+    Theme[fileListFilesCountTitleKey] = Text(value = "Файлы: $specialSymbol")
+    Theme[fileListDirectoriesCountTitleKey] = Text(value = "Папки: $specialSymbol")
 
     Theme[fileListItemNameKey] = Text(value = specialSymbol)
     Theme[fileListItemsCountKey] = Text(value = "Объекты: $specialSymbol")
