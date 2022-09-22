@@ -52,6 +52,7 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context), InnerPadding
 
     init {
         gravity = CENTER
+        minimumHeight = desireHeight
         isClickable = true
         isFocusable = true
         setBackground(background)

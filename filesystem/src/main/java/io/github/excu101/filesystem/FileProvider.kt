@@ -1,6 +1,7 @@
 package io.github.excu101.filesystem
 
 import io.github.excu101.filesystem.fs.DirectoryStream
+import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.FileSystem
 import io.github.excu101.filesystem.fs.FileSystemProvider
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
@@ -58,6 +59,14 @@ object FileProvider {
     fun newDirStream(path: Path): DirectoryStream<Path> {
         return try {
             getProvider(path).newDirectorySteam(path)
+        } catch (error: Throwable) {
+            throw error
+        }
+    }
+
+    fun getFileStore(path: Path): FileStore {
+        return try {
+            getProvider(path).getFileStore(path)
         } catch (error: Throwable) {
             throw error
         }

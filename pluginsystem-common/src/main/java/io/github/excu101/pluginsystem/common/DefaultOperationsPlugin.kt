@@ -3,6 +3,7 @@ package io.github.excu101.pluginsystem.common
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.unix.UnixFileSystem
 import io.github.excu101.filesystem.unix.UnixFileSystemProvider
+import io.github.excu101.filesystem.unix.utils.unixDeleteClass
 import io.github.excu101.pluginsystem.dsl.registers
 import io.github.excu101.pluginsystem.model.Plugin
 
@@ -25,9 +26,14 @@ class DefaultOperationsPlugin : Plugin {
         registerGroup {
             name = "Vortex operations"
         }
+
+        register(unixDeleteClass())
+
     }
 
     override fun disable() {
-        registers { unregisterGroup() }
+        registers {
+            unregisterGroup()
+        }
     }
 }

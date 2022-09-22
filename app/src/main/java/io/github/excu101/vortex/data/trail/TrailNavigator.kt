@@ -1,12 +1,16 @@
 package io.github.excu101.vortex.data.trail
 
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.toPath
 import io.github.excu101.vortex.data.PathItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class TrailNavigator : Iterable<PathItem> {
+
+    val size: Int
+        get() = _items.value.size
 
     private val _items = MutableStateFlow(mutableListOf<PathItem>())
     val items: StateFlow<List<PathItem>>
@@ -26,6 +30,7 @@ class TrailNavigator : Iterable<PathItem> {
             var cPath = path
 
             while (true) {
+                if (cPath == "/storage/emulated".toPath()) break
                 segments += PathItem(cPath)
                 cPath = cPath.parent ?: break
             }
@@ -66,8 +71,12 @@ class TrailNavigator : Iterable<PathItem> {
         _selectedIndex.emit(selectedIndex)
     }
 
-    suspend fun navigateUp() {
+    suspend fun navigateLeft() {
         navigateTo(segments = take(selectedIndex.value).toMutableList())
+    }
+
+    suspend fun navigateRight() {
+        navigateTo(segments = take(selectedIndex.value + 2).toMutableList())
     }
 
     override fun iterator(): Iterator<PathItem> {

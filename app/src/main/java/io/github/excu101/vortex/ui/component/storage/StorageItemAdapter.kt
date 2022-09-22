@@ -2,6 +2,7 @@ package io.github.excu101.vortex.ui.component.storage
 
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.Selection
+import io.github.excu101.vortex.data.header.IconTextHeaderItem
 import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.data.storage.MutablePathItemMapSet
 import io.github.excu101.vortex.data.storage.PathItemMapSet
@@ -12,6 +13,7 @@ import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
 
 class StorageItemAdapter : ItemAdapter<Item<*>>(
     ItemViewTypes.TEXT_HEADER to (TextHeaderItem as ViewHolderFactory<Item<*>>),
+    ItemViewTypes.ICON_TEXT_HEADER to (IconTextHeaderItem as ViewHolderFactory<Item<*>>),
     ItemViewTypes.STORAGE to (PathItem as ViewHolderFactory<Item<*>>)
 ) {
     init {
@@ -19,12 +21,6 @@ class StorageItemAdapter : ItemAdapter<Item<*>>(
     }
 
     private val selected = Selection<PathItem>()
-
-    val headerItemCount: Int
-        get() = list.count { it is TextHeaderItem }
-
-    val storageItemCount: Int
-        get() = list.count { it is PathItem }
 
     override fun getItemId(position: Int): Long = item(position).id
 

@@ -8,6 +8,14 @@ interface EditableAdapter<T> {
 
     operator fun get(item: T): Int = position(item)
 
+    operator fun plus(item: T) = add(item)
+
+    operator fun plus(pair: Pair<Int, T>) = add(pair.first, pair.second)
+
+    operator fun minus(item: T) = remove(item)
+
+    operator fun minus(position: Int) = remove(position)
+
     fun replace(items: List<T>, differ: DiffUtil.Callback?)
 
     fun add(item: T)

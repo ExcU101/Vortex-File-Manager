@@ -284,7 +284,7 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
                 widthLeft + infoLeftPadding,
                 middleInnerPadding + title.lineHeight,
                 widthLeft + infoLeftPadding + info.measuredWidth,
-                middleInnerPadding + title.lineHeight + info.lineHeight
+                middleInnerPadding + 3.dp + title.lineHeight + info.lineHeight
             )
         }
     }

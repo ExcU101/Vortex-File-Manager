@@ -7,6 +7,7 @@ import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 class TrailViewHolder(private val root: TrailItemView) : ViewHolder<PathItem>(root) {
 
     override fun bind(item: PathItem): Unit = with(root) {
+        onChanged()
         setTitle(value = item.name)
     }
 

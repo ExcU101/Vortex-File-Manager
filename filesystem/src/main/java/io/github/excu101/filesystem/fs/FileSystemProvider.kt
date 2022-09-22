@@ -35,8 +35,6 @@ abstract class FileSystemProvider {
 
     abstract val scheme: String
 
-    abstract fun createDirectory(path: Path, mode: Int)
-
     abstract fun getFileStore(path: Path): FileStore
 
     protected fun notify(error: Throwable) {

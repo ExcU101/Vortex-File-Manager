@@ -16,6 +16,7 @@ class StorageItemViewHolder(
 ) : ViewHolder<PathItem>(root) {
 
     override fun bind(item: PathItem): Unit = with(root) {
+        onChanged()
         setTitle(ReplacerThemeText(
             key = fileListItemNameKey,
             old = specialSymbol,

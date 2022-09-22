@@ -1,46 +1,27 @@
 package io.github.excu101.vortex.service
 
-import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import io.github.excu101.vortex.service.VortexLifecycleOwner.VortexLifecycle
-import io.github.excu101.vortex.service.VortexLifecycleOwner.VortexLifecycle.*
-import io.github.excu101.vortex.service.impl.VortexServiceBinder
+import androidx.lifecycle.LifecycleService
+import io.github.excu101.vortex.VortexServiceApi
+import io.github.excu101.vortex.service.impl.VortexServiceImpl
+import io.github.excu101.vortex.service.utils.VORTEX_SERVICE_ACTION_NAME
 
-class VortexService : Service() {
+class VortexService : LifecycleService() {
 
-    private val binder = VortexServiceBinder()
+    private val binder = VortexServiceImpl(context = this)
 
-    private val owners = mutableListOf<VortexLifecycleOwner>()
-    private val observers = mutableListOf<VortexLifecycleObserver>()
+    override fun onBind(intent: Intent): IBinder? {
+        super.onBind(intent)
 
-    override fun onBind(intent: Intent?): IBinder {
+        if (intent.action == null) return null
+        if (intent.action != VORTEX_SERVICE_ACTION_NAME) return null
+
         return binder
     }
 
-//    fun registerProvider(provider: VortexServiceProvider) {
-//        binder.getService().registerProvider(provider)
-//    }
-
-    override fun onCreate() {
-        super.onCreate()
-        notify(event = CREATE)
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        notify(event = START)
-        return START_NOT_STICKY
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        notify(event = DESTROY)
-    }
-
-    private fun notify(event: VortexLifecycle) {
-        for (observer in observers) {
-            observer.onChange(event)
-        }
+    fun getInterface(): VortexServiceApi {
+        return binder
     }
 
 }

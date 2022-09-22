@@ -37,12 +37,14 @@ import io.github.excu101.filesystem.fs.utils.fileCount
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.Color.Companion.Transparent
 import io.github.excu101.pluginsystem.ui.theme.*
-import io.github.excu101.vortex.IVortexService
+import io.github.excu101.vortex.VortexServiceApi
 import io.github.excu101.vortex.base.utils.collectEffect
 import io.github.excu101.vortex.base.utils.collectState
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.data.header.ActionHeaderItem
+import io.github.excu101.vortex.data.header.IconTextHeaderItem
 import io.github.excu101.vortex.data.header.TextHeaderItem
+import io.github.excu101.vortex.data.storage.PathItemFilters
+import io.github.excu101.vortex.data.storage.PathItemSorters
 import io.github.excu101.vortex.provider.contract.FullStorageAccessContract
 import io.github.excu101.vortex.ui.MainActivity
 import io.github.excu101.vortex.ui.component.animation.fade
@@ -71,7 +73,7 @@ class StorageListFragment : Fragment(),
     private val create by lazy {
         PathCreateDialog(requireContext())
     }
-    private var service: IVortexService? = null
+    private var service: VortexServiceApi? = null
 
     private var root: CoordinatorLayout? = null
     private var list: StorageListView? = null
@@ -188,7 +190,7 @@ class StorageListFragment : Fragment(),
         trailAdapter.registerLong { view, item, position ->
             when (view) {
                 is TrailItemView -> {
-                    viewModel.openDrawerTrailsActions()
+                    viewModel.openDrawerTrailsActions(item)
                     true
                 }
                 else -> false
@@ -336,7 +338,7 @@ class StorageListFragment : Fragment(),
 
                     groups.forEach { group ->
                         actions.add(TextHeaderItem(group.name))
-                        actions.addAll(group.actions.map { ActionHeaderItem(it) })
+                        actions.addAll(group.actions.map { IconTextHeaderItem(it) })
                     }
 
                     drawer?.actions = actions
@@ -349,9 +351,9 @@ class StorageListFragment : Fragment(),
             enabled = isBackPressEnabled
         ) {
             if (viewModel.navigator.selectedItem == PathItem(getExternalStorageDirectory().asPath())) {
-                isBackPressEnabled = false
+                requireActivity().finish()
             } else {
-                viewModel.navigateBack()
+                viewModel.navigateLeft()
             }
         }
     }
@@ -390,7 +392,8 @@ class StorageListFragment : Fragment(),
             }
 
             ThemeText(fileListTrailCopyPathActionTitleKey) -> {
-
+                viewModel.copyPath()
+                service?.notify(1, "Copied!")
             }
 
             ThemeText(fileListOperationDeleteActionTitleKey) -> {
@@ -398,6 +401,54 @@ class StorageListFragment : Fragment(),
             }
 
             ThemeText(fileListOperationRenameActionTitleKey) -> {
+
+            }
+
+            ThemeText(fileListMoreSelectAllActionTitleKey) -> {
+                viewModel.selectAll()
+            }
+
+            ThemeText(fileListMoreDeselectAllActionTitleKey) -> {
+                viewModel.deselectAll()
+            }
+
+            ThemeText(fileListMoreNavigateLeftActionTitleKey) -> {
+                viewModel.navigateLeft()
+            }
+
+            ThemeText(fileListMoreNavigateRightActionTitleKey) -> {
+                viewModel.navigateRight()
+            }
+
+            ThemeText(fileListSortNameActionTitleKey) -> {
+                viewModel.sort(PathItemSorters.Name)
+            }
+
+            ThemeText(fileListSortPathActionTitleKey) -> {
+                viewModel.sort(PathItemSorters.Path)
+            }
+
+            ThemeText(fileListSortSizeActionTitleKey) -> {
+                viewModel.sort(PathItemSorters.Size)
+            }
+
+            ThemeText(fileListSortLastAccessTimeActionTitleKey) -> {
+                viewModel.sort(PathItemSorters.LastAccessTime)
+            }
+
+            ThemeText(fileListSortCreationTimeActionTitleKey) -> {
+                viewModel.sort(PathItemSorters.CreationTime)
+            }
+
+            ThemeText(fileListFilterOnlyFilesActionTitleKey) -> {
+                viewModel.filter(PathItemFilters.OnlyFile)
+            }
+
+            ThemeText(fileListFilterOnlyFoldersActionTitleKey) -> {
+                viewModel.filter(PathItemFilters.OnlyFolder)
+            }
+
+            ThemeText(fileListMoreInfoActionTitleKey) -> {
 
             }
 
@@ -418,9 +469,9 @@ class StorageListFragment : Fragment(),
     }
 
     override fun onChanged() {
-        controller?.isAppearanceLightStatusBars = ThemeColor(trailSurfaceColorKey).luminance > 0.5F
-        controller?.isAppearanceLightNavigationBars =
-            ThemeColor(trailSurfaceColorKey).luminance > 0.5F
+        val isLight = ThemeColor(trailSurfaceColorKey).luminance > 0.5F
+        controller?.isAppearanceLightStatusBars = isLight
+        controller?.isAppearanceLightNavigationBars = isLight
     }
 
 }

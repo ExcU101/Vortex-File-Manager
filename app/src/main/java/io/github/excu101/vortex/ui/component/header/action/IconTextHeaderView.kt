@@ -20,7 +20,7 @@ import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconTintCol
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemTitleTextColorKey
 import kotlin.math.min
 
-class ActionHeaderView(context: Context) : ThemeFrameLayout(context) {
+class IconTextHeaderView(context: Context) : ThemeFrameLayout(context) {
 
     private val desireHeight = 48.dp
     private val iconHorizontalPadding = 16.dp

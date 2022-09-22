@@ -5,6 +5,9 @@ import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.*
 
 fun initVortexTextValuesEN() {
+    Theme[fileListNavigatingTitleKey] = Text(value = "Navigating to $specialSymbol...")
+    Theme[fileListWarningEmptyTitleKey] = Text(value = "$specialSymbol is empty")
+
     Theme[fileListSearchActionTitleKey] = Text(value = "Search")
     Theme[fileListMoreActionTitleKey] = Text(value = "More")
     Theme[fileListSortActionTitleKey] = Text(value = "Sort")
@@ -23,6 +26,7 @@ fun initVortexTextValuesEN() {
 
     // Sort
     Theme[fileListSortNameActionTitleKey] = Text(value = "Name")
+    Theme[fileListSortPathActionTitleKey] = Text(value = "Path")
     Theme[fileListSortSizeActionTitleKey] = Text(value = "Size")
     Theme[fileListSortLastModifiedTimeActionTitleKey] = Text(value = "Last modified time")
     Theme[fileListSortLastAccessTimeActionTitleKey] = Text(value = "Last access time")
@@ -31,6 +35,15 @@ fun initVortexTextValuesEN() {
     // Filter
     Theme[fileListFilterOnlyFoldersActionTitleKey] = Text(value = "Only folders")
     Theme[fileListFilterOnlyFilesActionTitleKey] = Text(value = "Only files")
+
+    // More
+    Theme[fileListGroupMoreActionTitleKey] = Text(value = "Default ($specialSymbol)")
+
+    Theme[fileListMoreSelectAllActionTitleKey] = Text(value = "Select all")
+    Theme[fileListMoreDeselectAllActionTitleKey] = Text(value = "Deselect all")
+    Theme[fileListMoreInfoActionTitleKey] = Text(value = "Info")
+    Theme[fileListMoreNavigateLeftActionTitleKey] = Text(value = "Navigate left")
+    Theme[fileListMoreNavigateRightActionTitleKey] = Text(value = "Navigate right")
 
     Theme[fileListFilesCountTitleKey] = Text(value = "Files: $specialSymbol")
     Theme[fileListDirectoriesCountTitleKey] = Text(value = "Folders: $specialSymbol")
@@ -68,6 +81,7 @@ fun initVortexTextValuesEN() {
     // Operation
     Theme[fileListGroupOperationDefaultActionTitleKey] = Text(value = "Default")
 
+    Theme[fileListOperationSwapNamesActionTitleKey] = Text(value = "Swap names")
     Theme[fileListOperationDeleteActionTitleKey] = Text(value = "Delete")
     Theme[fileListOperationRenameActionTitleKey] = Text(value = "Rename")
     Theme[fileListOperationCopyActionTitleKey] = Text(value = "Copy")

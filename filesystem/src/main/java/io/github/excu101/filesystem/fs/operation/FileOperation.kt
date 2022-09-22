@@ -9,8 +9,13 @@ abstract class FileOperation {
         get() = _observers
 
     abstract val id: Int
+
     internal suspend fun call() {
         perform()
+    }
+
+    suspend operator fun invoke() {
+        return perform()
     }
 
     protected abstract suspend fun perform()

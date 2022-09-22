@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
+import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 
 data class StorageScreenState(
@@ -16,20 +17,11 @@ data class StorageScreenState(
     val requiresPermissions: Boolean = false,
     @RequiresApi(30)
     val requiresAllFilePermission: Boolean = false,
+    @RequiresApi(33)
+    val requiresNotificationPermission: Boolean = false,
 ) {
 
     companion object {
-        fun content(data: List<Item<*>>) = StorageScreenState(
-            data = data,
-            isLoading = false,
-            loadingTitle = null,
-            isWarning = false,
-            warningIcon = null,
-            warningMessage = null,
-            requiresAllFilePermission = false,
-            requiresPermissions = false
-        )
-
         fun loading(title: String? = null) = StorageScreenState(
             data = listOf(),
             isLoading = true,
@@ -38,10 +30,24 @@ data class StorageScreenState(
             warningIcon = null,
             warningMessage = null,
             requiresAllFilePermission = false,
-            requiresPermissions = false
+            requiresPermissions = false,
+            requiresNotificationPermission = false
         )
     }
 
+}
+
+data class StorageScreenContentState(
+    val content: List<PathItem> = listOf(),
+    val selected: List<PathItem> = listOf(),
+    val currentSelectedTrail: Int = 0,
+    val trail: List<PathItem> = listOf(),
+) {
+    val isItemTrailFirst
+        get() = currentSelectedTrail == 0
+
+    val isItemTrailLast
+        get() = currentSelectedTrail == trail.lastIndex
 }
 
 data class StorageScreenSideEffect(

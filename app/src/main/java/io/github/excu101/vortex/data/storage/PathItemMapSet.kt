@@ -33,6 +33,10 @@ class MutablePathItemMapSet : PathItemMapSet() {
         return mapper.remove(extractor(element)) != null
     }
 
+    fun removeAll(elements: Iterable<PathItem>) {
+        elements.forEach(::remove)
+    }
+
     fun clear() {
         mapper.clear()
     }

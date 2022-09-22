@@ -36,6 +36,9 @@ object Deps {
         const val ViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycleVer}"
         const val SavedStateViewModel =
             "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.lifecycleVer}"
+
+        const val Service = "androidx.lifecycle:lifecycle-service:${Versions.lifecycleVer}"
+        const val Process = "androidx.lifecycle:lifecycle-process:${Versions.lifecycleVer}"
     }
 
     object Application {

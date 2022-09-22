@@ -305,7 +305,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
                 widthPosition,
                 8.dp + titleView.lineHeight,
                 widthPosition + subtitleView.measuredWidth,
-                8.dp + titleView.lineHeight + subtitleView.lineHeight
+                8.dp + titleView.lineHeight + subtitleView.lineHeight + 3.dp
             )
         }
 

@@ -31,10 +31,6 @@ object EmptyFileSystemProvider : FileSystemProvider() {
     override val scheme: String
         get() = ""
 
-    override fun createDirectory(path: Path, mode: Int) {
-
-    }
-
     override fun getFileStore(path: Path): FileStore {
         TODO("Not yet implemented")
     }

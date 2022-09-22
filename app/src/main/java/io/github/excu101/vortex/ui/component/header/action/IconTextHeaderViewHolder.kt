@@ -1,16 +1,17 @@
 package io.github.excu101.vortex.ui.component.header.action
 
 import android.view.View
-import io.github.excu101.vortex.data.header.ActionHeaderItem
+import io.github.excu101.vortex.data.header.IconTextHeaderItem
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 
-class ActionHeaderViewHolder(
-    private val root: ActionHeaderView,
-) : ViewHolder<ActionHeaderItem>(root) {
+class IconTextHeaderViewHolder(
+    private val root: IconTextHeaderView,
+) : ViewHolder<IconTextHeaderItem>(root) {
 
-    override fun bind(item: ActionHeaderItem) {
-        root.icon = item.value.icon
-        root.title = item.value.title
+    override fun bind(item: IconTextHeaderItem) = with(root) {
+        onChanged()
+        icon = item.value.icon
+        title = item.value.title
     }
 
     override fun bindListener(listener: View.OnClickListener) = with(root) {

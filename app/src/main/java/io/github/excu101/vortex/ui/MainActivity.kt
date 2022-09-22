@@ -20,11 +20,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.fragment.app.FragmentContainerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.pluginsystem.ui.theme.*
-import io.github.excu101.vortex.IVortexService
 import io.github.excu101.vortex.R
+import io.github.excu101.vortex.VortexServiceApi
+import io.github.excu101.vortex.base.FragmentNavigator
+import io.github.excu101.vortex.base.impl.ActivityFragmentNavigator
 import io.github.excu101.vortex.base.utils.snackIt
 import io.github.excu101.vortex.ui.component.action.ActionDialog
 import io.github.excu101.vortex.ui.component.bar.Bar
@@ -48,9 +49,12 @@ class MainActivity : AppCompatActivity(),
     ThemeColorChangeListener {
 
     private var root: CoordinatorLayout? = null
-    private var navigator: FragmentContainerView? = null
+    private var navigator: FragmentNavigator? = ActivityFragmentNavigator(
+        activity = this,
+        containerId = rootId
+    )
 
-    var service: IVortexService? = null
+    var service: VortexServiceApi? = null
         private set
     var isServiceBounded = false
         private set
@@ -100,12 +104,9 @@ class MainActivity : AppCompatActivity(),
             )
             insets
         }
-        supportFragmentManager.beginTransaction()
-            .replace(
-                rootId,
-                StorageListFragment(),
-                storageListTag
-            ).commit()
+
+        navigator?.navigateTo(StorageListFragment(), storageListTag)
+
         setContentView(root)
     }
 

@@ -4,14 +4,14 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import io.github.excu101.pluginsystem.model.Action
-import io.github.excu101.vortex.ui.component.ItemViewTypes.ACTION_HEADER
+import io.github.excu101.vortex.ui.component.ItemViewTypes.ICON_TEXT_HEADER
+import io.github.excu101.vortex.ui.component.header.action.IconTextHeaderView
+import io.github.excu101.vortex.ui.component.header.action.IconTextHeaderViewHolder
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.ui.component.header.action.ActionHeaderView
-import io.github.excu101.vortex.ui.component.header.action.ActionHeaderViewHolder
 
-data class ActionHeaderItem(
+data class IconTextHeaderItem(
     override val value: Action,
 ) : Item<Action> {
 
@@ -21,15 +21,15 @@ data class ActionHeaderItem(
         get() = hashCode().toLong()
 
     override val type: Int
-        get() = ACTION_HEADER
+        get() = ICON_TEXT_HEADER
 
-    companion object : ViewHolderFactory<ActionHeaderItem> {
+    companion object : ViewHolderFactory<IconTextHeaderItem> {
         override fun produceView(parent: ViewGroup): View {
-            return ActionHeaderView(parent.context)
+            return IconTextHeaderView(parent.context)
         }
 
-        override fun produceViewHolder(child: View): ViewHolder<ActionHeaderItem> {
-            return ActionHeaderViewHolder(child as ActionHeaderView)
+        override fun produceViewHolder(child: View): ViewHolder<IconTextHeaderItem> {
+            return IconTextHeaderViewHolder(child as IconTextHeaderView)
         }
     }
 

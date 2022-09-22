@@ -16,6 +16,11 @@ annotation class RegistersMarker
 @RegistersMarker
 class Registers(val plugin: Plugin) {
 
+    fun register(operation: KClass<out FileOperation>) {
+        Managers.Operation.register(plugin, operation)
+    }
+
+
     inner class GroupRegister(
         var name: String,
         var icon: Drawable? = null,
@@ -55,10 +60,6 @@ class Registers(val plugin: Plugin) {
         fun register(action: Action, operation: KClass<out FileOperation>) {
             register(operation)
             register(action)
-        }
-
-        fun register(operation: KClass<out FileOperation>) {
-            Managers.Operation.register(plugin, operation)
         }
 
         fun register(action: Action) {

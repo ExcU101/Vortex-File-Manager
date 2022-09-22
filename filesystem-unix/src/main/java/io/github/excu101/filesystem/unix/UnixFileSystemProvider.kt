@@ -57,17 +57,6 @@ class UnixFileSystemProvider : FileSystemProvider() {
         return source.getName().bytes[0] == '.'.code.toByte()
     }
 
-    override fun createDirectory(path: Path, mode: Int) {
-        try {
-            UnixCalls.mkdir(
-                path = path.bytes,
-                mode = mode
-            )
-        } catch (exception: SystemCallException) {
-            notify(exception)
-        }
-    }
-
     override fun newDirectorySteam(path: Path): DirectoryStream<Path> = try {
         UnixDirectoryStream(
             dir = path as UnixPath, UnixCalls.openDir(path.bytes),

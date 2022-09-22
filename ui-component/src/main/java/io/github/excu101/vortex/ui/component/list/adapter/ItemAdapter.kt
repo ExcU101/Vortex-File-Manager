@@ -132,6 +132,14 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
         notifyItemInserted(position)
     }
 
+    fun add(type: Int, factory: ViewHolderFactory<T>) {
+        factories[type] = factory
+    }
+
+    fun removeFactory(type: Int) {
+        factories.remove(type)
+    }
+
     override fun remove(item: T) = remove(position(item))
 
     override fun remove(position: Int) {

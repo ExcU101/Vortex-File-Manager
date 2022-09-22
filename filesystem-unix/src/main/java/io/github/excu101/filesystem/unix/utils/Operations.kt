@@ -8,12 +8,15 @@ import io.github.excu101.filesystem.unix.operation.UnixCreateDirectoryOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateFileOperation
 import io.github.excu101.filesystem.unix.operation.UnixDeleteOperation
 import io.github.excu101.filesystem.unix.operation.UnixRenameOperation
+import kotlin.reflect.KClass
 
 fun unixDelete(
     data: Collection<Path>,
 ): FileOperation = UnixDeleteOperation(
     data
 )
+
+fun unixDeleteClass(): KClass<out FileOperation> = UnixDeleteOperation::class
 
 fun unixRename(
     source: Path,

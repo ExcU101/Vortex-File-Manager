@@ -2,9 +2,12 @@ package io.github.excu101.vortex.ui.component.theme.key
 
 const val specialSymbol = "%s"
 
-const val fileListSearchActionTitleKey = " fileListSearchActionTitle"
-const val fileListMoreActionTitleKey = " fileListMoreActionTitle"
-const val fileListSortActionTitleKey = " fileListSortActionTitle"
+const val fileListNavigatingTitleKey = "fileListNavigatingTitle"
+const val fileListWarningEmptyTitleKey = "fileListWarningEmptyTitle"
+
+const val fileListSearchActionTitleKey = "fileListSearchActionTitle"
+const val fileListMoreActionTitleKey = "fileListMoreActionTitle"
+const val fileListSortActionTitleKey = "fileListSortActionTitle"
 
 // Trail
 const val fileListTrailCopyPathActionTitleKey = "fileListTrailCopyPathActionTitle"
@@ -12,7 +15,7 @@ const val fileListTrailCopyPathActionTitleKey = "fileListTrailCopyPathActionTitl
 // Group
 const val fileListGroupViewActionTitleKey = "fileListGroupViewActionTitle"
 const val fileListGroupSortActionTitleKey = "fileListGroupSortActionTitle"
-const val fileListGroupFilterActionTitleKey = "fileListGroupSortActionTitle"
+const val fileListGroupFilterActionTitleKey = "fileListGroupFilterActionTitle"
 
 // View
 const val fileListViewColumnActionTitleKey = "fileListViewColumnActionTitle"
@@ -20,6 +23,7 @@ const val fileListViewGridActionTitleKey = "fileListViewGridActionTitle"
 
 // Sort
 const val fileListSortNameActionTitleKey = "fileListSortNameActionTitle"
+const val fileListSortPathActionTitleKey = "fileListSortPathActionTitle"
 const val fileListSortSizeActionTitleKey = "fileListSortSizeActionTitle"
 const val fileListSortLastModifiedTimeActionTitleKey = "fileListSortLastModifiedTimeActionTitle"
 const val fileListSortLastAccessTimeActionTitleKey = "fileListSortLastAccessTimeActionTitle"
@@ -28,6 +32,15 @@ const val fileListSortCreationTimeActionTitleKey = "fileListSortCreationTimeActi
 // Filter
 const val fileListFilterOnlyFilesActionTitleKey = "fileListFilterOnlyFilesActionTitle"
 const val fileListFilterOnlyFoldersActionTitleKey = "fileListFilterOnlyFoldersActionTitle"
+
+// More
+const val fileListGroupMoreActionTitleKey = "fileListGroupMoreActionTitle"
+
+const val fileListMoreSelectAllActionTitleKey = "fileListMoreSelectAllActionTitle"
+const val fileListMoreDeselectAllActionTitleKey = "fileListMoreDeselectAllActionTitle"
+const val fileListMoreInfoActionTitleKey = "fileListMoreInfoActionTitle"
+const val fileListMoreNavigateLeftActionTitleKey = "fileListMoreNavigateLeftActionTitle"
+const val fileListMoreNavigateRightActionTitleKey = "fileListMoreNavigateRightActionTitle"
 
 // List
 const val fileListFilesCountTitleKey = "fileListFilesCountTitle"
@@ -68,10 +81,11 @@ const val fileListItemEmptyKey = "fileListItemEmpty"
 // Operation
 const val fileListGroupOperationDefaultActionTitleKey = "fileListGroupOperationDefaultActionTitle"
 
+const val fileListOperationSwapNamesActionTitleKey = "fileListOperationSwapNamesActionTitle"
 const val fileListOperationDeleteActionTitleKey = "fileListOperationDeleteActionTitle"
 const val fileListOperationRenameActionTitleKey = "fileListOperationRenameActionTitle"
 const val fileListOperationCopyActionTitleKey = "fileListOperationCopyActionTitle"
-const val fileListOperationCutActionTitleKey = "fileListOperationRenameActionTitle"
+const val fileListOperationCutActionTitleKey = "fileListOperationCutActionTitle"
 
 // Vortex Service
 const val vortexServiceConnectedKey = "vortexServiceConnected"
