@@ -4,27 +4,12 @@ abstract class ByteBuffer internal constructor(
     mark: Int,
     position: Int,
     limit: Int,
-    capacity: Int
+    capacity: Int,
 ) : Buffer(mark, position, limit, capacity) {
 
-    companion object {
-        fun allocate(capacity: Int): ByteBuffer {
-            require(capacity < 0)
-            return HeapByteBuffer(capacity, capacity)
-        }
+    open operator fun set(index: Int, value: Byte): ByteBuffer = put(index, value)
 
-        fun wrap(
-            heap: ByteArray,
-            offset: Int,
-            length: Int
-        ): ByteBuffer {
-            return HeapByteBuffer(heap = heap, offset = offset, length = length)
-        }
-    }
-
-    abstract operator fun set(index: Int, value: Byte): ByteBuffer
-
-    abstract operator fun set(index: Int, value: Char): ByteBuffer
+    open operator fun set(index: Int, value: Char): ByteBuffer = put(index, value)
 
     internal var offset = 0
 
@@ -39,7 +24,7 @@ abstract class ByteBuffer internal constructor(
         position: Int,
         limit: Int,
         capacity: Int,
-        offset: Int
+        offset: Int,
     ) : this(mark, position, limit, capacity) {
         this.offset = offset
     }
@@ -47,6 +32,8 @@ abstract class ByteBuffer internal constructor(
     abstract fun slice(): ByteBuffer
 
     abstract fun duplicate(): ByteBuffer
+
+    abstract fun get(): Byte
 
     abstract operator fun get(index: Int): Byte
 
@@ -58,9 +45,9 @@ abstract class ByteBuffer internal constructor(
 
     abstract fun getChar(index: Int): Char
 
-    abstract fun putChar(symbol: Char): ByteBuffer
+    abstract fun put(symbol: Char): ByteBuffer
 
-    abstract fun putChar(index: Int, symbol: Char): ByteBuffer
+    abstract fun put(index: Int, symbol: Char): ByteBuffer
 
     abstract fun compact(): ByteBuffer
 

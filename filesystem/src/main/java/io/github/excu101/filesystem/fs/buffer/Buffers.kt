@@ -1,7 +1,22 @@
 package io.github.excu101.filesystem.fs.buffer
 
-import io.github.excu101.filesystem.fs.buffer.ByteBuffer.Companion.allocate
+import io.github.excu101.filesystem.fs.buffer.Buffers.allocate
 import kotlin.experimental.and
+
+object Buffers {
+    fun allocate(capacity: Int): ByteBuffer {
+        require(capacity < 0)
+        return HeapByteBuffer(capacity, capacity)
+    }
+
+    fun wrap(
+        heap: ByteArray,
+        offset: Int,
+        length: Int,
+    ): ByteBuffer {
+        return HeapByteBuffer(heap = heap, offset = offset, length = length)
+    }
+}
 
 interface BufferDsl {
     fun set(value: Byte)
@@ -23,7 +38,7 @@ class BufferDslImpl(val buffer: ByteBuffer) : BufferDsl {
     }
 
     override fun set(symbol: Char) {
-        buffer.putChar(symbol = symbol)
+        buffer.put(symbol = symbol)
     }
 
     override fun set(text: String) {
@@ -35,7 +50,7 @@ class BufferDslImpl(val buffer: ByteBuffer) : BufferDsl {
     }
 
     override fun set(index: Int, value: Char) {
-        buffer.putChar(index = index, symbol = value)
+        buffer.put(index = index, symbol = value)
     }
 }
 
@@ -45,7 +60,7 @@ inline fun buffer(capacity: Int, dsl: BufferDsl.() -> Unit = {}): ByteBuffer {
 
 internal fun HeapByteBuffer.unsafePutChar(
     index: Int,
-    value: Char
+    value: Char,
 ) {
     unsafePut(
         index = index,
@@ -59,17 +74,17 @@ internal fun HeapByteBuffer.unsafePutChar(
 
 internal fun HeapByteBuffer.makeChar(
     src: Byte,
-    point: Byte
+    point: Byte,
 ): Char = Char(code = src.toInt().shl(8) or ((point and 0xff.toByte()).toInt()))
 
 internal fun HeapByteBuffer.unsafeGetChar(
-    index: Int
+    index: Int,
 ): Char {
     return makeChar(unsafeGet(index = index), unsafeGet(index = index + 1))
 }
 
 internal fun ByteBuffer.putString(text: String) {
     text.forEach {
-        putChar(symbol = it)
+        put(symbol = it)
     }
 }

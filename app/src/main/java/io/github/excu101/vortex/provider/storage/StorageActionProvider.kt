@@ -7,10 +7,10 @@ import io.github.excu101.pluginsystem.ui.theme.ThemeText
 import io.github.excu101.pluginsystem.utils.groupItem
 import io.github.excu101.pluginsystem.utils.item
 import io.github.excu101.vortex.R
-import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.provider.ActionProvider
 import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.screen.list.StorageScreenContentState
 import javax.inject.Inject
 
 class StorageActionProvider @Inject constructor(
@@ -18,48 +18,49 @@ class StorageActionProvider @Inject constructor(
 ) : ActionProvider() {
 
     private fun action(title: String, @DrawableRes icon: Int): Action {
-        return Action(title = title, icon = resources.getDrawable(icon))
+        return Action(title = title, icon = resources[icon])
     }
 
     fun trailActions(): List<GroupAction> = buildList {
         groupItem(title = "Default") {
             item {
                 title = ThemeText(fileListTrailCopyPathActionTitleKey)
-                icon = resources.getDrawable(R.drawable.ic_copy_24)
+                icon = resources[R.drawable.ic_copy_24]
             }
             item {
                 title = ThemeText(fileListOperationDeleteActionTitleKey)
-                icon = resources.getDrawable(R.drawable.ic_delete_24)
+                icon = resources[R.drawable.ic_delete_24]
             }
         }
     }
 
     fun onItems(
-        items: Collection<PathItem>,
+        state: StorageScreenContentState,
     ): List<GroupAction> = buildList {
         groupItem(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
-            if (items.size == 1) {
+            if (state.selectedCount == 1) {
                 item {
                     title = ThemeText(fileListOperationRenameActionTitleKey)
-                    icon = resources.getDrawable(R.drawable.ic_edit_24)
+                    icon = resources[R.drawable.ic_edit_24]
                 }
             }
-            if (items.size == 2) {
+            if (state.selectedCount == 2) {
                 item {
                     title = ThemeText(fileListOperationSwapNamesActionTitleKey)
+                    icon = resources[R.drawable.ic_swap_24]
                 }
             }
             item {
                 title = ThemeText(fileListOperationCopyActionTitleKey)
-                icon = resources.getDrawable(R.drawable.ic_copy_24)
+                icon = resources[R.drawable.ic_copy_24]
             }
             item {
                 title = ThemeText(fileListOperationCutActionTitleKey)
-                icon = resources.getDrawable(R.drawable.ic_cut_24)
+                icon = resources[R.drawable.ic_cut_24]
             }
             item {
                 title = ThemeText(fileListOperationDeleteActionTitleKey)
-                icon = resources.getDrawable(R.drawable.ic_delete_24)
+                icon = resources[R.drawable.ic_delete_24]
             }
         }
     }
@@ -69,7 +70,7 @@ class StorageActionProvider @Inject constructor(
             groupItem(title = ThemeText(fileListGroupViewActionTitleKey)) {
                 item {
                     title = ThemeText(fileListViewColumnActionTitleKey)
-                    icon = resources.getDrawable(R.drawable.ic_view_column_24)
+                    icon = resources[R.drawable.ic_view_column_24]
                 }
             }
             groupItem(title = ThemeText(fileListGroupSortActionTitleKey)) {
@@ -95,38 +96,36 @@ class StorageActionProvider @Inject constructor(
             groupItem(title = ThemeText(fileListGroupFilterActionTitleKey)) {
                 item {
                     title = ThemeText(fileListFilterOnlyFoldersActionTitleKey)
-                    icon = resources.getDrawable(R.drawable.ic_folder_24)
+                    icon = resources[R.drawable.ic_folder_24]
                 }
                 item {
                     title = ThemeText(fileListFilterOnlyFilesActionTitleKey)
-                    icon = resources.getDrawable(R.drawable.ic_file_24)
+                    icon = resources[R.drawable.ic_file_24]
                 }
             }
         }
     }
 
     fun moreActions(
-        current: PathItem,
-        content: Collection<PathItem>,
-        selected: Collection<PathItem>,
-        isItemTrailFirst: Boolean = false,
-        isItemTrailLast: Boolean = false,
+        state: StorageScreenContentState,
     ): List<GroupAction> {
         return buildList {
             groupItem(title = "Default") {
-                if (selected.isEmpty()) {
-                    item {
-                        title = ThemeText(fileListMoreSelectAllActionTitleKey)
-                        icon = resources.getDrawable(R.drawable.ic_select_all_24)
+                if (!state.isEmpty) {
+                    if (state.isSelectedEmpty) {
+                        item {
+                            title = ThemeText(fileListMoreSelectAllActionTitleKey)
+                            icon = resources[R.drawable.ic_select_all_24]
+                        }
+                    }
+                    if (state.selected.containsAll(state.content)) {
+                        item {
+                            title = ThemeText(fileListMoreDeselectAllActionTitleKey)
+                            icon = resources[R.drawable.ic_deselect_all_24]
+                        }
                     }
                 }
-                if (selected.containsAll(content)) {
-                    item {
-                        title = ThemeText(fileListMoreDeselectAllActionTitleKey)
-                        icon = resources.getDrawable(R.drawable.ic_deselect_all_24)
-                    }
-                }
-                if (selected.isNotEmpty()) {
+                if (!state.isSelectedEmpty && !state.isSelectedContainsContent) {
                     item {
                         title = "Select other"
                     }
@@ -134,20 +133,20 @@ class StorageActionProvider @Inject constructor(
                         title = "Deselect selected"
                     }
                 }
-                if (!isItemTrailFirst)
+                if (!state.isItemTrailFirst)
                     item {
                         title = ThemeText(fileListMoreNavigateLeftActionTitleKey)
-                        icon = resources.getDrawable(R.drawable.ic_arrow_left_24)
+                        icon = resources[R.drawable.ic_arrow_left_24]
                     }
-                if (!isItemTrailLast) {
+                if (!state.isItemTrailLast) {
                     item {
                         title = ThemeText(fileListMoreNavigateRightActionTitleKey)
-                        icon = resources.getDrawable(R.drawable.ic_arrow_right_24)
+                        icon = resources[R.drawable.ic_arrow_right_24]
                     }
                 }
                 item {
                     title = ThemeText(fileListMoreInfoActionTitleKey)
-                    icon = resources.getDrawable(R.drawable.ic_info_24)
+                    icon = resources[R.drawable.ic_info_24]
                 }
             }
         }
@@ -161,12 +160,18 @@ class StorageActionProvider @Inject constructor(
         )
     }
 
-    override fun defaultDrawerGroups(): List<GroupAction> {
+    override fun defaultDrawerGroups(
+        isDark: Boolean,
+    ): List<GroupAction> {
         return buildList {
             groupItem(title = "Default actions") {
                 item {
                     title = "Switch theme"
-                    icon = resources.getDrawable(R.drawable.ic_dark_mode_24)
+                    icon = if (isDark) {
+                        resources[R.drawable.ic_light_mode_24]
+                    } else {
+                        resources[R.drawable.ic_dark_mode_24]
+                    }
                 }
             }
         }

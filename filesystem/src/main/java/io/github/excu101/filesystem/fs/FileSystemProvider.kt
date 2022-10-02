@@ -5,6 +5,7 @@ import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.Option
 import io.github.excu101.filesystem.fs.channel.Channel
 import io.github.excu101.filesystem.fs.channel.FileChannel
+import io.github.excu101.filesystem.fs.channel.ReactiveFileChannel
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.FileOperationObserver
 import io.github.excu101.filesystem.fs.path.Path
@@ -30,6 +31,12 @@ abstract class FileSystemProvider {
     abstract fun newByteChannel(path: Path, flags: Set<Option>, mode: Int): Channel
 
     abstract fun newDirectorySteam(path: Path): DirectoryStream<Path>
+
+    abstract fun newReactiveFileChannel(
+        path: Path,
+        flags: Set<Option> = setOf(),
+        mode: Int,
+    ): ReactiveFileChannel
 
     abstract fun isHidden(source: Path): Boolean
 

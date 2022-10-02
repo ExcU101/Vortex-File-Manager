@@ -9,6 +9,6 @@ abstract class ActionProvider {
     abstract fun defaultBarActions(): List<Action>
 
     // Drawer actions
-    abstract fun defaultDrawerGroups(): List<GroupAction>
+    abstract fun defaultDrawerGroups(isDark: Boolean): List<GroupAction>
 
 }

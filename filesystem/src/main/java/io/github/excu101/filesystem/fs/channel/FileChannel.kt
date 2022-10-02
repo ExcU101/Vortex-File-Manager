@@ -14,9 +14,9 @@ abstract class FileChannel protected constructor() : AbstractChannel() {
 
     abstract val size: Long
 
-    abstract val position: Int
+    abstract val position: Long
 
-    abstract fun newPosition(position: Int): FileChannel
+    abstract fun newPosition(position: Long): FileChannel
 
     abstract fun truncate(size: Long): FileChannel
 

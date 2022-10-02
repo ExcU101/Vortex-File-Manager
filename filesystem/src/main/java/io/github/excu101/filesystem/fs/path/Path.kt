@@ -22,15 +22,15 @@ interface Path : Comparable<Path> {
 
     val system: FileSystem
 
-    fun startsWith(other: Path): Boolean
+    infix fun startsWith(other: Path): Boolean
 
-    fun endsWith(other: Path): Boolean
+    infix fun endsWith(other: Path): Boolean
 
-    fun resolve(other: Path): Path
+    infix fun resolve(other: Path): Path
 
     fun normalize(): Path
 
-    fun relativize(other: Path): Path
+    infix fun relativize(other: Path): Path
 
     fun sub(from: Int, to: Int): Path
 

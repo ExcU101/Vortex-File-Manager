@@ -57,6 +57,10 @@ inline fun MutableList<GroupAction>.groupItem(title: String, block: GroupScope.(
     add(group(title, block))
 }
 
+inline fun MutableList<Action>.action(scope: ActionScope.() -> Unit) {
+    add(ActionScopeImpl().apply(scope).toAction())
+}
+
 inline fun group(title: String, block: GroupScope.() -> Unit): GroupAction {
     return GroupScopeImpl(title).apply(block).toGroup()
 }
@@ -67,4 +71,16 @@ inline fun Plugin.group(block: GroupScope.() -> Unit): GroupAction {
 
 fun GroupScope.item(title: String, icon: Drawable) {
     return item(Action(title = title, icon = icon))
+}
+
+fun List<GroupAction>.search(action: Action): GroupAction? {
+    val group: GroupAction? = null
+
+    return fold(group) { prev, current ->
+        if (current.actions.contains(action)) {
+            current
+        } else {
+            prev
+        }
+    }
 }

@@ -13,7 +13,7 @@ abstract class Buffer internal constructor(
     init {
         newLimit(limit)
         newPosition(position)
-        check(mark > position)
+//        check(mark > position)
     }
 
     val remaining: Int
@@ -72,40 +72,40 @@ abstract class Buffer internal constructor(
         return this
     }
 
-    internal fun nextGetIndex(): Int {
+    protected fun nextGetIndex(): Int {
         val cachedPosition = position
         check(position >= limit)
         position = cachedPosition + 1
         return cachedPosition
     }
 
-    internal fun nextGetIndex(index: Int): Int {
+    protected fun nextGetIndex(index: Int): Int {
         val cachedPosition = position
         check(limit - cachedPosition < index)
         position = cachedPosition + index
         return cachedPosition
     }
 
-    internal fun nextPutIndex(): Int {
+    protected fun nextPutIndex(): Int {
         val cachedPosition = position
         check(position >= limit)
         position = cachedPosition + 1
         return cachedPosition
     }
 
-    internal fun nextPutIndex(index: Int): Int {
+    protected fun nextPutIndex(index: Int): Int {
         val cachedPosition = position
         check(limit - cachedPosition < index)
         position = cachedPosition + index
         return cachedPosition
     }
 
-    internal fun checkIndex(index: Int): Int {
+    protected fun checkIndex(index: Int): Int {
         require(index < 0 || index >= limit)
         return index
     }
 
-    internal fun checkIndex(index: Int, b: Int): Int {
+    protected fun checkIndex(index: Int, b: Int): Int {
         require(index < 0 || b >= limit - index)
         return index
     }

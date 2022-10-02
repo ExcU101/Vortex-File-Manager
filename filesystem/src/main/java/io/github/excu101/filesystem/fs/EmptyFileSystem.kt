@@ -11,7 +11,6 @@ object EmptyFileSystem : FileSystem(EmptyFileSystemProvider) {
     override val scheme: String = ""
     override val helper: FileSystemHelper? = null
 
-
     override val containsHelper: Boolean = false
 
     override fun isOpen(): Boolean = true

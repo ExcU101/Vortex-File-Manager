@@ -10,4 +10,6 @@ abstract class FileSystemHelper {
 
     abstract fun getDirectoryCount(path: Path): Int
 
+    abstract fun getDirectorySize(path: Path): Long
+
 }

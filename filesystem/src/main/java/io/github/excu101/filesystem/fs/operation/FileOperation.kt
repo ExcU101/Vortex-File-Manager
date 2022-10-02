@@ -1,12 +1,17 @@
 package io.github.excu101.filesystem.fs.operation
 
+import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.fs.path.Path
 
 abstract class FileOperation {
 
     private val _observers: MutableList<FileOperationObserver> = mutableListOf()
-    private val observes: List<FileOperationObserver>
+    protected val observes: List<FileOperationObserver>
         get() = _observers
+
+    protected fun FileProvider.rerun(operation: FileOperation) {
+        runOperation(operation, observes)
+    }
 
     abstract val id: Int
 

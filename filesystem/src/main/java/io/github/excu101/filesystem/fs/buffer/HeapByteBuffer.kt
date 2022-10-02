@@ -9,7 +9,7 @@ class HeapByteBuffer : ByteBuffer {
         capacity = capacity,
         offset = 0
     ) {
-       this.heapBuffer = ByteArray(capacity)
+        this.heapBuffer = ByteArray(capacity)
     }
 
     constructor(heap: ByteArray, offset: Int, length: Int) : super(
@@ -53,7 +53,7 @@ class HeapByteBuffer : ByteBuffer {
         heapBuffer[index] = value
     }
 
-    fun get(): Byte = get(nextGetIndex())
+    override fun get(): Byte = get(nextGetIndex())
 
     override operator fun get(index: Int): Byte {
         return heapBuffer[indexWithOffset(checkIndex(index))]
@@ -74,21 +74,17 @@ class HeapByteBuffer : ByteBuffer {
         return unsafeGetChar(index = indexWithOffset(index = checkIndex(index = index, b = 2)))
     }
 
-    override fun putChar(symbol: Char): ByteBuffer {
+    override fun put(symbol: Char): ByteBuffer {
         val index = indexWithOffset(nextPutIndex(index = 2))
         unsafePutChar(index, symbol)
         return this
     }
 
-    override fun putChar(index: Int, symbol: Char): ByteBuffer {
+    override fun put(index: Int, symbol: Char): ByteBuffer {
         val checkedIndex = indexWithOffset(checkIndex(index = index, b = 2))
         unsafePutChar(checkedIndex, symbol)
         return this
     }
-
-    override fun set(index: Int, value: Byte): ByteBuffer = put(index = index, value = value)
-
-    override fun set(index: Int, value: Char): ByteBuffer = putChar(index = index, symbol = value)
 
     override fun slice(): ByteBuffer {
         val cachedPosition = position

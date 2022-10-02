@@ -4,7 +4,6 @@ import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.attr.UnixDirentStructure
 import io.github.excu101.filesystem.unix.attr.UnixStatusStructure
 import io.github.excu101.filesystem.unix.attr.UnixStructureFileSystemStatus
-import io.github.excu101.filesystem.unix.error.UnixException
 import java.io.FileDescriptor
 
 internal object UnixCalls {
@@ -13,11 +12,44 @@ internal object UnixCalls {
         System.loadLibrary("unix-calls")
     }
 
+    internal fun allocate(size: Long) = allocateImpl(size)
+
+    private external fun allocateImpl(size: Long): Long
+
+    fun truncate(path: ByteArray, length: Long) = truncateImpl(path, length)
+
+    fun truncate(descriptor: Int, offset: Long) = truncateImpl(descriptor, offset)
+
+    private external fun truncateImpl(path: ByteArray, length: Long): Int
+
+    private external fun truncateImpl(descriptor: Int, offset: Long): Int
+
     external fun rename(source: ByteArray, dest: ByteArray)
 
-    external fun stat(path: ByteArray): UnixStatusStructure
+    internal fun stat(
+        path: ByteArray,
+        isLink: Boolean,
+    ): UnixStatusStructure = if (isLink) {
+        lstatImpl(path)
+    } else {
+        statImpl(path)
+    }
 
-    external fun lstat(path: ByteArray): UnixStatusStructure
+    private external fun statImpl(path: ByteArray): UnixStatusStructure
+
+    private external fun lstatImpl(path: ByteArray): UnixStatusStructure
+
+    internal fun fstat(descriptor: Int): UnixStatusStructure = fstatImpl(descriptor)
+
+    private external fun fstatImpl(descriptor: Int): UnixStatusStructure
+
+    internal fun lseek(
+        descriptor: Int,
+        offset: Long,
+        whence: Int,
+    ): Long = lseekImpl(descriptor, offset, whence)
+
+    private external fun lseekImpl(descriptor: Int, offset: Long, whence: Int): Long
 
     external fun removeDirectory(path: ByteArray)
 
@@ -29,13 +61,19 @@ internal object UnixCalls {
 
     external fun mkdir(path: ByteArray, mode: Int)
 
-    external fun readDir(pointer: Long): UnixDirentStructure?
+    internal fun readDir(pointer: Long) = readDirImpl(pointer)
 
-    external fun close(descriptor: Int)
+    private external fun readDirImpl(pointer: Long): UnixDirentStructure?
+
+    internal fun close(descriptor: Int) = closeImpl(descriptor)
+
+    private external fun closeImpl(descriptor: Int): Boolean
 
     external fun closeDir(pointer: Long)
 
     external fun statVfs(path: ByteArray): UnixStructureFileSystemStatus
+
+    // Helper
 
     internal fun getCount(path: Path): Int = getCountImpl(path.bytes)
 
@@ -48,5 +86,15 @@ internal object UnixCalls {
     fun getFileCount(path: Path): Int = getFileCountImpl(path.bytes)
 
     private external fun getFileCountImpl(path: ByteArray): Int
+
+    internal fun getDirectorySize(path: Path): Long = getDirectorySizeImpl(path.bytes)
+
+    private external fun getDirectorySizeImpl(path: ByteArray): Long
+
+    internal fun getIndexDescriptor(descriptor: FileDescriptor): Int {
+        return getDescriptorImpl(descriptor)
+    }
+
+    private external fun getDescriptorImpl(descriptor: FileDescriptor): Int
 
 }

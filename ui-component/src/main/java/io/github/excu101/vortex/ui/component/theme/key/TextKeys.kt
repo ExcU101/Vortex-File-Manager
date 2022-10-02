@@ -3,8 +3,27 @@ package io.github.excu101.vortex.ui.component.theme.key
 const val specialSymbol = "%s"
 
 const val fileListNavigatingTitleKey = "fileListNavigatingTitle"
+
+// Warning
 const val fileListWarningEmptyTitleKey = "fileListWarningEmptyTitle"
 
+// Warning : Permission
+const val fileListWarningFullStorageAccessTitleKey =
+    "fileListWarningFullStorageAccessTitle"
+const val fileListWarningStorageAccessTitleKey =
+    "fileListWarningStorageAccessTitle"
+const val fileListWarningNotificationAccessTitleKey =
+    "fileListWarningNotificationAccessTitle"
+
+// Warning : Action
+const val fileListWarningFullStorageAccessActionTitleKey =
+    "fileListWarningFullStorageAccessActionTitle"
+const val fileListWarningStorageAccessActionTitleKey =
+    "fileListWarningStorageAccessActionTitle"
+const val fileListWarningNotificationAccessActionTitleKey =
+    "fileListWarningNotificationAccessActionTitle"
+
+// Bar
 const val fileListSearchActionTitleKey = "fileListSearchActionTitle"
 const val fileListMoreActionTitleKey = "fileListMoreActionTitle"
 const val fileListSortActionTitleKey = "fileListSortActionTitle"
@@ -86,6 +105,7 @@ const val fileListOperationDeleteActionTitleKey = "fileListOperationDeleteAction
 const val fileListOperationRenameActionTitleKey = "fileListOperationRenameActionTitle"
 const val fileListOperationCopyActionTitleKey = "fileListOperationCopyActionTitle"
 const val fileListOperationCutActionTitleKey = "fileListOperationCutActionTitle"
+const val fileListOperationAddActionNewTitleKey = "fileListOperationAddNewActionTitle"
 
 // Vortex Service
 const val vortexServiceConnectedKey = "vortexServiceConnected"

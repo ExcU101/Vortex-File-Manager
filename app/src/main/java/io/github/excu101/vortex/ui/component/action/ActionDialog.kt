@@ -12,24 +12,18 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.builder
+import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.vortex.data.header.IconTextHeaderItem
-import io.github.excu101.vortex.data.header.TextHeaderItem
-import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.Item
-import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
-import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.menu.ActionListener
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerSurfaceColorKey
 
 class ActionDialog(context: Context) : BottomSheetDialog(context) {
 
     private val listeners = mutableListOf<ActionListener>()
-    private val adapter = ItemAdapter(
-        ItemViewTypes.TEXT_HEADER to (TextHeaderItem as ViewHolderFactory<Item<*>>),
-        ItemViewTypes.ICON_TEXT_HEADER to (IconTextHeaderItem as ViewHolderFactory<Item<*>>)
-    )
+    private val adapter = ActionAdapter()
     private val background = MaterialShapeDrawable(
         builder()
             .setTopRightCorner(ROUNDED, 16F)
@@ -63,6 +57,10 @@ class ActionDialog(context: Context) : BottomSheetDialog(context) {
 
     fun registerListener(listener: ActionListener) {
         listeners.add(listener)
+    }
+
+    fun setSelected(actions: List<Action>) {
+        adapter.replaceSelected(actions)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

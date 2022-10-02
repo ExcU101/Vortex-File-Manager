@@ -1,6 +1,5 @@
 package io.github.excu101.vortex.ui.screen.list
 
-import android.os.Build
 import android.os.Environment
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -13,7 +12,10 @@ import io.github.excu101.filesystem.unix.utils.unixDelete
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
+import io.github.excu101.pluginsystem.ui.theme.ThemeText
+import io.github.excu101.pluginsystem.utils.action
 import io.github.excu101.vortex.R
+import io.github.excu101.vortex.R.drawable.*
 import io.github.excu101.vortex.base.impl.Sorter
 import io.github.excu101.vortex.base.impl.StorageListContentParser
 import io.github.excu101.vortex.base.impl.StorageListContentParser.Filter
@@ -28,10 +30,10 @@ import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.provider.StorageProvider
 import io.github.excu101.vortex.provider.storage.StorageActionProvider
 import io.github.excu101.vortex.ui.component.list.adapter.Item
-import io.github.excu101.vortex.ui.component.theme.key.fileListNavigatingTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningEmptyTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.specialSymbol
+import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.screen.list.StorageScreenState.Companion.loading
+import io.github.excu101.vortex.utils.isAndroidR
+import io.github.excu101.vortex.utils.isAndroidTiramisu
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -85,17 +87,24 @@ class StorageListViewModel @Inject constructor(
     private var actionItem = path
 
     private val _filter = MutableStateFlow<Filter<PathItem>>(PathItemFilters.Empty)
+    val filter: StateFlow<Filter<PathItem>>
+        get() = _filter.asStateFlow()
+
     private val _resultParser = MutableStateFlow(ResultParserImpl())
+    val resultParser: StateFlow<StorageListContentParser.ResultParser<PathItem>>
+        get() = _resultParser.asStateFlow()
+
     private val _sorter = MutableStateFlow(compareBy<PathItem> { it.name })
+    val sorter: StateFlow<Sorter<PathItem>>
+        get() = _sorter.asStateFlow()
 
     init {
         initActions()
         checkPermission()
     }
 
-    fun openDefaultDrawerActions() = intent {
-        _drawerGroups.emit(actions.defaultDrawerGroups().toMutableList())
-        delay(100L) // TODO <- REMOVE THIS!!!
+    fun openDefaultDrawerActions(isDark: Boolean) = intent {
+        _drawerGroups.emit(actions.defaultDrawerGroups(isDark).toMutableList())
         side(StorageScreenSideEffect(showDrawer = true))
     }
 
@@ -151,10 +160,7 @@ class StorageListViewModel @Inject constructor(
 
     fun sort(filter: Sorter<PathItem>) = intent {
         _sorter.emit(filter)
-        val content = parseContent(data = state.data.filterIsInstance<PathItem>())
-        state {
-            StorageScreenState(data = content)
-        }
+        current?.let { parseState(it) }
     }
 
     fun filter(filter: Filter<PathItem>) = intent {
@@ -167,7 +173,7 @@ class StorageListViewModel @Inject constructor(
 
     fun delete(items: Set<PathItem> = selected.value) = intent {
         if (items == selected.value) {
-
+            select(selected.value)
         }
         FileProvider.runOperation(unixDelete(items.map { it.value }),
             observers = listOf(
@@ -192,6 +198,12 @@ class StorageListViewModel @Inject constructor(
         )
     }
 
+    private fun addContent(items: Set<PathItem>) = intent {
+        state {
+            copy(data = data + items)
+        }
+    }
+
     private fun removeContent(items: Set<PathItem>) = intent {
         state {
             copy(data = data - items)
@@ -200,7 +212,7 @@ class StorageListViewModel @Inject constructor(
 
     private fun initActions() = intent {
         _drawerGroups.applyValue {
-            addAll(actions.defaultDrawerGroups())
+            addAll(actions.defaultDrawerGroups(false))
         }
         _barActions.applyValue {
             addAll(actions.defaultBarActions())
@@ -214,9 +226,40 @@ class StorageListViewModel @Inject constructor(
     fun checkPermission() = intent {
         state { loading(title = "Checking permissions") }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (isAndroidTiramisu) {
+            if (provider.requiresNotificationsAccess()) {
+                state {
+                    StorageScreenState(
+                        isWarning = true,
+                        warningMessage = ThemeText(fileListWarningNotificationAccessTitleKey),
+                        warningIcon = resources[ic_info_24],
+                        warningActions = listOf(
+                            Action(
+                                title = ThemeText(fileListWarningNotificationAccessActionTitleKey),
+                                icon = resources[ic_add_24]
+                            )
+                        )
+                    )
+                }
+                return@intent
+            }
+        }
+
+        if (isAndroidR) {
             if (provider.requiresFullStorageAccess()) {
-                state { StorageScreenState(requiresAllFilePermission = true) }
+                state {
+                    StorageScreenState(
+                        isWarning = true,
+                        warningMessage = ThemeText(fileListWarningFullStorageAccessTitleKey),
+                        warningIcon = resources[ic_info_24],
+                        warningActions = listOf(
+                            Action(
+                                title = ThemeText(fileListWarningFullStorageAccessActionTitleKey),
+                                icon = resources[ic_add_24]
+                            )
+                        )
+                    )
+                }
             } else {
                 navigateTo(path)
             }
@@ -224,7 +267,15 @@ class StorageListViewModel @Inject constructor(
             if (provider.requiresPermissions()) {
                 state {
                     StorageScreenState(
-                        requiresPermissions = true
+                        isWarning = true,
+                        warningMessage = ThemeText(fileListWarningStorageAccessTitleKey),
+                        warningIcon = resources[ic_info_24],
+                        warningActions = listOf(
+                            Action(
+                                title = ThemeText(fileListWarningStorageAccessActionTitleKey),
+                                icon = resources[ic_add_24]
+                            )
+                        )
                     )
                 }
             }
@@ -235,33 +286,7 @@ class StorageListViewModel @Inject constructor(
         navigator.navigateLeft()
 
         navigator.selectedItem?.let {
-            val data = try {
-                provider.provideList(it)
-            } catch (error: Throwable) {
-                state {
-                    StorageScreenState(
-                        warningMessage = error.message
-                    )
-                }
-                return@let
-            }
-
-            if (data.isEmpty()) {
-                state {
-                    StorageScreenState(
-                        isWarning = true,
-                        warningIcon = resources[R.drawable.ic_folder_24],
-                        warningMessage = "${it.name} is empty"
-                    )
-                }
-            } else {
-                val content = parseContent(data)
-                state {
-                    StorageScreenState(
-                        data = content
-                    )
-                }
-            }
+            parseState(it)
         }
     }
 
@@ -269,33 +294,7 @@ class StorageListViewModel @Inject constructor(
         navigator.navigateRight()
 
         navigator.selectedItem?.let {
-            val data = try {
-                provider.provideList(it)
-            } catch (error: Throwable) {
-                state {
-                    StorageScreenState(
-                        warningMessage = error.message
-                    )
-                }
-                return@let
-            }
-
-            if (data.isEmpty()) {
-                state {
-                    StorageScreenState(
-                        isWarning = true,
-                        warningIcon = resources[R.drawable.ic_folder_24],
-                        warningMessage = "${it.name} is empty"
-                    )
-                }
-            } else {
-                val content = parseContent(data)
-                state {
-                    StorageScreenState(
-                        data = content
-                    )
-                }
-            }
+            parseState(it)
         }
     }
 
@@ -307,7 +306,14 @@ class StorageListViewModel @Inject constructor(
     }
 
     fun openDrawerActions() = intent {
-        _drawerGroups.emit(actions.onItems(selected.value).toMutableList())
+        _drawerGroups.emit(actions.onItems(
+            StorageScreenContentState(
+                content = state.data.filterIsInstance<PathItem>(),
+                selected = selected.value.toList(),
+                currentSelectedTrail = navigator.selectedIndex.value,
+                trail = navigator.items.value
+            )
+        ).toMutableList())
         delay(100L)
         side(StorageScreenSideEffect(showDrawer = true))
     }
@@ -321,11 +327,12 @@ class StorageListViewModel @Inject constructor(
     fun openDrawerMoreActions() = intent {
         _drawerGroups.emit(
             actions.moreActions(
-                current = current!!,
-                content = state.data.filterIsInstance<PathItem>(),
-                selected = selected.value,
-                isItemTrailFirst = navigator.selectedIndex.value == 0,
-                isItemTrailLast = navigator.selectedIndex.value == navigator.size - 1
+                StorageScreenContentState(
+                    content = state.data.filterIsInstance<PathItem>(),
+                    selected = selected.value.toList(),
+                    currentSelectedTrail = navigator.selectedIndex.value,
+                    trail = navigator.items.value
+                )
             ).toMutableList()
         )
         delay(100L)
@@ -347,37 +354,8 @@ class StorageListViewModel @Inject constructor(
         if (item.isDirectory) {
             navigator.navigateTo(item)
             handle[pathItemKey] = item
-            val data = try {
-                provider.provideList(item)
-            } catch (error: Throwable) {
-                state {
-                    StorageScreenState(
-                        warningMessage = error.message
-                    )
-                }
-                return@intent
-            }
 
-            if (data.isEmpty()) {
-                state {
-                    StorageScreenState(
-                        isWarning = true,
-                        warningIcon = resources[R.drawable.ic_folder_24],
-                        warningMessage = ReplacerThemeText(
-                            key = fileListWarningEmptyTitleKey,
-                            old = specialSymbol,
-                            new = item.name
-                        )
-                    )
-                }
-            } else {
-                val content = parseContent(data)
-                state {
-                    StorageScreenState(
-                        data = content
-                    )
-                }
-            }
+            parseState(item)
         } else {
             state {
                 current
@@ -385,13 +363,66 @@ class StorageListViewModel @Inject constructor(
         }
     }
 
-    fun parseContent(data: List<PathItem>): List<Item<*>> {
+    private fun resolveErrorActions(
+        error: Throwable,
+    ) {
+
+    }
+
+    private suspend fun parseState(item: PathItem) = intent {
+        val data = try {
+            provider.provideList(item)
+        } catch (error: Throwable) {
+            state {
+                StorageScreenState(
+                    warningMessage = error.message
+                )
+            }
+            return@intent
+        }
+
+        if (data.isEmpty()) {
+            state {
+                StorageScreenState(
+                    isWarning = true,
+                    warningIcon = resources[R.drawable.ic_folder_24],
+                    warningMessage = ReplacerThemeText(
+                        key = fileListWarningEmptyTitleKey,
+                        old = specialSymbol,
+                        new = item.name
+                    ),
+                    warningActions = buildList {
+                        action {
+                            title = "Add new"
+                            icon = resources[R.drawable.ic_add_24]
+                        }
+                    }
+                )
+            }
+        } else {
+            state {
+                StorageScreenState(
+                    data = parseContent(data)
+                )
+            }
+        }
+    }
+
+    private fun parseContent(data: List<PathItem>): List<Item<*>> {
         return parser.run(
             content = data,
             sorter = _sorter.value,
             filter = _filter.value,
             parser = _resultParser.value
         )
+    }
+
+    fun dialog(type: DialogType) {
+        when (type) {
+            DialogType.CREATE -> {
+
+            }
+        }
     }
 
 }

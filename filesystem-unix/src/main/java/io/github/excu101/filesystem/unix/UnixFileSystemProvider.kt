@@ -9,10 +9,13 @@ import io.github.excu101.filesystem.fs.attr.Option
 import io.github.excu101.filesystem.fs.attr.StandardOptions
 import io.github.excu101.filesystem.fs.channel.Channel
 import io.github.excu101.filesystem.fs.channel.FileChannel
-import io.github.excu101.filesystem.fs.channel.FileChannelImpl.Companion.open
 import io.github.excu101.filesystem.fs.error.SystemCallException
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.attr.UnixAttributes
+import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
+import io.github.excu101.filesystem.fs.channel.ReactiveFileChannel
+import io.github.excu101.filesystem.unix.channel.ReactiveUnixFileChannel
+import io.github.excu101.filesystem.unix.channel.UnixFileChannel
 import io.github.excu101.filesystem.unix.path.UnixPath
 import kotlin.reflect.KClass
 
@@ -25,10 +28,29 @@ class UnixFileSystemProvider : FileSystemProvider() {
 
             EmptyAttrs::class -> EmptyAttrs as T
 
-            UnixAttributes::class -> UnixAttributes.from(path = source as UnixPath, true) as T
+            PosixAttrs::class -> UnixAttributes.from(path = source as UnixPath, true) as T
 
             else -> throw UnsupportedOperationException()
         }
+    }
+
+    override fun newReactiveFileChannel(
+        path: Path,
+        flags: Set<Option>,
+        mode: Int,
+    ): ReactiveFileChannel {
+        val readable = flags.contains(StandardOptions.READ)
+        val writable = flags.contains(StandardOptions.WRITE)
+        val appendable = flags.contains(StandardOptions.APPEND)
+
+        var cFlags = if (readable && writable) 2 else if (readable) 0 else 1
+        if (appendable) {
+            cFlags = cFlags or 0x400
+        }
+
+        return ReactiveUnixFileChannel(
+            descriptor = UnixCalls.open(path = path.bytes, flags = cFlags, mode = mode)
+        )
     }
 
     override fun newFileChannel(path: Path, flags: Set<Option>, mode: Int): FileChannel {
@@ -41,11 +63,11 @@ class UnixFileSystemProvider : FileSystemProvider() {
             cFlags = cFlags or 0x400
         }
 
-        return open(
+        return UnixFileChannel(
             descriptor = UnixCalls.open(path = path.bytes, flags = cFlags, mode = mode),
-            path = path.toString(),
-            readable = readable,
-            writable = writable
+            isReadable = readable,
+            isWriteable = writable,
+            isAppendable = appendable
         )
     }
 

@@ -6,8 +6,27 @@ import io.github.excu101.vortex.ui.component.theme.key.*
 
 fun initVortexTextValuesEN() {
     Theme[fileListNavigatingTitleKey] = Text(value = "Navigating to $specialSymbol...")
+
+    // Warning
     Theme[fileListWarningEmptyTitleKey] = Text(value = "$specialSymbol is empty")
 
+    // Warning : Permission
+    Theme[fileListWarningFullStorageAccessTitleKey] = Text(value = "App requires")
+    Theme[fileListWarningStorageAccessTitleKey] = Text(value = "App requires")
+    Theme[fileListWarningNotificationAccessTitleKey] = Text(value = "App requires")
+
+    // Warning : Action
+    Theme[fileListWarningFullStorageAccessActionTitleKey] = Text(
+        value = "Provide full storage access"
+    )
+    Theme[fileListWarningStorageAccessActionTitleKey] = Text(
+        value = "Provide storage access"
+    )
+    Theme[fileListWarningNotificationAccessActionTitleKey] = Text(
+        value = "Provide notifications access"
+    )
+
+    // Bar
     Theme[fileListSearchActionTitleKey] = Text(value = "Search")
     Theme[fileListMoreActionTitleKey] = Text(value = "More")
     Theme[fileListSortActionTitleKey] = Text(value = "Sort")
@@ -86,6 +105,7 @@ fun initVortexTextValuesEN() {
     Theme[fileListOperationRenameActionTitleKey] = Text(value = "Rename")
     Theme[fileListOperationCopyActionTitleKey] = Text(value = "Copy")
     Theme[fileListOperationCutActionTitleKey] = Text(value = "Cut")
+    Theme[fileListOperationAddActionNewTitleKey] = Text(value = "Add new")
 
     Theme[vortexServiceConnectedKey] = Text(value = "Vortex Service is connected!")
     Theme[vortexServiceDisconnectedKey] = Text(value = "Vortex Service is disconnected!")

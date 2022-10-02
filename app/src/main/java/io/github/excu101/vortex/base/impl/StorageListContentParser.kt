@@ -4,6 +4,7 @@ import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.data.storage.PathItemFilters
+import io.github.excu101.vortex.data.storage.PathItemSorters
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.theme.key.fileListDirectoriesCountSectionKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListFilesCountSectionKey
@@ -23,7 +24,9 @@ class StorageListContentParser {
 
     class ResultParserImpl : ResultParser<PathItem> {
         override fun parse(content: List<PathItem>): List<Item<*>> {
-            val result = content.toMutableList() as MutableList<Item<*>>
+            val result = mutableListOf<Item<*>>().apply {
+                addAll(content)
+            }
 
             val files = content.count { it.isFile }
             val directories = content.count { it.isDirectory }
@@ -54,17 +57,16 @@ class StorageListContentParser {
                             old = specialSymbol,
                             new = files.toString()
                         )
-                    ))
+                    )
+                )
             }
-
             return result
         }
-
     }
 
     fun run(
         content: List<PathItem>,
-        sorter: Sorter<PathItem>,
+        sorter: Sorter<PathItem> = PathItemSorters.Name,
         filter: Filter<PathItem> = PathItemFilters.Empty,
         parser: ResultParser<PathItem> = ResultParserImpl(),
     ): List<Item<*>> {

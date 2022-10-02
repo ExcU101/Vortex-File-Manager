@@ -42,14 +42,14 @@ class ContainerImpl<S, E>(
         }
     )
 
-    fun emitState(state: S) {
+    private fun emitState(state: S) {
         parentScope.launch {
             _state.emit(state)
             _collector.emit(state)
         }
     }
 
-    fun emitEffect(effect: E) {
+    private fun emitEffect(effect: E) {
         parentScope.launch { _effect.send(effect) }
     }
 

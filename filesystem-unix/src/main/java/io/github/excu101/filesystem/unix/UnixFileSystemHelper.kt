@@ -9,6 +9,10 @@ class UnixFileSystemHelper : FileSystemHelper() {
         return UnixCalls.getCount(path)
     }
 
+    override fun getDirectorySize(path: Path): Long {
+        return UnixCalls.getDirectorySize(path)
+    }
+
     override fun getDirectoryCount(path: Path): Int {
         return UnixCalls.getDirectoryCount(path)
     }

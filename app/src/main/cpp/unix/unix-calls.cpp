@@ -1,7 +1,7 @@
-#include "stdlib.h"
+#include <cstdlib>
 #include "dirent.h"
 #include "string"
-#include "errno.h"
+#include <cerrno>
 #include "../log.h"
 #include "classes.cpp"
 #include "dirent.h"
@@ -27,16 +27,12 @@ static char *fromByteArrayToPath(
     return cPath;
 }
 
-static jobject doStat(
+static jobject getUnixStatusStructure(
         JNIEnv *env,
-        char *path,
-        bool isLinkStatus
+        struct stat64 status
 ) {
     static jmethodID constructor(nullptr);
     if (!constructor) { constructor = findUnixStatusStructureInitMethod(env); }
-    struct stat64 status = {};
-    isLinkStatus ? isLinkExists(path, &status) : isExists(path, &status);
-    free(path);
 
     auto userId = (jint) status.st_uid;
     auto groupId = (jint) status.st_gid;
@@ -77,9 +73,46 @@ static jobject doStat(
     );
 }
 
+static jobject doStat(
+        JNIEnv *env,
+        char *path,
+        bool isLinkStatus
+) {
+    struct stat64 status = {};
+    isLinkStatus ? isLinkExists(path, &status) : isExists(path, &status);
+    free(path);
+
+    return getUnixStatusStructure(env, status);
+}
+
+static jobject doStat(
+        JNIEnv *env,
+        int descriptor
+) {
+    struct stat64 status = {};
+    isExists(descriptor, &status);
+
+    return getUnixStatusStructure(env, status);
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_allocateImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jlong size
+) {
+    size_t cSize = size;
+    auto result = (uintptr_t) malloc(cSize);
+
+    LOGV("Allocating %i", result)
+
+    return result;
+}
+
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_lstat(
+Java_io_github_excu101_filesystem_unix_UnixCalls_lstatImpl(
         JNIEnv *env,
         jobject thiz,
         jbyteArray path
@@ -90,13 +123,86 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_lstat(
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_stat(
+Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jint descriptor
+) {
+    int cDescriptor = descriptor;
+
+    return doStat(env, cDescriptor);
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_statImpl(
         JNIEnv *env,
         jobject thiz,
         jbyteArray path
 ) {
     char *cPath = fromByteArrayToPath(env, path);
     return doStat(env, cPath, false);
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl__IJ(
+        JNIEnv *env,
+        jobject thiz,
+        jint descriptor,
+        jlong offset
+) {
+    int cDescriptor = descriptor;
+    off64_t cOffset = offset;
+    jint result = ftruncate64(cDescriptor, cOffset);
+
+    return result;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl___3BJ(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray path,
+        jlong length
+) {
+    clearErrno();
+
+    char *cPath = fromByteArrayToPath(env, path);
+    off64_t cLength = length;
+    jint result = truncate64(cPath, cLength);
+
+    free(cPath);
+
+    if (errno != 0) {
+
+    }
+
+    return result;
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_lseekImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jint descriptor,
+        jlong offset,
+        jint whence
+) {
+    clearErrno();
+    int cDescriptor = descriptor;
+    off64_t cOffset = offset;
+    int cWhence = whence;
+
+    jlong result = lseek64(cDescriptor, cOffset, cWhence);
+
+    if (errno != 0) {
+
+    }
+
+    return result;
 }
 
 extern "C"
@@ -215,7 +321,7 @@ Java_io_github_excu101_filesystem_linux_LinuxCalls_rename(
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_readDir(
+Java_io_github_excu101_filesystem_unix_UnixCalls_readDirImpl(
         JNIEnv *env,
         jobject thiz,
         jlong pointer
@@ -363,6 +469,7 @@ Java_io_github_excu101_filesystem_fs_operation_NativeCalls_pointerRead(
         jlong pointer
 ) {
     clearErrno();
+    read(1, &address, 0);
     jint result = pread64(descriptor, &address, length, pointer);
 
     if (errno != 0) {
@@ -373,13 +480,13 @@ Java_io_github_excu101_filesystem_fs_operation_NativeCalls_pointerRead(
 }
 
 extern "C"
-JNIEXPORT void JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_close(
+JNIEXPORT jboolean JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_closeImpl(
         JNIEnv *env,
         jobject thiz,
         jint descriptor
 ) {
-    closeFileDescriptor(descriptor);
+    return closeFileDescriptor(descriptor);
 }
 
 struct count {
@@ -488,6 +595,45 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getCountImpl(
     return count;
 }
 
+
+long getDirectorySize(char *path) {
+    DIR *dir;
+    struct dirent64 *ent;
+    struct stat64 *buf{};
+    long result = 0L;
+
+    dir = opendir(path);
+
+    if (dir == nullptr) return -1L;
+
+    while ((ent = readdir64(dir))) {
+        char *name = ent->d_name;
+        if (STATUS64(name, buf) == 0) {
+            result += (long) buf->st_size;
+            if (isDirectory(buf->st_mode)) {
+                result += getDirectorySize(name);
+            }
+        }
+    }
+
+    closedir(dir);
+    return result;
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectorySizeImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray path
+) {
+    char *cPath = fromByteArrayToPath(env, path);
+    long result = getDirectorySize(cPath);
+    free(cPath);
+
+    return result;
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_fs_operation_NativeCalls_close(
@@ -505,4 +651,14 @@ Java_io_github_excu101_filesystem_fs_operation_NativeCalls_getFileDescriptor(
         jobject original
 ) {
     return getIndexFromFileDescriptor(env, original);
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_getDescriptorImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jobject descriptor
+) {
+    return getIndexFromFileDescriptor(env, descriptor);
 }

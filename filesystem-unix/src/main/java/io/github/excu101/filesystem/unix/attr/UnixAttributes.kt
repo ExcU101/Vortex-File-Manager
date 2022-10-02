@@ -9,20 +9,15 @@ import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
 import io.github.excu101.filesystem.unix.path.UnixPath
 import io.github.excu101.filesystem.unix.utils.*
-import java.io.File
 
-class UnixAttributes private constructor(
+internal class UnixAttributes private constructor(
     private val structure: UnixStatusStructure,
 ) : PosixAttrs {
 
     companion object {
         fun from(path: UnixPath, followLinks: Boolean): UnixAttributes {
             return UnixAttributes(
-                structure = if (followLinks) {
-                    UnixCalls.stat(path.bytes)
-                } else {
-                    UnixCalls.lstat(path.bytes)
-                }
+                structure = UnixCalls.stat(path.bytes, isLink = !followLinks),
             )
         }
     }

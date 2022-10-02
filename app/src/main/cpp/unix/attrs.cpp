@@ -3,6 +3,8 @@
 
 #define STATUS(...) stat(__VA_ARGS__)
 #define STATUS64(...) stat64(__VA_ARGS__)
+#define FILE_STATUS(...) fstat(__VA_ARGS__)
+#define FILE_STATUS64(...) fstat64(__VA_ARGS__)
 #define LINK_STATUS(...) lstat(__VA_ARGS__)
 #define LINK_STATUS64(...) lstat64(__VA_ARGS__)
 #define FILESYSTEM_STATUS(...) statvfs(__VA_ARGS__)
@@ -16,7 +18,7 @@ static bool statusFileSystem(char *path, struct statvfs *stat) {
     return FILESYSTEM_STATUS(path, stat) == 0;
 }
 
-static bool isLink(int mode) {
+static bool isLink(unsigned int mode) {
     return S_ISLNK(mode);
 }
 
@@ -109,3 +111,10 @@ static bool isExists(const char *path, struct stat64 *buffer) {
     return STATUS64(path, buffer) == 0;
 }
 
+static bool isExists(int descriptor, struct stat *buffer) {
+    return FILE_STATUS(descriptor, buffer) == 0;
+}
+
+static bool isExists(int descriptor, struct stat64 *buffer) {
+    return FILE_STATUS64(descriptor, buffer) == 0;
+}

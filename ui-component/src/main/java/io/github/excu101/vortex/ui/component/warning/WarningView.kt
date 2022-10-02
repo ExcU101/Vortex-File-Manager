@@ -5,22 +5,21 @@ import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity.CENTER
-import android.widget.FrameLayout
+import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.WRAP_CONTENT
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
+import com.google.android.material.R.style.Widget_MaterialComponents_Button_TextButton
 import com.google.android.material.button.MaterialButton
 import io.github.excu101.pluginsystem.model.Action
-import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.removeViewFrom
+import io.github.excu101.vortex.ui.component.menu.ActionListener
 import io.github.excu101.vortex.ui.component.theme.key.fileWarningActionContentColorKey
 import io.github.excu101.vortex.ui.component.theme.key.fileWarningBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.fileWarningIconTintColorKey
@@ -31,6 +30,8 @@ class WarningView : ThemeLinearLayout {
     constructor(context: Context) : super(context)
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    private val listeners = mutableListOf<ActionListener>()
 
     private val iconSize = 56.dp
     private val messagePadding = 32.dp
@@ -48,6 +49,7 @@ class WarningView : ThemeLinearLayout {
     }
 
     private val actions: MutableList<Action> = arrayListOf()
+    private val views = arrayListOf<View>()
 
     var message: CharSequence?
         get() = messageView.text
@@ -88,24 +90,50 @@ class WarningView : ThemeLinearLayout {
 
     fun addAction(value: Action) {
         actions.add(value)
-        refreshActions()
+        initViews()
     }
 
-    fun remove(value: Action) {
+    fun replaceActions(values: Collection<Action>) {
+        actions.clear()
+        actions.addAll(values)
+        initViews()
+    }
+
+    fun removeAction(value: Action) {
         actions.remove(value)
-        refreshActions()
+        initViews()
     }
 
-    private fun refreshActions() {
-        actions.forEachIndexed { index, action ->
-            val view = MaterialButton(context).apply {
-                icon = action.icon
-                text = action.title
-                iconTint = valueOf(ThemeColor(fileWarningActionContentColorKey))
-                setTextColor(ThemeColor(fileWarningActionContentColorKey))
-                layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+    private fun initViews() {
+        views.forEach {
+            removeView(it)
+        }
+        views.clear()
+        for (item in actions) {
+            views.add(getItem(item))
+        }
+        for (view in views) {
+            addView(view)
+        }
+    }
+
+    fun registerListener(listener: ActionListener) {
+        listeners.add(listener)
+    }
+
+    private fun getItem(action: Action): MaterialButton {
+        return MaterialButton(ContextThemeWrapper(context,
+            Widget_MaterialComponents_Button_TextButton)).apply {
+            icon = action.icon
+            text = action.title
+            iconTint = valueOf(ThemeColor(fileWarningActionContentColorKey))
+            setTextColor(ThemeColor(fileWarningActionContentColorKey))
+            layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+            setOnClickListener { view ->
+                listeners.forEach { listener ->
+                    listener.onCall(action)
+                }
             }
-            addView(view, index + 2)
         }
     }
 

@@ -2,6 +2,7 @@ package io.github.excu101.vortex.ui.component.storage.standard
 
 import android.view.View
 import io.github.excu101.filesystem.fs.utils.count
+import io.github.excu101.filesystem.fs.utils.directoryCount
 import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
 import io.github.excu101.vortex.R

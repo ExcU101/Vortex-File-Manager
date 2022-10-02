@@ -5,7 +5,7 @@ import io.github.excu101.filesystem.fs.path.Path
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-typealias Action = (value: Path) -> Unit
+typealias Event = (value: Path) -> Unit
 typealias Error = (value: Throwable) -> Unit
 typealias Completion = () -> Unit
 
@@ -14,7 +14,7 @@ typealias SuspendError = suspend (value: Throwable) -> Unit
 typealias SuspendCompletion = suspend () -> Unit
 
 inline fun FileOperationObserver(
-    crossinline action: Action,
+    crossinline action: Event,
     crossinline error: Error,
     crossinline completion: Completion,
 ): FileOperationObserver {

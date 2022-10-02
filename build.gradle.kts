@@ -16,6 +16,7 @@ subprojects {
     val args = listOf(
         "-opt-in=kotlin.RequiresOptIn",
         "-Xcontext-receivers",
+//        "-Xuse-k2"
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {

@@ -4,19 +4,19 @@ import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import io.github.excu101.filesystem.FileProvider
-import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.EmptyAttrs
 import io.github.excu101.filesystem.fs.attr.mimetype.MimeType
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
+import io.github.excu101.vortex.service.utils.PathParceler
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.storage.standard.StorageItemView
 import io.github.excu101.vortex.ui.component.storage.standard.StorageItemViewHolder
-import io.github.excu101.vortex.utils.PathParceler
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.IgnoredOnParcel
@@ -39,7 +39,7 @@ class PathItem(
 
     @IgnoredOnParcel
     private val attrs = try {
-        FileProvider.readAttrs<BasicAttrs>(value)
+        FileProvider.readAttrs<PosixAttrs>(value)
     } catch (exception: Exception) {
         EmptyAttrs
     }

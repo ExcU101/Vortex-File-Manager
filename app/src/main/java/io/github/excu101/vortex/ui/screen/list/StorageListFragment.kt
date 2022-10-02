@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.ui.screen.list
 
-import android.os.Build
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
@@ -24,7 +24,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +36,7 @@ import io.github.excu101.filesystem.fs.utils.fileCount
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.Color.Companion.Transparent
 import io.github.excu101.pluginsystem.ui.theme.*
+import io.github.excu101.pluginsystem.utils.EmptyDrawable
 import io.github.excu101.vortex.VortexServiceApi
 import io.github.excu101.vortex.base.utils.collectEffect
 import io.github.excu101.vortex.base.utils.collectState
@@ -45,8 +45,8 @@ import io.github.excu101.vortex.data.header.IconTextHeaderItem
 import io.github.excu101.vortex.data.header.TextHeaderItem
 import io.github.excu101.vortex.data.storage.PathItemFilters
 import io.github.excu101.vortex.data.storage.PathItemSorters
-import io.github.excu101.vortex.provider.contract.FullStorageAccessContract
-import io.github.excu101.vortex.ui.MainActivity
+import io.github.excu101.vortex.provider.StorageActionRegister
+import io.github.excu101.vortex.provider.contract.Contracts
 import io.github.excu101.vortex.ui.component.animation.fade
 import io.github.excu101.vortex.ui.component.bar
 import io.github.excu101.vortex.ui.component.drawer
@@ -59,12 +59,14 @@ import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.trail.TrailItemView
 import io.github.excu101.vortex.ui.component.trail.TrailListView
 import io.github.excu101.vortex.ui.component.warning.WarningView
+import io.github.excu101.vortex.ui.screen.VortexServiceFragment
 import io.github.excu101.vortex.ui.screen.create.PathCreateDialog
+import io.github.excu101.vortex.ui.screen.main.MainActivity
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class StorageListFragment : Fragment(),
+class StorageListFragment : VortexServiceFragment(),
     ActionListener,
     ThemeColorChangeListener {
 
@@ -84,7 +86,14 @@ class StorageListFragment : Fragment(),
 
     @RequiresApi(R)
     private val storageAccessLauncher: ActivityResultLauncher<Unit> =
-        registerForActivityResult(FullStorageAccessContract()) { isGranted ->
+        registerForActivityResult(Contracts.FullStorageAccess) { isGranted ->
+            if (isGranted) {
+                viewModel.checkPermission()
+            }
+        }
+
+    private val permissionLauncher: ActivityResultLauncher<String> =
+        registerForActivityResult(Contracts.Permission) { isGranted ->
             if (isGranted) {
                 viewModel.checkPermission()
             }
@@ -97,10 +106,10 @@ class StorageListFragment : Fragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        service = (requireActivity() as MainActivity).service
+        super.onCreateView(inflater, container, savedInstanceState)
         bar?.addActionListener(listener = this)
         bar?.setNavigationClickListener { view ->
-            viewModel.openDefaultDrawerActions()
+            viewModel.openDefaultDrawerActions((requireActivity() as MainActivity).isDarkTheme)
         }
         drawer?.registerListener(listener = this)
         root = container?.let {
@@ -121,11 +130,13 @@ class StorageListFragment : Fragment(),
                 layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
             }
         }
+
         trail = container?.let {
             TrailListView(it.context).apply {
                 layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
         }
+
         loading = container?.let {
             LoadingView(it.context).apply {
                 layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
@@ -139,6 +150,7 @@ class StorageListFragment : Fragment(),
                 layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
                     gravity = CENTER
                 }
+                registerListener(this@StorageListFragment)
             }
         }
 
@@ -158,9 +170,6 @@ class StorageListFragment : Fragment(),
         requireActivity().window.navigationBarColor = Transparent.value
 
         bar?.hideOnScroll = true
-        bar?.setOnClickListener {
-
-        }
 
         Theme.registerColorChangeListener(listener = this)
 
@@ -241,12 +250,8 @@ class StorageListFragment : Fragment(),
 
                     warning?.icon = state.warningIcon
                     warning?.message = state.warningMessage
+                    warning?.replaceActions(state.warningActions)
 
-                    if (Build.VERSION.SDK_INT >= R) {
-                        if (state.requiresAllFilePermission) {
-                            storageAccessLauncher.launch()
-                        }
-                    }
 
                     if (state.data.isNotEmpty()) {
                         listAdapter.replace(items = state.data)
@@ -286,12 +291,12 @@ class StorageListFragment : Fragment(),
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.selected.collect { selected ->
                     if (viewModel.selectionModeEnabled) {
-                        bar?.subtitle = null
                         bar?.title = ReplacerThemeText(
                             fileListSelectionTitleKey,
                             specialSymbol,
                             selected.size.toString()
                         )
+                        bar?.subtitle = null
                     } else {
                         viewModel.current?.let {
                             wrapBarTitle(it)
@@ -327,6 +332,14 @@ class StorageListFragment : Fragment(),
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.barActions.collect { actions ->
                     bar?.replaceItems(actions)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.filter.collect { filter ->
+
                 }
             }
         }
@@ -392,7 +405,7 @@ class StorageListFragment : Fragment(),
             }
 
             ThemeText(fileListTrailCopyPathActionTitleKey) -> {
-                viewModel.copyPath()
+                StorageActionRegister.perform()
                 service?.notify(1, "Copied!")
             }
 
@@ -425,6 +438,14 @@ class StorageListFragment : Fragment(),
             }
 
             ThemeText(fileListSortPathActionTitleKey) -> {
+                drawer?.setSelected(
+                    listOf(
+                        Action(
+                            ThemeText(fileListSortPathActionTitleKey),
+                            EmptyDrawable
+                        )
+                    )
+                )
                 viewModel.sort(PathItemSorters.Path)
             }
 
@@ -452,8 +473,20 @@ class StorageListFragment : Fragment(),
 
             }
 
-            "Add new" -> {
+            ThemeText(fileListMoreInfoActionTitleKey) -> {
+                viewModel.dialog(DialogType.CREATE)
+            }
 
+            ThemeText(fileListWarningStorageAccessActionTitleKey) -> {
+
+            }
+
+            ThemeText(fileListWarningFullStorageAccessActionTitleKey) -> {
+                storageAccessLauncher.launch()
+            }
+
+            ThemeText(fileListWarningNotificationAccessActionTitleKey) -> {
+                permissionLauncher.launch(POST_NOTIFICATIONS)
             }
         }
         drawer?.hide()

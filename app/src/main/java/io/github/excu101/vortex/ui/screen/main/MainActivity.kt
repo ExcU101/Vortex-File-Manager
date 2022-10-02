@@ -1,4 +1,4 @@
-package io.github.excu101.vortex.ui
+package io.github.excu101.vortex.ui.screen.main
 
 import android.content.ComponentName
 import android.content.Context
@@ -8,11 +8,11 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.IBinder
 import android.view.Gravity.BOTTOM
-import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat.getDrawable
@@ -20,6 +20,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.pluginsystem.ui.theme.*
 import io.github.excu101.vortex.R
@@ -34,19 +37,19 @@ import io.github.excu101.vortex.ui.component.theme.key.vortexServiceConnectedKey
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceDisconnectedKey
 import io.github.excu101.vortex.ui.component.theme.value.initVortexDarkColorValues
 import io.github.excu101.vortex.ui.component.theme.value.initVortexLightColorValues
-import io.github.excu101.vortex.ui.screen.list.StorageListFragment
+import io.github.excu101.vortex.ui.screen.main.MainViewModel.Companion.rootId
 import io.github.excu101.vortex.utils.vortexPackageName
 import io.github.excu101.vortex.utils.vortexServiceActionName
+import kotlinx.coroutines.launch
 import kotlin.math.sqrt
-
-private val rootId = View.generateViewId()
-private const val storageListTag = "STORAGE_LIST"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
     ServiceConnection,
     ThemeSwitcherCallback,
     ThemeColorChangeListener {
+
+    private val viewModel by viewModels<MainViewModel>()
 
     private var root: CoordinatorLayout? = null
     private var navigator: FragmentNavigator? = ActivityFragmentNavigator(
@@ -105,9 +108,15 @@ class MainActivity : AppCompatActivity(),
             insets
         }
 
-        navigator?.navigateTo(StorageListFragment(), storageListTag)
-
         setContentView(root)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.screen.collect { (dest, tag) ->
+                    navigator?.navigateTo(dest, tag)
+                }
+            }
+        }
     }
 
     override fun onStart() {

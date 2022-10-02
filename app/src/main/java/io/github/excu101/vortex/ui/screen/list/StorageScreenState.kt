@@ -1,9 +1,11 @@
 package io.github.excu101.vortex.ui.screen.list
 
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
+import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 
@@ -14,11 +16,7 @@ data class StorageScreenState(
     val isWarning: Boolean = false,
     val warningIcon: Drawable? = null,
     val warningMessage: String? = null,
-    val requiresPermissions: Boolean = false,
-    @RequiresApi(30)
-    val requiresAllFilePermission: Boolean = false,
-    @RequiresApi(33)
-    val requiresNotificationPermission: Boolean = false,
+    val warningActions: List<Action> = listOf(),
 ) {
 
     companion object {
@@ -29,9 +27,7 @@ data class StorageScreenState(
             isWarning = false,
             warningIcon = null,
             warningMessage = null,
-            requiresAllFilePermission = false,
-            requiresPermissions = false,
-            requiresNotificationPermission = false
+            warningActions = listOf(),
         )
     }
 
@@ -48,6 +44,22 @@ data class StorageScreenContentState(
 
     val isItemTrailLast
         get() = currentSelectedTrail == trail.lastIndex
+
+    val isEmpty
+        get() = content.isEmpty()
+
+    val isSelectedEmpty
+        get() = selected.isEmpty()
+
+    val isSelectedContainsContent
+        get() = selected.containsAll(content)
+
+    val selectedCount
+        get() = selected.count()
+}
+
+enum class DialogType {
+    CREATE
 }
 
 data class StorageScreenSideEffect(
