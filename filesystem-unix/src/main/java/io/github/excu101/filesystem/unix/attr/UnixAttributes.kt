@@ -66,13 +66,13 @@ internal class UnixAttributes private constructor(
         get() = _perms
 
     override val isDirectory: Boolean
-        get() = structure.mode.modeWith(S_IFDIR)
+        get() = structure.mode modeWith S_IFDIR
 
     override val isFile: Boolean
-        get() = structure.mode.modeWith(S_IFREG)
+        get() = structure.mode modeWith S_IFREG
 
     override val isLink: Boolean
-        get() = structure.mode.modeWith(S_IFLNK)
+        get() = structure.mode modeWith S_IFLNK
 
     override val isOther: Boolean
         get() = !isDirectory && !isFile && !isLink

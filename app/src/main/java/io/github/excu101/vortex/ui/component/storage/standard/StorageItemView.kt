@@ -85,11 +85,11 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
     private val iconShape = MaterialShapeDrawable(
         Builder().setAllCorners(CornerFamily.ROUNDED, 500F).build()
     ).apply {
-        setTint(ThemeColor(fileItemIconBackgroundColorKey))
+        setTint(ThemeColor(storageListItemIconBackgroundColorKey))
     }
 
     private val iconBackground = RippleDrawable(
-        valueOf(ThemeColor(fileItemIconTintColorKey)),
+        valueOf(ThemeColor(storageListItemIconTintColorKey)),
         iconShape,
         null
     )
@@ -100,11 +100,11 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
         shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
         initializeElevationOverlay(context)
         setUseTintColorForShadow(true)
-        setTint(ThemeColor(fileItemSurfaceColorKey))
+        setTint(ThemeColor(storageListItemSurfaceColorKey))
     }
 
     private val background = RippleDrawable(
-        valueOf(ThemeColor(fileItemSurfaceRippleColorKey)),
+        valueOf(ThemeColor(storageListItemSurfaceRippleColorKey)),
         shape,
         null
     )
@@ -117,19 +117,19 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
         minimumHeight = iconSize
         isClickable = true
         isFocusable = true
-        setColorFilter(ThemeColor(fileItemIconTintColorKey))
+        setColorFilter(ThemeColor(storageListItemIconTintColorKey))
     }
 
     private val title = TextView(context).apply {
         textSize = 16F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        setTextColor(ThemeColor(fileItemTitleTextColorKey))
+        setTextColor(ThemeColor(storageListItemTitleTextColorKey))
     }
 
     private val info = TextView(context).apply {
         textSize = 14F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        setTextColor(ThemeColor(fileItemSecondaryTextColorKey))
+        setTextColor(ThemeColor(storageListItemSecondaryTextColorKey))
     }
 
     private fun ensureContainingTitle() {
@@ -185,17 +185,17 @@ class StorageItemView(context: Context) : ThemeFrameLayout(context) {
 
     private fun updateSelectionState() {
         if (isItemSelected) {
-            titleColor = ThemeColor(fileItemTitleSelectedTextColorKey)
-            infoColor = ThemeColor(fileItemSecondarySelectedTextColorKey)
-            icon.setColorFilter(ThemeColor(fileItemIconSelectedTintColorKey))
-            iconShape.setTint(ThemeColor(fileItemIconBackgroundSelectedColorKey))
-            shape.setTint(ThemeColor(fileItemSurfaceSelectedColorKey))
+            titleColor = ThemeColor(storageListItemTitleSelectedTextColorKey)
+            infoColor = ThemeColor(storageListItemSecondarySelectedTextColorKey)
+            icon.setColorFilter(ThemeColor(storageListItemIconSelectedTintColorKey))
+            iconShape.setTint(ThemeColor(storageListItemIconBackgroundSelectedColorKey))
+            shape.setTint(ThemeColor(storageListItemSurfaceSelectedColorKey))
         } else {
-            titleColor = ThemeColor(fileItemTitleTextColorKey)
-            infoColor = ThemeColor(fileItemSecondaryTextColorKey)
-            icon.setColorFilter(ThemeColor(fileItemIconTintColorKey))
-            iconShape.setTint(ThemeColor(fileItemIconBackgroundColorKey))
-            shape.setTint(ThemeColor(fileItemSurfaceColorKey))
+            titleColor = ThemeColor(storageListItemTitleTextColorKey)
+            infoColor = ThemeColor(storageListItemSecondaryTextColorKey)
+            icon.setColorFilter(ThemeColor(storageListItemIconTintColorKey))
+            iconShape.setTint(ThemeColor(storageListItemIconBackgroundColorKey))
+            shape.setTint(ThemeColor(storageListItemSurfaceColorKey))
         }
     }
 

@@ -2,7 +2,8 @@ package io.github.excu101.vortex.ui.component.theme.key
 
 const val specialSymbol = "%s"
 
-const val fileListNavigatingTitleKey = "fileListNavigatingTitle"
+const val fileListLoadingInitiatingTitleKey = "fileListLoadingInitiatingTitle"
+const val fileListLoadingNavigatingTitleKey = "fileListLoadingNavigatingTitle"
 
 // Warning
 const val fileListWarningEmptyTitleKey = "fileListWarningEmptyTitle"
@@ -28,19 +29,24 @@ const val fileListSearchActionTitleKey = "fileListSearchActionTitle"
 const val fileListMoreActionTitleKey = "fileListMoreActionTitle"
 const val fileListSortActionTitleKey = "fileListSortActionTitle"
 
-// Trail
+// Storage list : Trail
 const val fileListTrailCopyPathActionTitleKey = "fileListTrailCopyPathActionTitle"
 
-// Group
+// Storage list : Drawer Groups
 const val fileListGroupViewActionTitleKey = "fileListGroupViewActionTitle"
+const val fileListGroupOrderActionTitleKey = "fileListGroupOrderActionTitleKey"
 const val fileListGroupSortActionTitleKey = "fileListGroupSortActionTitle"
 const val fileListGroupFilterActionTitleKey = "fileListGroupFilterActionTitle"
 
-// View
+// Storage list : Drawer Groups : View
 const val fileListViewColumnActionTitleKey = "fileListViewColumnActionTitle"
 const val fileListViewGridActionTitleKey = "fileListViewGridActionTitle"
 
-// Sort
+// Storage list : Drawer Groups : Order
+const val fileListOrderAscendingActionTitleKey = "fileListOrderAscendingActionTitle"
+const val fileListOrderDescendingActionTitleKey = "fileListOrderDescendingActionTitles"
+
+// Storage list : Drawer Groups : Sort
 const val fileListSortNameActionTitleKey = "fileListSortNameActionTitle"
 const val fileListSortPathActionTitleKey = "fileListSortPathActionTitle"
 const val fileListSortSizeActionTitleKey = "fileListSortSizeActionTitle"
@@ -48,11 +54,11 @@ const val fileListSortLastModifiedTimeActionTitleKey = "fileListSortLastModified
 const val fileListSortLastAccessTimeActionTitleKey = "fileListSortLastAccessTimeActionTitle"
 const val fileListSortCreationTimeActionTitleKey = "fileListSortCreationTimeActionTitle"
 
-// Filter
+// Storage list : Drawer Groups : Filter
 const val fileListFilterOnlyFilesActionTitleKey = "fileListFilterOnlyFilesActionTitle"
 const val fileListFilterOnlyFoldersActionTitleKey = "fileListFilterOnlyFoldersActionTitle"
 
-// More
+// Storage list : Drawer Groups : More
 const val fileListGroupMoreActionTitleKey = "fileListGroupMoreActionTitle"
 
 const val fileListMoreSelectAllActionTitleKey = "fileListMoreSelectAllActionTitle"

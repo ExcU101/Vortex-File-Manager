@@ -5,7 +5,8 @@ import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.*
 
 fun initVortexTextValuesEN() {
-    Theme[fileListNavigatingTitleKey] = Text(value = "Navigating to $specialSymbol...")
+    Theme[fileListLoadingInitiatingTitleKey] = Text(value = "Initiating...")
+    Theme[fileListLoadingNavigatingTitleKey] = Text(value = "Navigating to $specialSymbol...")
 
     // Warning
     Theme[fileListWarningEmptyTitleKey] = Text(value = "$specialSymbol is empty")
@@ -34,16 +35,21 @@ fun initVortexTextValuesEN() {
     // Trail
     Theme[fileListTrailCopyPathActionTitleKey] = Text(value = "Copy path")
 
-    // Group
+    // Storage list : Drawer Groups
     Theme[fileListGroupViewActionTitleKey] = Text(value = "View")
+    Theme[fileListGroupOrderActionTitleKey] = Text(value = "Order")
     Theme[fileListGroupSortActionTitleKey] = Text(value = "Sort")
     Theme[fileListGroupFilterActionTitleKey] = Text(value = "Filter")
 
-    // View
+    // Storage list : Drawer Groups : View
     Theme[fileListViewColumnActionTitleKey] = Text(value = "Column")
     Theme[fileListViewGridActionTitleKey] = Text(value = "Grid")
 
-    // Sort
+    // Storage list : Drawer Groups : View
+    Theme[fileListOrderAscendingActionTitleKey] = Text(value = "Ascending")
+    Theme[fileListOrderDescendingActionTitleKey] = Text(value = "Descending")
+
+    // Storage list : Drawer Groups : Sort
     Theme[fileListSortNameActionTitleKey] = Text(value = "Name")
     Theme[fileListSortPathActionTitleKey] = Text(value = "Path")
     Theme[fileListSortSizeActionTitleKey] = Text(value = "Size")

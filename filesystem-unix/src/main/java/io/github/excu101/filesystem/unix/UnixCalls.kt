@@ -57,7 +57,21 @@ internal object UnixCalls {
 
     external fun openDir(path: ByteArray): Long
 
-    external fun open(path: ByteArray, flags: Int, mode: Int): FileDescriptor
+    internal fun open(
+        path: ByteArray,
+        flags: Int,
+        mode: Int,
+    ): FileDescriptor? = openImpl(
+        path,
+        flags,
+        mode
+    )
+
+    private external fun openImpl(
+        path: ByteArray,
+        flags: Int,
+        mode: Int,
+    ): FileDescriptor?
 
     external fun mkdir(path: ByteArray, mode: Int)
 

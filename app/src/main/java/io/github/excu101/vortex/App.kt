@@ -8,7 +8,6 @@ import io.github.excu101.pluginsystem.common.DefaultOperationsPlugin
 import io.github.excu101.pluginsystem.provider.PluginManager
 import io.github.excu101.vortex.base.utils.logIt
 import io.github.excu101.vortex.ui.component.theme.value.*
-import java.nio.ByteBuffer
 
 @HiltAndroidApp
 class App : MultiDexApplication() {

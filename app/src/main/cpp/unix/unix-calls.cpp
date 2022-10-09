@@ -343,22 +343,31 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_readDirImpl(
     return newLinuxDirentStruct(env, directory);
 }
 
-static jobject openFileDescriptor(JNIEnv *env, int id) {
+static jobject openFileDescriptor(JNIEnv *env, int descriptor) {
     static jmethodID constructor(nullptr);
     if (!constructor) {
         constructor = findJavaFileDescriptorInitMethod(env);
     }
 
-    return env->NewObject(
+    jobject fileDescriptor = env->NewObject(
             findJavaFileDescriptorClass(env),
             constructor,
-            id
+            descriptor
     );
+
+    // TODO: Make it outside C++ code
+    if (fileDescriptor == nullptr) {
+        close(descriptor);
+        return NULL;
+    }
+    env->SetIntField(fileDescriptor, findJavaFileDescriptorField(env), descriptor);
+
+    return fileDescriptor;
 }
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_open(
+Java_io_github_excu101_filesystem_unix_UnixCalls_openImpl(
         JNIEnv *env,
         jobject thiz,
         jbyteArray path,
@@ -368,10 +377,10 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_open(
     char *cPath = fromByteArrayToPath(env, path);
     int cFlags = flags;
     auto cMode = (mode_t) mode;
-    int id = openFileDescriptor(cPath, cFlags, cMode, false);
+    int descriptor = openFileDescriptor(cPath, cFlags, cMode, false);
     free(cPath);
 
-    return openFileDescriptor(env, id);
+    return openFileDescriptor(env, descriptor);
 }
 
 extern "C"

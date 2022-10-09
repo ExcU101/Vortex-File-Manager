@@ -1,9 +1,9 @@
 package io.github.excu101.vortex.ui.component.trail
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowInsets
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat.Type.statusBars
@@ -23,6 +23,8 @@ import io.github.excu101.vortex.ui.component.foundtation.MarginItemDecoration
 import io.github.excu101.vortex.ui.component.theme.key.trailElevationKey
 import io.github.excu101.vortex.ui.component.theme.key.trailHeightKey
 import io.github.excu101.vortex.ui.component.theme.key.trailSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailWidthKey
+import io.github.excu101.vortex.ui.component.udp
 import kotlin.math.min
 
 class TrailListView : RecyclerView,
@@ -65,21 +67,40 @@ class TrailListView : RecyclerView,
             trailLayoutManager.reverseLayout = value
         }
 
+
     private val trailLayoutManager = LinearLayoutManager(context, HORIZONTAL, false)
 
     private val shape = MaterialShapeDrawable().apply {
         setTint(ThemeColor(trailSurfaceColorKey))
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_NEVER
-        elevation = 0f
         setUseTintColorForShadow(false)
+        initializeElevationOverlay(context)
+    }
+
+    private val desireWidth = ThemeDimen(trailWidthKey).udp
+    private val desireHeight = ThemeDimen(trailHeightKey).dp
+
+    init {
+        background = shape
+        clipToPadding = false
+        adapter = trailAdapter
+        elevation = ThemeDimen(trailElevationKey).toFloat()
+        layoutManager = trailLayoutManager
+        addItemDecoration(MarginItemDecoration(
+            horizontal = 4.dp
+        ))
+        setOnApplyWindowInsetsListener(this)
+    }
+
+    override fun setBackgroundTintList(tint: ColorStateList?) {
+        shape.tintList = tint
     }
 
     override fun getElevation(): Float = shape.elevation
 
     override fun setElevation(elevation: Float) {
         super.setElevation(elevation)
-
-//        MaterialShapeUtils.setElevation(this, elevation)
+        shape.elevation = elevation
     }
 
     override fun onAttachedToWindow() {
@@ -96,20 +117,6 @@ class TrailListView : RecyclerView,
 
     override fun getAdapter(): TrailAdapter = trailAdapter
 
-    init {
-        minimumWidth = MATCH_PARENT
-        minimumHeight = ThemeDimen(trailHeightKey).dp
-        background = shape
-        elevation = ThemeDimen(trailElevationKey).toFloat()
-        clipToPadding = false
-        adapter = trailAdapter
-        layoutManager = trailLayoutManager
-        addItemDecoration(MarginItemDecoration(
-            horizontal = 4.dp
-        ))
-        setOnApplyWindowInsetsListener(this)
-    }
-
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         val widthSize = MeasureSpec.getSize(widthSpec)
         val widthMode = MeasureSpec.getMode(widthSpec)
@@ -118,13 +125,13 @@ class TrailListView : RecyclerView,
 
         val width = when (widthMode) {
             MeasureSpec.EXACTLY -> widthSize
-            MeasureSpec.AT_MOST -> min(suggestedMinimumWidth, widthSize)
+            MeasureSpec.AT_MOST -> min(desireWidth, widthSize)
             else -> widthSize
         } + paddingStart + paddingEnd
 
         val height = when (heightMode) {
             MeasureSpec.EXACTLY -> heightSize
-            MeasureSpec.AT_MOST -> min(suggestedMinimumHeight, heightSize)
+            MeasureSpec.AT_MOST -> min(desireHeight, heightSize)
             else -> suggestedMinimumHeight
         } + paddingBottom + paddingTop
 

@@ -36,7 +36,12 @@ fun unixCreateDirectory(
 
 fun unixCreateFile(
     source: Path,
-    flags: Set<Option> = setOf(StandardOptions.READ, StandardOptions.WRITE, StandardOptions.APPEND),
+    flags: Set<Option> = setOf(
+        StandardOptions.CREATE_NEW,
+        StandardOptions.READ,
+        StandardOptions.WRITE,
+        StandardOptions.APPEND
+    ),
     mode: Int = 777,
 ): FileOperation = UnixCreateFileOperation(
     source,

@@ -7,8 +7,10 @@ import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
+import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
+import io.github.excu101.vortex.ui.component.list.adapter.Item
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -77,6 +79,10 @@ fun ThemeDp(key: String): Int {
 context(View)
 val Int.dp: Int
     get() = ceil(context.resources.displayMetrics.density * this).roundToInt()
+
+context (View)
+val Int.udp: Int
+    get() = if (this == -1) -1 else dp
 
 context(View)
 val Float.dp: Float

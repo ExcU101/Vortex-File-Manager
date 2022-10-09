@@ -2,8 +2,11 @@ package io.github.excu101.vortex.ui.component.theme.key
 
 const val mainBarHeightKey = "mainBarHeight"
 
-const val trailHeightKey = "trailHeightKey"
-const val trailItemHeightKey = "trailItemHeightKey"
+const val trailWidthKey = "trailWidth"
+const val trailHeightKey = "trailHeight"
+
+const val trailItemHeightKey = "trailItemHeight"
+
 const val trailElevationKey = "trailElevation"
 
 const val fileItemHeightKey = "fileItemHeight"

@@ -35,50 +35,54 @@ const val mainDrawerItemSelectedBackgroundColorKey = "mainDrawerItemSelectedBack
 const val mainDrawerItemIconSelectedTintColorKey = "mainDrawerItemIconSelectedTintColor"
 const val mainDrawerItemTitleSelectedTextColorKey = "mainDrawerItemTitleSelectedTextColor"
 
-// FILE LIST SCREEN : Additional menu
+// Storage List Screen
 
-const val fileAdditionalSurfaceColorKey = "fileAdditionalSurfaceColor"
-const val fileAdditionalTitleTextColorKey = "fileAdditionalTitleTextColor"
-const val fileAdditionalActionIconTintColorKey = "fileAdditionalActionIconTintColor"
+const val storageListListBackgroundColorKey = "storageListListBackgroundColor"
 
-// FILE LIST SCREEN : Trail
+// Storage List Screen : Additional menu
+
+const val storageListAdditionalSurfaceColorKey = "storageListAdditionalSurfaceColor"
+const val storageListAdditionalTitleTextColorKey = "storageListAdditionalTitleTextColor"
+const val storageListAdditionalActionIconTintColorKey = "storageListAdditionalActionIconTintColor"
+
+// Storage List Screen : Trail
 
 const val trailSurfaceColorKey = "trailSurfaceColor"
 const val trailItemTitleTextColorKey = "trailItemTitleTextColor"
 const val trailItemArrowTintColorKey = "trailItemArrowTintColor"
 const val trailItemRippleTintColorKey = "trailItemRippleTintColor"
 
-// FILE LIST SCREEN : Trail (selected)
+// Storage List Screen : Trail (selected)
 
 const val trailItemTitleSelectedTextColorKey = "trailItemTitleSelectedTextColor"
 const val trailItemArrowSelectedTintColorKey = "trailItemArrowSelectedTintColor"
 const val trailItemRippleSelectedTintColorKey = "trailItemRippleSelectedTintColor"
 
-// FILE LIST SCREEN : Warning
+// Storage List Screen : Warning
 
-const val fileWarningBackgroundColorKey = "fileWarningBackgroundColor"
-const val fileWarningIconTintColorKey = "fileWarningIconTintColor"
-const val fileWarningTitleTextColorKey = "fileWarningTitleTextColor"
-const val fileWarningActionContentColorKey = "fileWarningActionContentColor"
+const val storageListWarningBackgroundColorKey = "storageListWarningBackgroundColor"
+const val storageListWarningIconTintColorKey = "storageListWarningIconTintColor"
+const val storageListWarningTitleTextColorKey = "storageListWarningTitleTextColor"
+const val storageListWarningActionContentColorKey = "storageListWarningActionContentColor"
 
-// FILE LIST SCREEN : File Item
-const val fileItemSurfaceColorKey = "fileItemSurfaceColor"
-const val fileItemTitleTextColorKey = "fileItemTitleTextColor"
-const val fileItemSecondaryTextColorKey = "fileItemSecondaryTextColor"
-const val fileItemIndexTextColorKey = "fileItemIndexTextColor"
-const val fileItemIconTintColorKey = "fileItemIconTintColor"
-const val fileItemIconBackgroundColorKey = "fileItemIconBackgroundColor"
+// Storage List Screen : storageList Item
+const val storageListItemSurfaceColorKey = "storageListItemSurfaceColor"
+const val storageListItemTitleTextColorKey = "storageListItemTitleTextColor"
+const val storageListItemSecondaryTextColorKey = "storageListItemSecondaryTextColor"
+const val storageListItemIndexTextColorKey = "storageListItemIndexTextColor"
+const val storageListItemIconTintColorKey = "storageListItemIconTintColor"
+const val storageListItemIconBackgroundColorKey = "storageListItemIconBackgroundColor"
 
-const val fileItemSurfaceRippleColorKey = "fileItemSurfaceRippleColor"
+const val storageListItemSurfaceRippleColorKey = "storageListItemSurfaceRippleColor"
 
-// FILE LIST SCREEN : File Item (selected)
-const val fileItemSurfaceSelectedColorKey = "fileItemSurfaceSelectedColor"
-const val fileItemIconSelectedTintColorKey = "fileItemIconSelectedTintColor"
-const val fileItemIconBackgroundSelectedColorKey = "fileItemIconBackgroundSelectedColor"
-const val fileItemTitleSelectedTextColorKey = "fileItemTitleSelectedTextColor"
-const val fileItemSecondarySelectedTextColorKey = "fileItemSecondarySelectedTextColor"
+// Storage List Screen : storageList Item (selected)
+const val storageListItemSurfaceSelectedColorKey = "storageListItemSurfaceSelectedColor"
+const val storageListItemIconSelectedTintColorKey = "storageListItemIconSelectedTintColor"
+const val storageListItemIconBackgroundSelectedColorKey = "storageListItemIconBackgroundSelectedColor"
+const val storageListItemTitleSelectedTextColorKey = "storageListItemTitleSelectedTextColor"
+const val storageListItemSecondarySelectedTextColorKey = "storageListItemSecondarySelectedTextColor"
 
-// LAYOUTS : Progress
+// Layouts : Progress
 const val layoutProgressBarBackgroundColorKey = "layoutProgressBarBackgroundColorKey"
 const val layoutProgressBarTintColorKey = "layoutProgressBarTintColor"
 const val layoutProgressTitleTextColorKey = "layoutProgressTitleTextColor"

@@ -7,6 +7,7 @@ import io.github.excu101.vortex.ui.component.theme.key.*
 fun initVortexDimenValues() {
     Theme[mainBarHeightKey] = Dimen(value = 56)
 
+    Theme[trailWidthKey] = Dimen(value = -1) // MATCH_PARENT
     Theme[trailHeightKey] = Dimen(value = 48)
     Theme[trailItemHeightKey] = Dimen(value = 48)
     Theme[trailElevationKey] = Dimen(value = 4)

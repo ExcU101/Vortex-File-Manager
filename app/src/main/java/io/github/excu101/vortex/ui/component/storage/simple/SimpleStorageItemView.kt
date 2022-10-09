@@ -54,11 +54,11 @@ class SimpleStorageItemView(context: Context) : FrameLayout(context) {
     private val shape = MaterialShapeDrawable(
     ).apply {
         initializeElevationOverlay(context)
-        fillColor = valueOf(ThemeColor(fileItemSurfaceColorKey))
+        fillColor = valueOf(ThemeColor(storageListItemSurfaceColorKey))
     }
 
     private val background = RippleDrawable(
-        valueOf(ThemeColor(fileItemIconTintColorKey)),
+        valueOf(ThemeColor(storageListItemIconTintColorKey)),
         shape,
         null
     )
@@ -70,13 +70,13 @@ class SimpleStorageItemView(context: Context) : FrameLayout(context) {
         minimumHeight = iconSize
         isClickable = true
         isFocusable = true
-        imageTintList = valueOf(ThemeColor(fileItemIconTintColorKey))
+        imageTintList = valueOf(ThemeColor(storageListItemIconTintColorKey))
     }
 
     private val title = TextView(context).apply {
         textSize = 16F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        setTextColor(ThemeColor(fileItemTitleTextColorKey))
+        setTextColor(ThemeColor(storageListItemTitleTextColorKey))
     }
 
     private fun ensureContainingTitle() {
@@ -115,13 +115,13 @@ class SimpleStorageItemView(context: Context) : FrameLayout(context) {
 
     fun updateSelection(isSelected: Boolean) {
         if (isSelected) {
-            titleColor = ThemeColor(fileItemTitleSelectedTextColorKey)
-            icon.setColorFilter(ThemeColor(fileItemIconSelectedTintColorKey))
-            shape.fillColor = valueOf(ThemeColor(fileItemSurfaceSelectedColorKey))
+            titleColor = ThemeColor(storageListItemTitleSelectedTextColorKey)
+            icon.setColorFilter(ThemeColor(storageListItemIconSelectedTintColorKey))
+            shape.fillColor = valueOf(ThemeColor(storageListItemSurfaceSelectedColorKey))
         } else {
-            titleColor = ThemeColor(fileItemTitleTextColorKey)
-            icon.setColorFilter(ThemeColor(fileItemIconTintColorKey))
-            shape.fillColor = valueOf(ThemeColor(fileItemSurfaceColorKey))
+            titleColor = ThemeColor(storageListItemTitleTextColorKey)
+            icon.setColorFilter(ThemeColor(storageListItemIconTintColorKey))
+            shape.fillColor = valueOf(ThemeColor(storageListItemSurfaceColorKey))
         }
     }
 

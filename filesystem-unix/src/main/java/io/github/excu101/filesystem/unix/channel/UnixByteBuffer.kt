@@ -5,7 +5,7 @@ import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.channel.UnixBufferCalls.get
 import io.github.excu101.filesystem.unix.channel.UnixBufferCalls.put
 
-class UnixByteBuffer : ByteBuffer {
+internal class UnixByteBuffer : ByteBuffer {
 
     constructor(capacity: Long) : super(
         mark = 0,

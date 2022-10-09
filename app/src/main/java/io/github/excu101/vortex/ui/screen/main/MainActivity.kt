@@ -1,17 +1,27 @@
 package io.github.excu101.vortex.ui.screen.main
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.res.Configuration.UI_MODE_NIGHT_MASK
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
+import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.IBinder
 import android.view.Gravity.BOTTOM
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -30,8 +40,8 @@ import io.github.excu101.vortex.VortexServiceApi
 import io.github.excu101.vortex.base.FragmentNavigator
 import io.github.excu101.vortex.base.impl.ActivityFragmentNavigator
 import io.github.excu101.vortex.base.utils.snackIt
-import io.github.excu101.vortex.ui.component.action.ActionDialog
 import io.github.excu101.vortex.ui.component.bar.Bar
+import io.github.excu101.vortex.ui.component.drawer.BottomActionDrawer
 import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceConnectedKey
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceDisconnectedKey
@@ -52,6 +62,7 @@ class MainActivity : AppCompatActivity(),
     private val viewModel by viewModels<MainViewModel>()
 
     private var root: CoordinatorLayout? = null
+    private var themeImageView: ImageView? = null
     private var navigator: FragmentNavigator? = ActivityFragmentNavigator(
         activity = this,
         containerId = rootId
@@ -68,7 +79,7 @@ class MainActivity : AppCompatActivity(),
     var bar: Bar? = null
         private set
 
-    var drawer: ActionDialog? = null
+    var drawer: BottomActionDrawer? = null
         private set
 
     private val intentService by lazy {
@@ -98,8 +109,12 @@ class MainActivity : AppCompatActivity(),
                 gravity = BOTTOM
             }
         }
-        drawer = ActionDialog(context = this)
+        themeImageView = ImageView(this).apply {
+            visibility = GONE
+        }
+        drawer = BottomActionDrawer(context = this)
         root?.addView(bar)
+        root?.addView(themeImageView, MATCH_PARENT, MATCH_PARENT)
         ViewCompat.setOnApplyWindowInsetsListener(bar!!) { view, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.updatePadding(
@@ -107,6 +122,8 @@ class MainActivity : AppCompatActivity(),
             )
             insets
         }
+
+        isDarkTheme = resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
 
         setContentView(root)
 
@@ -129,12 +146,12 @@ class MainActivity : AppCompatActivity(),
 
     override fun onStop() {
         super.onStop()
-        unbindService(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         stopService(intentService)
+        service = null
         Theme.unregisterColorChangeListener(this)
         Theme.detachCallback(this)
         root = null
@@ -157,15 +174,34 @@ class MainActivity : AppCompatActivity(),
             false
         }
 
-        Theme.notifyColorsChanged()
+        val bitmap = createBitmap(
+            root?.measuredWidth ?: 0,
+            root?.measuredHeight ?: 0,
+            Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        root?.draw(canvas)
+        themeImageView?.setImageBitmap(bitmap)
+        themeImageView?.visibility = VISIBLE
+
 
         val animation = ViewAnimationUtils.createCircularReveal(root,
-            width ?: 0,
-            height ?: 0,
+            (bitmap.width / 2) ?: 0,
+            (bitmap.height / 2) ?: 0,
             startRadius,
             finalRadius
         ).apply {
             duration = 350L
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    Theme.notifyColorsChanged()
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    themeImageView?.setImageDrawable(null)
+                    themeImageView?.visibility = GONE
+                }
+            })
         }
 
         animation.start()

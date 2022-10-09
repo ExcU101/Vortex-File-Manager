@@ -1,6 +1,7 @@
 package io.github.excu101.vortex.ui.component.warning
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -9,21 +10,19 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.WRAP_CONTENT
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
-import com.google.android.material.R.style.Widget_MaterialComponents_Button_TextButton
 import com.google.android.material.button.MaterialButton
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.menu.ActionListener
-import io.github.excu101.vortex.ui.component.theme.key.fileWarningActionContentColorKey
-import io.github.excu101.vortex.ui.component.theme.key.fileWarningBackgroundColorKey
-import io.github.excu101.vortex.ui.component.theme.key.fileWarningIconTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.fileWarningTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningActionContentColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningTitleTextColorKey
 
 class WarningView : ThemeLinearLayout {
 
@@ -36,15 +35,27 @@ class WarningView : ThemeLinearLayout {
     private val iconSize = 56.dp
     private val messagePadding = 32.dp
 
+    private val buttonStates = arrayOf(
+        arrayOf(android.R.attr.state_checked).toIntArray(),
+        arrayOf(-android.R.attr.state_checked).toIntArray()
+    )
+
+    private val buttonColors = arrayOf(
+        ThemeColor(storageListWarningActionContentColorKey),
+        ThemeColor(storageListWarningBackgroundColorKey)
+    ).toIntArray()
+
     private val iconView = ImageView(context).apply {
         minimumHeight = iconSize
         minimumWidth = iconSize
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        setColorFilter(ThemeColor(storageListWarningIconTintColorKey))
     }
 
     private val messageView = TextView(context).apply {
         textSize = 18F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        setTextColor(ThemeColor(storageListWarningTitleTextColorKey))
         updatePadding(top = 16)
     }
 
@@ -122,12 +133,20 @@ class WarningView : ThemeLinearLayout {
     }
 
     private fun getItem(action: Action): MaterialButton {
-        return MaterialButton(ContextThemeWrapper(context,
-            Widget_MaterialComponents_Button_TextButton)).apply {
+        return MaterialButton(
+            context
+        ).apply {
             icon = action.icon
             text = action.title
-            iconTint = valueOf(ThemeColor(fileWarningActionContentColorKey))
-            setTextColor(ThemeColor(fileWarningActionContentColorKey))
+            elevation = 0F
+            updatePadding(
+                top = 4.dp,
+                bottom = 4.dp
+            )
+            backgroundTintList = ColorStateList(buttonStates, buttonColors)
+            rippleColor = valueOf(ThemeColor(storageListWarningActionContentColorKey))
+            iconTint = valueOf(ThemeColor(storageListWarningActionContentColorKey))
+            setTextColor(ThemeColor(storageListWarningActionContentColorKey))
             layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
             setOnClickListener { view ->
                 listeners.forEach { listener ->
@@ -140,13 +159,13 @@ class WarningView : ThemeLinearLayout {
     init {
         orientation = VERTICAL
         gravity = CENTER
-        setBackgroundColor(ThemeColor(fileWarningBackgroundColorKey))
+        setBackgroundColor(ThemeColor(storageListWarningBackgroundColorKey))
     }
 
     override fun onChanged() {
-        iconView.setColorFilter(ThemeColor(fileWarningIconTintColorKey))
-        messageView.setTextColor(ThemeColor(fileWarningTitleTextColorKey))
-        setBackgroundColor(ThemeColor(fileWarningBackgroundColorKey))
+        iconView.setColorFilter(ThemeColor(storageListWarningIconTintColorKey))
+        messageView.setTextColor(ThemeColor(storageListWarningTitleTextColorKey))
+        setBackgroundColor(ThemeColor(storageListWarningBackgroundColorKey))
     }
 
 //    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

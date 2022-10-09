@@ -19,8 +19,16 @@ interface ViewHolderFactory<T> {
     fun produceViewHolder(child: View): ViewHolder<T>
 }
 
+class UnsupportedViewTypeException(
+    viewType: Int,
+) : Throwable("Unsupported view type (viewType: $viewType)")
+
 open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, EditableAdapter<T>,
     ClickListenerRegister<T> {
+
+    init {
+        setHasStableIds(true)
+    }
 
     // key: viewType, value: viewHolder factory
     private val factories = mutableMapOf<Int, ViewHolderFactory<T>>()
@@ -28,8 +36,8 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
     val viewTypes: Int
         get() = factories.keys.size
 
-    private val listeners = mutableListOf<ItemViewListener<T>>()
-    private val longListeners = mutableListOf<ItemViewLongListener<T>>()
+    private val itemViewListeners = mutableListOf<ItemViewListener<T>>()
+    private val itemViewLongListeners = mutableListOf<ItemViewLongListener<T>>()
 
     protected val adapterList = mutableListOf<T>()
     val list: List<T>
@@ -55,12 +63,12 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         return factories[viewType]?.let { factory ->
             factory.produceViewHolder(factory.produceView(parent))
-        } ?: throw Throwable("Unsupported viewType")
+        } ?: throw UnsupportedViewTypeException(viewType)
     }
 
     override fun onBindViewHolder(holder: ViewHolder<T>, position: Int) {
         val item = item(position)
-        val isSelected = isSelected(item = item)
+        val isSelected = isSelected(item)
         holder.bind(item)
         holder.bindSelection(isSelected)
         holder.bindListener { view ->
@@ -182,15 +190,19 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
     }
 
     override fun register(listener: ItemViewListener<T>) {
-        listeners.add(listener)
+        itemViewListeners.add(listener)
     }
 
     override fun registerLong(listener: ItemViewLongListener<T>) {
-        longListeners.add(listener)
+        itemViewLongListeners.add(listener)
+    }
+
+    protected fun notifyAdd() {
+
     }
 
     protected fun notify(view: View, item: T, position: Int) {
-        listeners.forEach { listener ->
+        itemViewListeners.forEach { listener ->
             listener.onClick(view, item, position)
         }
     }
@@ -198,7 +210,7 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
     protected fun notifyLong(view: View, item: T, position: Int): Boolean {
         var clicked = false
 
-        longListeners.forEach { listener ->
+        itemViewLongListeners.forEach { listener ->
             clicked = listener.onClick(view, item, position)
         }
 

@@ -32,9 +32,11 @@ fun initVortexLightColorValues(): Theme {
     Theme[mainDrawerItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
     Theme[mainDrawerItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
 
-    Theme[fileAdditionalSurfaceColorKey] = Color.White
-    Theme[fileAdditionalTitleTextColorKey] = Color.Black
-    Theme[fileAdditionalActionIconTintColorKey] = Color.Black
+    Theme[storageListListBackgroundColorKey] = Color.LightGray
+
+    Theme[storageListAdditionalSurfaceColorKey] = Color.White
+    Theme[storageListAdditionalTitleTextColorKey] = Color.Black
+    Theme[storageListAdditionalActionIconTintColorKey] = Color.Black
 
     Theme[trailSurfaceColorKey] = Color.White
     Theme[trailItemTitleTextColorKey] = Color.Black
@@ -45,24 +47,24 @@ fun initVortexLightColorValues(): Theme {
     Theme[trailItemArrowSelectedTintColorKey] = Color(value = 0xFF3062FF)
     Theme[trailItemRippleSelectedTintColorKey] = Color(value = 0x523062FF)
 
-    Theme[fileWarningBackgroundColorKey] = Color.White
-    Theme[fileWarningIconTintColorKey] = Color.Black
-    Theme[fileWarningTitleTextColorKey] = Color.Black
-    Theme[fileWarningActionContentColorKey] = Color(value = 0xFF3062FF)
+    Theme[storageListWarningBackgroundColorKey] = Color.White
+    Theme[storageListWarningIconTintColorKey] = Color.Black
+    Theme[storageListWarningTitleTextColorKey] = Color.Black
+    Theme[storageListWarningActionContentColorKey] = Color(value = 0xFF3062FF)
 
-    Theme[fileItemSurfaceColorKey] = Color.White
-    Theme[fileItemTitleTextColorKey] = Color.Black
-    Theme[fileItemSecondaryTextColorKey] = Color.DarkGray
-    Theme[fileItemIndexTextColorKey] = Color.Gray
-    Theme[fileItemIconTintColorKey] = Color.White
-    Theme[fileItemIconBackgroundColorKey] = Color.DarkGray
-    Theme[fileItemSurfaceRippleColorKey] = Color(value = 0x4D000000)
+    Theme[storageListItemSurfaceColorKey] = Color.White
+    Theme[storageListItemTitleTextColorKey] = Color.Black
+    Theme[storageListItemSecondaryTextColorKey] = Color.DarkGray
+    Theme[storageListItemIndexTextColorKey] = Color.Gray
+    Theme[storageListItemIconTintColorKey] = Color.White
+    Theme[storageListItemIconBackgroundColorKey] = Color.DarkGray
+    Theme[storageListItemSurfaceRippleColorKey] = Color(value = 0x4D000000)
 
-    Theme[fileItemSurfaceSelectedColorKey] = Color(value = 0x4D2962FF)
-    Theme[fileItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
-    Theme[fileItemSecondarySelectedTextColorKey] = Color(value = 0xFF3062FF)
-    Theme[fileItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
-    Theme[fileItemIconBackgroundSelectedColorKey] = Color.LightGray
+    Theme[storageListItemSurfaceSelectedColorKey] = Color(value = 0x4D2962FF)
+    Theme[storageListItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
+    Theme[storageListItemSecondarySelectedTextColorKey] = Color(value = 0xFF3062FF)
+    Theme[storageListItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
+    Theme[storageListItemIconBackgroundSelectedColorKey] = Color.LightGray
 
     Theme[layoutProgressBarBackgroundColorKey] = Color.White
     Theme[layoutProgressBarTintColorKey] = Color(value = 0xFF3062FF)

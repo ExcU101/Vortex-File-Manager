@@ -9,8 +9,10 @@ import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
+import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
+import com.google.android.material.shape.ShapeAppearanceModel.builder
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
@@ -28,7 +30,11 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context), InnerPadding
         private const val ARROW_INDEX = 1
     }
 
-    private val shape = MaterialShapeDrawable().apply {
+    private val shape = MaterialShapeDrawable(
+        builder().setAllCorners(
+            ROUNDED, 16F.dp
+        ).build()
+    ).apply {
         setTint(ThemeColor(trailSurfaceColorKey))
         initializeElevationOverlay(context)
         setUseTintColorForShadow(true)

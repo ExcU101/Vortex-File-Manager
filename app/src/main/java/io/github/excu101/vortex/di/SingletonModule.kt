@@ -7,8 +7,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.github.excu101.vortex.provider.ResourceProvider
-import io.github.excu101.vortex.provider.StorageProvider
 import io.github.excu101.vortex.provider.storage.StorageActionProvider
+import io.github.excu101.vortex.provider.storage.StorageProvider
 import javax.inject.Singleton
 
 @Module

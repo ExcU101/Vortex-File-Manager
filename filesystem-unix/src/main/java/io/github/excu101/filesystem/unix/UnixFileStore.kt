@@ -4,7 +4,7 @@ import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.attr.UnixStructureFileSystemStatus
 
-class UnixFileStore(val path: Path) : FileStore() {
+internal class UnixFileStore(val path: Path) : FileStore() {
 
     private val structure: UnixStructureFileSystemStatus
         get() = UnixCalls.statVfs(path = path.bytes)

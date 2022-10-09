@@ -100,7 +100,6 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     private var textWidth = 0
 
-
     var title: CharSequence?
         get() = titleView.text
         set(value) {
@@ -152,6 +151,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     override fun setElevation(elevation: Float) {
         super.setElevation(elevation)
+
         MaterialShapeUtils.setElevation(this, elevation)
     }
 
@@ -214,11 +214,11 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         menuView.removeItem(action)
     }
 
-    fun addActionListener(listener: ActionListener) {
+    fun registerListener(listener: ActionListener) {
         menuView.addListener(listener)
     }
 
-    fun removeActionListener(listener: ActionListener) {
+    fun unregisterListener(listener: ActionListener) {
         menuView.removeListener(listener)
     }
 

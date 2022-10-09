@@ -31,6 +31,6 @@ internal const val S_IWOTH: Int = 2
 internal const val S_IOTH: Int = 1
 
 
-internal fun Int.modeWith(other: Int): Boolean {
+internal infix fun Int.modeWith(other: Int): Boolean {
     return (this and S_IFMT) == other
 }

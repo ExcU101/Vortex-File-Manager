@@ -12,24 +12,28 @@ static jclass findClass(JNIEnv *env, const char *name) {
 static jclass findJavaFileDescriptorClass(JNIEnv *env) {
     static jclass clazz = nullptr;
     if (!clazz) {
-        clazz = env->FindClass("java/io/FileDescriptor");
+        clazz = findClass(env, "java/io/FileDescriptor");
     }
     return clazz;
 }
 
 static _jmethodID *findJavaFileDescriptorInitMethod(JNIEnv *env) {
-    return env->GetMethodID(findJavaFileDescriptorClass(env), "<init>", "(I)V");
+    return env->GetMethodID(findJavaFileDescriptorClass(env), "<init>", "()V");
+}
+
+static jfieldID findJavaFileDescriptorField(JNIEnv *env) {
+    static jfieldID field = nullptr;
+    if (!field) {
+        field = env->GetFieldID(findJavaFileDescriptorClass(env), "descriptor", "I");
+    }
+    return field;
 }
 
 static int getIndexFromFileDescriptor(JNIEnv *env, jobject fileDescriptor) {
     jint fd = -1;
-    jclass fdClass = env->FindClass("java/io/FileDescriptor");
-
-    if (fdClass != NULL) {
-        jfieldID fdClassDescriptorFieldID = env->GetFieldID(fdClass, "fd", "I");
-        if (fdClassDescriptorFieldID != NULL && fileDescriptor != NULL) {
-            fd = env->GetIntField(fileDescriptor, fdClassDescriptorFieldID);
-        }
+    jfieldID field = findJavaFileDescriptorField(env);
+    if (field != NULL && fileDescriptor != NULL) {
+        fd = env->GetIntField(fileDescriptor, field);
     }
 
     return fd;

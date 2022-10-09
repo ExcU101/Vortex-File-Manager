@@ -1,5 +1,6 @@
 <resources>
     <style name="Theme.VortexFileManager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-
+        <item name="colorSurface">#212121</item>
+        <item name="elevationOverlayEnabled">true</item>
     </style>
 </resources>

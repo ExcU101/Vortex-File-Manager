@@ -50,7 +50,9 @@ class ContainerImpl<S, E>(
     }
 
     private fun emitEffect(effect: E) {
-        parentScope.launch { _effect.send(effect) }
+        parentScope.launch(Unconfined) {
+            _effect.send(effect)
+        }
     }
 
     override fun emit(block: suspend ContainerScope<S, E>.() -> Unit) {

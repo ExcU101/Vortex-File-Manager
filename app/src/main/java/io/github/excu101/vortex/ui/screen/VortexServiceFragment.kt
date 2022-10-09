@@ -27,7 +27,7 @@ open class VortexServiceFragment : Fragment {
         savedInstanceState: Bundle?,
     ): View? {
         service = (requireActivity() as MainActivity).service
-        return null
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
 }

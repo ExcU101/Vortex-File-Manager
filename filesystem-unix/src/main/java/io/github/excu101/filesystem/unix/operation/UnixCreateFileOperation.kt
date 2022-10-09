@@ -15,7 +15,7 @@ internal class UnixCreateFileOperation(
 
     override suspend fun perform() {
         try {
-            path.system.provider.newFileChannel(path, flags, mode).close()
+            path.system.provider.newReactiveFileChannel(path, flags, mode).close()
         } catch (exception: Exception) {
             notify(error = exception)
             return

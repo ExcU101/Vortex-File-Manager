@@ -7,6 +7,7 @@ import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
+import io.github.excu101.vortex.utils.TRAIL
 
 class TrailAdapter : ItemAdapter<PathItem>(
     ItemViewTypes.TRAIL to Factory
