@@ -32,4 +32,12 @@ interface EditableAdapter<T> {
 
     fun item(position: Int): T
 
+    fun changed(item: T) = changed(position(item))
+
+    fun changed(position: Int)
+
+}
+
+fun <T> EditableAdapter<T>.replace(items: List<T>) {
+    replace(items = items, differ = null)
 }

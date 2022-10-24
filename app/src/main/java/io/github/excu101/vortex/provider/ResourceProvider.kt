@@ -6,8 +6,9 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.github.excu101.pluginsystem.utils.EmptyDrawable
+import javax.inject.Inject
 
-class ResourceProvider(private val context: Context) {
+class ResourceProvider @Inject constructor(private val context: Context) {
 
     fun getString(@StringRes id: Int): String {
         return context.getString(id)

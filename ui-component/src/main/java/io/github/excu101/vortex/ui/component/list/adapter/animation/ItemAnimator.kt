@@ -350,7 +350,8 @@ abstract class ItemAnimator : SimpleItemAnimator() {
                 fromLeft,
                 fromTop,
                 toLeft,
-                toTop)
+                toTop
+            )
         )
         return true
     }

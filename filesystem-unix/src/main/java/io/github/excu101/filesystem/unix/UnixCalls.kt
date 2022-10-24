@@ -1,9 +1,9 @@
 package io.github.excu101.filesystem.unix
 
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.unix.attr.UnixDirentStructure
-import io.github.excu101.filesystem.unix.attr.UnixStatusStructure
-import io.github.excu101.filesystem.unix.attr.UnixStructureFileSystemStatus
+import io.github.excu101.filesystem.unix.structure.UnixDirentStructure
+import io.github.excu101.filesystem.unix.structure.UnixFileSystemStatusStructure
+import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
 import java.io.FileDescriptor
 
 internal object UnixCalls {
@@ -75,6 +75,10 @@ internal object UnixCalls {
 
     external fun mkdir(path: ByteArray, mode: Int)
 
+    internal fun symlink(target: ByteArray, link: ByteArray) = symlinkImpl(target, link)
+
+    private external fun symlinkImpl(target: ByteArray, link: ByteArray)
+
     internal fun readDir(pointer: Long) = readDirImpl(pointer)
 
     private external fun readDirImpl(pointer: Long): UnixDirentStructure?
@@ -85,7 +89,10 @@ internal object UnixCalls {
 
     external fun closeDir(pointer: Long)
 
-    external fun statVfs(path: ByteArray): UnixStructureFileSystemStatus
+
+    internal fun getFileSystemStatus(path: ByteArray) = getFileSystemStatusImpl(path)
+
+    private external fun getFileSystemStatusImpl(path: ByteArray): UnixFileSystemStatusStructure
 
     // Helper
 

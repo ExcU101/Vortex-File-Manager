@@ -4,10 +4,7 @@ import io.github.excu101.filesystem.fs.attr.Option
 import io.github.excu101.filesystem.fs.attr.StandardOptions
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.unix.operation.UnixCreateDirectoryOperation
-import io.github.excu101.filesystem.unix.operation.UnixCreateFileOperation
-import io.github.excu101.filesystem.unix.operation.UnixDeleteOperation
-import io.github.excu101.filesystem.unix.operation.UnixRenameOperation
+import io.github.excu101.filesystem.unix.operation.*
 import kotlin.reflect.KClass
 
 fun unixDelete(
@@ -17,6 +14,14 @@ fun unixDelete(
 )
 
 fun unixDeleteClass(): KClass<out FileOperation> = UnixDeleteOperation::class
+
+fun unixCreateSymbolicLink(
+    target: Path,
+    link: Path,
+): FileOperation = UnixCreateLinkOperation(
+    target = target,
+    link = link,
+)
 
 fun unixRename(
     source: Path,

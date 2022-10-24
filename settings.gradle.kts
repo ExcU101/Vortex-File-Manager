@@ -12,6 +12,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "Vortex File Manager"
 include(
     ":app",
@@ -19,6 +20,8 @@ include(
     ":filesystem-unix",
     ":pluginsystem",
     ":pluginsystem-common",
-    ":ui-component"
+    ":ui-component",
+    ":vortex-service",
+    ":manifest-dsl"
 )
-include(":vortex-service")
+include(":pluginsystem-ui")

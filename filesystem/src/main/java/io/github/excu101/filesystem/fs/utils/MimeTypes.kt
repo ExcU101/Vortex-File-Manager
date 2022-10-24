@@ -24,6 +24,9 @@ val videoMimeTypes = mapOf(
     "3gp" to "video/3gpp",
     "3gp2" to "video/3gpp2",
     "jpm" to "video/jpm",
+    "mp4" to "video/mp4",
+    "mp4v" to "video/mp4",
+    "mpg4" to "video/mp4",
 )
 
 val imageMimeTypes = mapOf(
@@ -88,11 +91,13 @@ val applicationMimeTypes = mapOf(
     "snf" to "application/x-font-snf",
     "spq" to "application/scvp-vp-request",
     "spp" to "application/scvp-vp-response",
+    "mpg4s" to "video/mp4",
 )
 
 val audioMimeTypes = mapOf(
     "adp" to "audio/adpcm",
     "aac" to "audio/x-aac",
+    "mp3" to "audio/mp3"
 )
 
 val textMimeType = mapOf(

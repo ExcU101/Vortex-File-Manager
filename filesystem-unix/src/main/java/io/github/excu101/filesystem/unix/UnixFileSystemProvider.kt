@@ -112,7 +112,7 @@ class UnixFileSystemProvider : FileSystemProvider() {
     }
 
     override fun getFileStore(path: Path): FileStore {
-        return UnixFileStore(path)
+        return UnixFileStore.from(path)
     }
 
     override val scheme: String

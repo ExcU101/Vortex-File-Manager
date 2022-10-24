@@ -1,8 +1,8 @@
 package io.github.excu101.vortex.data.trail
 
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.fs.utils.toPath
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.provider.storage.StorageProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,12 +25,16 @@ class TrailNavigator : Iterable<PathItem> {
         get() = items.value.getOrNull(selectedIndex.value)
 
     companion object {
+        private var isSlicePathEnabled = true
+
         private fun parseSegments(path: Path): MutableList<PathItem> {
             val segments = mutableListOf<PathItem>()
             var cPath = path
 
             while (true) {
-                if (cPath == "/storage/emulated".toPath()) break
+                if (isSlicePathEnabled) {
+                    if (cPath == StorageProvider.EXTERNAL_STORAGE.parent) break
+                }
                 segments += PathItem(cPath)
                 cPath = cPath.parent ?: break
             }

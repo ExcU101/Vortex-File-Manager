@@ -36,5 +36,6 @@ dependencies {
     implementation(Deps.Coroutines.Android)
     implementation(Deps.Ui.Material)
     implementation(project(Deps.Application.PluginSystem))
+    implementation(project(Deps.Application.PluginSystemUi))
     implementation(project(Deps.Application.FileSystem))
 }

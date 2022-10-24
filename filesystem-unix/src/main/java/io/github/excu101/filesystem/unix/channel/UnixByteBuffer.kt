@@ -2,8 +2,8 @@ package io.github.excu101.filesystem.unix.channel
 
 import io.github.excu101.filesystem.fs.buffer.ByteBuffer
 import io.github.excu101.filesystem.unix.UnixCalls
-import io.github.excu101.filesystem.unix.channel.UnixBufferCalls.get
-import io.github.excu101.filesystem.unix.channel.UnixBufferCalls.put
+import io.github.excu101.filesystem.unix.calls.UnixBufferCalls.get
+import io.github.excu101.filesystem.unix.calls.UnixBufferCalls.put
 
 internal class UnixByteBuffer : ByteBuffer {
 

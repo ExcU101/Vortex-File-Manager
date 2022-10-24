@@ -1,10 +1,16 @@
 #include <cstdlib>
 #include "jni.h"
 
+//#define __VA_ARGS__
+
 static jclass findClass(JNIEnv *env, const char *name) {
     jclass local = env->FindClass(name);
     auto global = (jclass) env->NewGlobalRef(local);
     env->DeleteLocalRef(local);
+
+    if (global == NULL) {
+        abort();
+    }
 
     return global;
 }
@@ -42,7 +48,7 @@ static int getIndexFromFileDescriptor(JNIEnv *env, jobject fileDescriptor) {
 static jclass findUnixExceptionClass(
         JNIEnv *env
 ) {
-    static jclass exception = nullptr;
+    static jclass exception = NULL;
     if (!exception) {
         exception = findClass(env, "io/github/excu101/filesystem/unix/error/UnixException");
     }
@@ -60,20 +66,28 @@ static jmethodID findUnixExceptionConstructorMethod(
     );
 }
 
-static void __throwUnixException(JNIEnv *env, int error, const char *name) {
+static void throwUnixException(JNIEnv *env, int error, const char *name) {
     if (env->ExceptionCheck()) {
+        env->ExceptionDescribe();
         env->ExceptionClear();
     }
-    env->ThrowNew(findUnixExceptionClass(env), "exception");
-}
 
-#define UNIX_ERROR(...) __throwUnixException(__VA_ARGS__);
+
+    auto exception = env->NewObject(
+            findUnixExceptionClass(env),
+            findUnixExceptionConstructorMethod(env),
+            error,
+            name
+    );
+
+//    env->Throw(exception);
+}
 
 static jclass findUnixStatusStructureStatClass(
         JNIEnv *env
 ) {
     jclass local = env->FindClass(
-            "io/github/excu101/filesystem/unix/attr/UnixStatusStructure"
+            "io/github/excu101/filesystem/unix/structure/UnixStatusStructure"
     );
     auto global = (jclass) env->NewGlobalRef(local);
     env->DeleteLocalRef(local);
@@ -92,7 +106,7 @@ static jmethodID findUnixStatusStructureInitMethod(
 
 static jclass findUnixDirentStructureClass(JNIEnv *env) {
     jclass local = env->FindClass(
-            "io/github/excu101/filesystem/unix/attr/UnixDirentStructure"
+            "io/github/excu101/filesystem/unix/structure/UnixDirentStructure"
     );
     auto global = (jclass) env->NewGlobalRef(local);
     env->DeleteLocalRef(local);
@@ -107,12 +121,14 @@ static jmethodID findUnixDirentStructureInitMethod(JNIEnv *env) {
 }
 
 static jclass findUnixFileSystemStatusStructureClass(JNIEnv *env) {
-    jclass local = env->FindClass(
-            "io/github/excu101/filesystem/unix/attr/UnixStructureFileSystemStatus"
-    );
-    auto global = (jclass) env->NewGlobalRef(local);
-    env->DeleteLocalRef(local);
-    return global;
+    static jclass clazz = NULL;
+    if (clazz == NULL) {
+        clazz = findClass(
+                env,
+                "io/github/excu101/filesystem/unix/structure/UnixFileSystemStatusStructure"
+        );
+    }
+    return clazz;
 }
 
 static jmethodID findUnixFileSystemStatusStructureInitMethod(JNIEnv *env) {
@@ -120,5 +136,22 @@ static jmethodID findUnixFileSystemStatusStructureInitMethod(JNIEnv *env) {
             findUnixFileSystemStatusStructureClass(env),
             "<init>",
             "(JJJJJJJJJJJ)V"
+    );
+}
+
+static jclass findUnixMountEntryStructureClass(JNIEnv *env) {
+    jclass local = env->FindClass(
+            "io/github/excu101/filesystem/unix/structure/UnixMountEntryStructure"
+    );
+    auto global = (jclass) env->NewGlobalRef(local);
+    env->DeleteLocalRef(local);
+    return global;
+}
+
+static jmethodID findUnixMountEntryStructureInitMethod(JNIEnv *env) {
+    return env->GetMethodID(
+            findUnixMountEntryStructureClass(env),
+            "<init>",
+            "([B[B[B[BII)V"
     );
 }

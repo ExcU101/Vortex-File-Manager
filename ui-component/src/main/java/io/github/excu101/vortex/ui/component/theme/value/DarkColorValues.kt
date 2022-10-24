@@ -5,70 +5,92 @@ import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.*
 
 fun initVortexDarkColorValues(): Theme {
-    Theme[backgroundColorKey] = Color(value = 0xFF212121)
-    Theme[surfaceColorKey] = Color.Black
-    Theme[accentColorKey] = Color(value = 0xFF3062FF)
+    Theme[backgroundColorKey] = io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[surfaceColorKey] = io.github.excu101.pluginsystem.model.Color.Black
+    Theme[accentColorKey] = io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
 
-    Theme[mainBarSurfaceColorKey] = Color(value = 0xFF212121)
-    Theme[mainBarActionIconTintColorKey] = Color.White
-    Theme[mainBarNavigationIconTintColorKey] = Color.White
-    Theme[mainBarTitleTextColorKey] = Color.White
-    Theme[mainBarSubtitleTextColorKey] = Color.LightGray
+    Theme[mainBarSurfaceColorKey] = io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[mainBarActionIconTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[mainBarNavigationIconTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[mainBarTitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[mainBarSubtitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.LightGray
 
-    Theme[mainBarSurfaceContextualColorKey] = Color(value = 0xFF212121)
-    Theme[mainBarActionIconContextualTintColorKey] = Color.White
-    Theme[mainBarNavigationIconContextualTintColorKey] = Color.White
-    Theme[mainBarTitleContextualTextColorKey] = Color.White
+    Theme[mainBarSurfaceContextualColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[mainBarActionIconContextualTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[mainBarNavigationIconContextualTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[mainBarTitleContextualTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
 
-    Theme[mainDrawerTitleColorKey] = Color.LightGray
-    Theme[mainDrawerBackgroundColorKey] = Color(value = 0xFF212121)
-    Theme[mainDrawerSurfaceColorKey] = Color(value = 0xFF212121)
+    Theme[mainDrawerTitleColorKey] = io.github.excu101.pluginsystem.model.Color.LightGray
+    Theme[mainDrawerBackgroundColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[mainDrawerSurfaceColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
 
-    Theme[mainDrawerItemBackgroundColorKey] = Color(value = 0xFF212121)
-    Theme[mainDrawerItemIconTintColorKey] = Color.White
-    Theme[mainDrawerItemTitleTextColorKey] = Color.White
+    Theme[mainDrawerItemBackgroundColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[mainDrawerItemIconTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[mainDrawerItemTitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
 
-    Theme[mainDrawerItemSelectedBackgroundColorKey] = Color(value = 0x4D3062FF)
-    Theme[mainDrawerItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
-    Theme[mainDrawerItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
+    Theme[mainDrawerItemSelectedBackgroundColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0x4D3062FF)
+    Theme[mainDrawerItemIconSelectedTintColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
+    Theme[mainDrawerItemTitleSelectedTextColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
 
-    Theme[storageListListBackgroundColorKey] = Color(value = 0xFF212121)
+    Theme[storageListListBackgroundColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
 
-    Theme[storageListAdditionalSurfaceColorKey] = Color(value = 0xFF212121)
-    Theme[storageListAdditionalTitleTextColorKey] = Color.White
-    Theme[storageListAdditionalActionIconTintColorKey] = Color.White
+    Theme[storageListAdditionalSurfaceColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[storageListAdditionalTitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[storageListAdditionalActionIconTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
 
-    Theme[trailSurfaceColorKey] = Color(value = 0xFF212121)
-    Theme[trailItemTitleTextColorKey] = Color.White
-    Theme[trailItemArrowTintColorKey] = Color.White
+    Theme[trailSurfaceColorKey] = io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[trailItemTitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[trailItemArrowTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
 
-    Theme[trailItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
-    Theme[trailItemArrowSelectedTintColorKey] = Color(value = 0xFF3062FF)
-    Theme[trailItemRippleSelectedTintColorKey] = Color(value = 0x523062FF)
+    Theme[trailItemTitleSelectedTextColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
+    Theme[trailItemArrowSelectedTintColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
+    Theme[trailItemRippleSelectedTintColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0x523062FF)
 
-    Theme[storageListWarningBackgroundColorKey] = Color(value = 0xFF212121)
-    Theme[storageListWarningIconTintColorKey] = Color.White
-    Theme[storageListWarningTitleTextColorKey] = Color.White
-    Theme[storageListWarningActionContentColorKey] = Color(value = 0xFF3062FF)
+    Theme[storageListWarningBackgroundColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[storageListWarningIconTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[storageListWarningTitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[storageListWarningActionContentColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
 
-    Theme[storageListItemSurfaceColorKey] = Color(value = 0xFF212121)
-    Theme[storageListItemTitleTextColorKey] = Color.White
-    Theme[storageListItemSecondaryTextColorKey] = Color.LightGray
-    Theme[storageListItemIndexTextColorKey] = Color.Gray
-    Theme[storageListItemIconTintColorKey] = Color.White
-    Theme[storageListItemIconBackgroundColorKey] = Color.Gray
-    Theme[storageListItemSurfaceRippleColorKey] = Color(value = 0x4DFFFFFF)
+    Theme[storageListItemSurfaceColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[storageListItemTitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[storageListItemSecondaryTextColorKey] = io.github.excu101.pluginsystem.model.Color.LightGray
+    Theme[storageListItemIndexTextColorKey] = io.github.excu101.pluginsystem.model.Color.Gray
+    Theme[storageListItemIconTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[storageListItemIconBackgroundColorKey] = io.github.excu101.pluginsystem.model.Color.Gray
+    Theme[storageListItemSurfaceRippleColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0x4DFFFFFF)
 
-    Theme[storageListItemSurfaceSelectedColorKey] = Color(value = 0x4D3062FF)
-    Theme[storageListItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
-    Theme[storageListItemSecondarySelectedTextColorKey] = Color(value = 0xFF3062FF)
-    Theme[storageListItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
-    Theme[storageListItemIconBackgroundSelectedColorKey] = Color.DarkGray
+    Theme[storageListItemSurfaceSelectedColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0x4D3062FF)
+    Theme[storageListItemTitleSelectedTextColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
+    Theme[storageListItemSecondarySelectedTextColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
+    Theme[storageListItemIconSelectedTintColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
+    Theme[storageListItemIconBackgroundSelectedColorKey] = io.github.excu101.pluginsystem.model.Color.DarkGray
 
-    Theme[layoutProgressBarBackgroundColorKey] = Color(value = 0xFF212121)
-    Theme[layoutProgressBarTintColorKey] = Color(value = 0xFF3062FF)
-    Theme[layoutProgressTitleTextColorKey] = Color.White
-    Theme[layoutProgressActionTintColorKey] = Color.White
+    Theme[layoutProgressBarBackgroundColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF212121)
+    Theme[layoutProgressBarTintColorKey] =
+        io.github.excu101.pluginsystem.model.Color(value = 0xFF3062FF)
+    Theme[layoutProgressTitleTextColorKey] = io.github.excu101.pluginsystem.model.Color.White
+    Theme[layoutProgressActionTintColorKey] = io.github.excu101.pluginsystem.model.Color.White
 
     return Theme
 }

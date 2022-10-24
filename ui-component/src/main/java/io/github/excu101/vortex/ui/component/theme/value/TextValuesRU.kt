@@ -5,18 +5,24 @@ import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.*
 
 fun initVortexTextValuesRU() {
-    Theme[fileListSearchActionTitleKey] = Text(value = "Поиск")
-    Theme[fileListMoreActionTitleKey] = Text(value = "Больше")
-    Theme[fileListSortActionTitleKey] = Text(value = "Сортировка")
+    Theme[fileListSearchActionTitleKey] = io.github.excu101.pluginsystem.model.Text(value = "Поиск")
+    Theme[fileListMoreActionTitleKey] = io.github.excu101.pluginsystem.model.Text(value = "Больше")
+    Theme[fileListSortActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Сортировка")
 
-    Theme[fileListFilesCountTitleKey] = Text(value = "Файлы: $specialSymbol")
-    Theme[fileListDirectoriesCountTitleKey] = Text(value = "Папки: $specialSymbol")
+    Theme[fileListFilesCountTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Файлы: $integerSpecifier")
+    Theme[fileListDirectoriesCountTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Папки: $integerSpecifier")
 
-    Theme[fileListItemNameKey] = Text(value = specialSymbol)
-    Theme[fileListItemsCountKey] = Text(value = "Объекты: $specialSymbol")
-    Theme[fileListItemCountKey] = Text(value = "Один объект")
-    Theme[fileListItemEmptyKey] = Text(value = "Пусто")
+    Theme[fileListItemNameKey] = io.github.excu101.pluginsystem.model.Text(value = stringSpecifier)
+    Theme[fileListItemsCountKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Объекты: $integerSpecifier")
+    Theme[fileListItemCountKey] = io.github.excu101.pluginsystem.model.Text(value = "Один объект")
+    Theme[fileListItemEmptyKey] = io.github.excu101.pluginsystem.model.Text(value = "Пусто")
 
-    Theme[vortexServiceConnectedKey] = Text(value = "Vortex Service подключен!")
-    Theme[vortexServiceDisconnectedKey] = Text(value = "Vortex Service отключен!")
+    Theme[vortexServiceConnectedKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Vortex Service подключен!")
+    Theme[vortexServiceDisconnectedKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Vortex Service отключен!")
 }

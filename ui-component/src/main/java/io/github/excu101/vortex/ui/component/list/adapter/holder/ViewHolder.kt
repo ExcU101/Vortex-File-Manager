@@ -1,25 +1,68 @@
 package io.github.excu101.vortex.ui.component.list.adapter.holder
 
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
+import android.view.View.OnClickListener
+import android.view.View.OnLongClickListener
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
-abstract class ViewHolder<T>(itemView: View) :
-    RecyclerView.ViewHolder(itemView) {
+open class ViewHolder<T>(itemView: View) : ViewHolder(itemView) {
 
-    abstract fun bind(item: T) // Bind itemView with given item (data)
+    // Bind itemView with given item (data)
+    @Suppress("UNCHECKED_CAST")
+    open fun bind(item: T) {
+        (itemView as? RecyclableView<T>)?.onBind(item)
+    }
 
-    abstract fun unbind() // Unbind view, when it's recycled
+    // Unbind view, when it's recycled
+    @Suppress("UNCHECKED_CAST")
+    open fun unbind() {
+        (itemView as? RecyclableView<T>)?.onUnbind()
+    }
 
-    open fun bindSelection(isSelected: Boolean) {}
+    @Suppress("UNCHECKED_CAST")
+    open fun bindSelection(isSelected: Boolean) {
+        (itemView as? RecyclableView<T>)?.onBindSelection(isSelected)
+    }
 
-    open fun bindListener(listener: View.OnClickListener) {}
+    @Suppress("UNCHECKED_CAST")
+    open fun bindListener(listener: OnClickListener) {
+        (itemView as? RecyclableView<T>)?.onBindListener(listener)
+    }
 
-    open fun bindLongListener(listener: View.OnLongClickListener) {}
+    @Suppress("UNCHECKED_CAST")
+    open fun bindLongListener(listener: OnLongClickListener) {
+        (itemView as? RecyclableView<T>)?.onBindLongListener(listener)
+    }
 
-    open fun bindSelectionListener(listener: View.OnClickListener) {}
+    open fun bindSelectionListener(listener: OnClickListener) {}
 
-    open fun bindSelectionLongListener(listener: View.OnLongClickListener) {}
+    open fun bindSelectionLongListener(listener: OnLongClickListener) {}
 
-    open fun unbindListeners() {}
+    @Suppress("UNCHECKED_CAST")
+    open fun unbindListeners() {
+        (itemView as? RecyclableView<T>)?.onUnbindListeners()
+    }
+
+    interface RecyclableView<T> {
+        fun onBind(item: T)
+
+        fun onUnbind()
+
+        fun onBindSelection(isSelected: Boolean) {
+
+        }
+
+        fun onBindListener(listener: OnClickListener) {
+
+        }
+
+        fun onBindLongListener(listener: OnLongClickListener) {
+
+        }
+
+        fun onUnbindListeners() {
+
+        }
+    }
 
 }

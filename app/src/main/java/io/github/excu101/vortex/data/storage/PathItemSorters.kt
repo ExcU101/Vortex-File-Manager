@@ -5,28 +5,40 @@ import io.github.excu101.vortex.data.PathItem
 
 object PathItemSorters {
 
-    val Name: Sorter<PathItem> = compareBy { item ->
-        item.name
+    val Name: Sorter<PathItem> = compareByDescending<PathItem> { item ->
+        item.isDirectory
+    }.thenBy {
+        it.name
     }
 
-    val Path: Sorter<PathItem> = compareBy { item ->
-        item.value
+    val Path: Sorter<PathItem> = compareByDescending<PathItem> { item ->
+        item.isDirectory
+    }.thenBy {
+        it.value
     }
 
-    val Size: Sorter<PathItem> = compareBy { item ->
-        item.size.memory
+    val Size: Sorter<PathItem> = compareByDescending<PathItem> { item ->
+        item.isDirectory
+    }.thenBy {
+        it.size.memory
     }
 
-    val LastModifiedTime: Sorter<PathItem> = compareBy { item ->
-        item.lastModifiedTime.toNanos()
+    val LastModifiedTime: Sorter<PathItem> = compareByDescending<PathItem> { item ->
+        item.isDirectory
+    }.thenBy {
+        it.lastModifiedTime.toNanos()
     }
 
-    val LastAccessTime: Sorter<PathItem> = compareBy { item ->
-        item.lastAccessTime.toNanos()
+    val LastAccessTime: Sorter<PathItem> = compareByDescending<PathItem> { item ->
+        item.isDirectory
+    }.thenBy {
+        it.lastAccessTime.toNanos()
     }
 
-    val CreationTime: Sorter<PathItem> = compareBy { item ->
-        item.creationTime.toNanos()
+    val CreationTime: Sorter<PathItem> = compareByDescending<PathItem> { item ->
+        item.isDirectory
+    }.thenBy {
+        it.creationTime.toNanos()
     }
 
 }

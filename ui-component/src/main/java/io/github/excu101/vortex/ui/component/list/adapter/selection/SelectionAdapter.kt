@@ -5,8 +5,4 @@ import io.github.excu101.vortex.ui.component.list.adapter.listener.ClickListener
 import io.github.excu101.vortex.ui.component.list.adapter.EditableAdapter
 
 abstract class SelectionAdapter<T, VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>(),
-    EditableAdapter<T>, ClickListenerRegister<T> {
-
-    abstract fun isSelected(position: Int): Boolean
-
-}
+    SelectableAdapter<T>, ClickListenerRegister<T>

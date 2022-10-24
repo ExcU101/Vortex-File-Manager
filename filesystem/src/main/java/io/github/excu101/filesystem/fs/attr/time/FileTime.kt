@@ -13,9 +13,10 @@ class FileTime(
     fun toSeconds() = instant.seconds
 
     override fun toString(): String {
+
         return SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ssZ",
-            Locale.ENGLISH
+            "E MMM d",
+            Locale.getDefault()
         ).format(TimeUnit.MILLISECONDS.toDays(toSeconds()))
     }
 

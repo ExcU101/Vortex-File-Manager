@@ -7,6 +7,7 @@ add_library(
         SHARED
         unix/unix-calls.cpp
         unix/unix-file-channel.cpp
+        unix/operations/symlink.cpp
         unix/attrs.cpp
         unix/operations.cpp
         unix/classes.cpp

@@ -1,7 +1,7 @@
 object Versions {
 
     // AGP
-    const val androidVer = "7.3.0"
+    const val androidVer = "7.3.1"
 
     // AndroidX
     const val coreVer = "1.9.0"

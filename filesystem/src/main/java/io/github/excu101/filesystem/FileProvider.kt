@@ -24,6 +24,9 @@ object FileProvider {
 
     private var defaultSystem: FileSystem? = null
 
+    val stores: Iterable<FileStore>
+        get() = getSystem().stores
+
     private fun getSystem(): FileSystem {
         return defaultSystem ?: throw NotAnyProviderInstalled()
     }
@@ -62,6 +65,11 @@ object FileProvider {
         } catch (error: Throwable) {
             throw error
         }
+    }
+
+    fun getFileStores(scheme: String? = null): Iterable<FileStore> {
+        if (scheme == null) return stores
+        return getSystem(scheme).stores
     }
 
     fun getFileStore(path: Path): FileStore {

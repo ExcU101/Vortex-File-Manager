@@ -5,114 +5,174 @@ import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.*
 
 fun initVortexTextValuesEN() {
-    Theme[fileListLoadingInitiatingTitleKey] = Text(value = "Initiating...")
-    Theme[fileListLoadingNavigatingTitleKey] = Text(value = "Navigating to $specialSymbol...")
+    Theme[fileListLoadingInitiatingTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Initiating...")
+    Theme[fileListLoadingNavigatingTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Navigating to $stringSpecifier")
 
     // Warning
-    Theme[fileListWarningEmptyTitleKey] = Text(value = "$specialSymbol is empty")
+    Theme[fileListWarningEmptyTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "$stringSpecifier is empty")
 
     // Warning : Permission
-    Theme[fileListWarningFullStorageAccessTitleKey] = Text(value = "App requires")
-    Theme[fileListWarningStorageAccessTitleKey] = Text(value = "App requires")
-    Theme[fileListWarningNotificationAccessTitleKey] = Text(value = "App requires")
+    Theme[fileListWarningFullStorageAccessTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "App requires")
+    Theme[fileListWarningStorageAccessTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "App requires")
+    Theme[fileListWarningNotificationAccessTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "App requires")
 
     // Warning : Action
-    Theme[fileListWarningFullStorageAccessActionTitleKey] = Text(
-        value = "Provide full storage access"
-    )
-    Theme[fileListWarningStorageAccessActionTitleKey] = Text(
+    Theme[fileListWarningFullStorageAccessActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(
+            value = "Provide full storage access"
+        )
+    Theme[fileListWarningStorageAccessActionTitleKey] = io.github.excu101.pluginsystem.model.Text(
         value = "Provide storage access"
     )
-    Theme[fileListWarningNotificationAccessActionTitleKey] = Text(
-        value = "Provide notifications access"
-    )
+    Theme[fileListWarningNotificationAccessActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(
+            value = "Provide notifications access"
+        )
 
     // Bar
-    Theme[fileListSearchActionTitleKey] = Text(value = "Search")
-    Theme[fileListMoreActionTitleKey] = Text(value = "More")
-    Theme[fileListSortActionTitleKey] = Text(value = "Sort")
+    Theme[fileListSearchActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Search")
+    Theme[fileListMoreActionTitleKey] = io.github.excu101.pluginsystem.model.Text(value = "More")
+    Theme[fileListSortActionTitleKey] = io.github.excu101.pluginsystem.model.Text(value = "Sort")
+
+    // Storage list : Create dialog
+    Theme[fileListCreateDialogNameHintTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Enter name")
+    Theme[fileListCreateDialogPathHintTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Enter path")
 
     // Trail
-    Theme[fileListTrailCopyPathActionTitleKey] = Text(value = "Copy path")
+    Theme[fileListTrailCopyPathActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Copy path")
 
     // Storage list : Drawer Groups
-    Theme[fileListGroupViewActionTitleKey] = Text(value = "View")
-    Theme[fileListGroupOrderActionTitleKey] = Text(value = "Order")
-    Theme[fileListGroupSortActionTitleKey] = Text(value = "Sort")
-    Theme[fileListGroupFilterActionTitleKey] = Text(value = "Filter")
+    Theme[fileListGroupViewActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "View")
+    Theme[fileListGroupOrderActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Order")
+    Theme[fileListGroupSortActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Sort")
+    Theme[fileListGroupFilterActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Filter")
 
     // Storage list : Drawer Groups : View
-    Theme[fileListViewColumnActionTitleKey] = Text(value = "Column")
-    Theme[fileListViewGridActionTitleKey] = Text(value = "Grid")
+    Theme[fileListViewColumnActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Column")
+    Theme[fileListViewGridActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Grid")
 
     // Storage list : Drawer Groups : View
-    Theme[fileListOrderAscendingActionTitleKey] = Text(value = "Ascending")
-    Theme[fileListOrderDescendingActionTitleKey] = Text(value = "Descending")
+    Theme[fileListOrderAscendingActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Ascending")
+    Theme[fileListOrderDescendingActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Descending")
 
     // Storage list : Drawer Groups : Sort
-    Theme[fileListSortNameActionTitleKey] = Text(value = "Name")
-    Theme[fileListSortPathActionTitleKey] = Text(value = "Path")
-    Theme[fileListSortSizeActionTitleKey] = Text(value = "Size")
-    Theme[fileListSortLastModifiedTimeActionTitleKey] = Text(value = "Last modified time")
-    Theme[fileListSortLastAccessTimeActionTitleKey] = Text(value = "Last access time")
-    Theme[fileListSortCreationTimeActionTitleKey] = Text(value = "Creation time")
+    Theme[fileListSortNameActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Name")
+    Theme[fileListSortPathActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Path")
+    Theme[fileListSortSizeActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Size")
+    Theme[fileListSortLastModifiedTimeActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Last modified time")
+    Theme[fileListSortLastAccessTimeActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Last access time")
+    Theme[fileListSortCreationTimeActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Creation time")
 
     // Filter
-    Theme[fileListFilterOnlyFoldersActionTitleKey] = Text(value = "Only folders")
-    Theme[fileListFilterOnlyFilesActionTitleKey] = Text(value = "Only files")
+    Theme[fileListFilterOnlyFoldersActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Only folders")
+    Theme[fileListFilterOnlyFilesActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Only files")
 
     // More
-    Theme[fileListGroupMoreActionTitleKey] = Text(value = "Default ($specialSymbol)")
+    Theme[fileListGroupMoreActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Default ($stringSpecifier)")
 
-    Theme[fileListMoreSelectAllActionTitleKey] = Text(value = "Select all")
-    Theme[fileListMoreDeselectAllActionTitleKey] = Text(value = "Deselect all")
-    Theme[fileListMoreInfoActionTitleKey] = Text(value = "Info")
-    Theme[fileListMoreNavigateLeftActionTitleKey] = Text(value = "Navigate left")
-    Theme[fileListMoreNavigateRightActionTitleKey] = Text(value = "Navigate right")
+    Theme[fileListMoreSelectAllActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Select all")
+    Theme[fileListMoreDeselectAllActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Deselect all")
+    Theme[fileListMoreInfoActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Info")
+    Theme[fileListMoreNavigateLeftActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Navigate left")
+    Theme[fileListMoreNavigateRightActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Navigate right")
 
-    Theme[fileListFilesCountTitleKey] = Text(value = "Files: $specialSymbol")
-    Theme[fileListDirectoriesCountTitleKey] = Text(value = "Folders: $specialSymbol")
-    Theme[fileListSelectionTitleKey] = Text(value = "Selected $specialSymbol")
+    Theme[fileListFilesCountTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Files: $integerSpecifier")
+    Theme[fileListDirectoriesCountTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Folders: $integerSpecifier")
+    Theme[fileListSelectionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Selected $integerSpecifier")
 
-    Theme[fileListFilesCountSectionKey] = Text(value = "Files ($specialSymbol)")
-    Theme[fileListDirectoriesCountSectionKey] = Text(value = "Folders ($specialSymbol)")
+    Theme[fileListFilesCountSectionKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Files ($integerSpecifier)")
+    Theme[fileListDirectoriesCountSectionKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Folders ($integerSpecifier)")
 
-    Theme[fileListItemMimeTypeApplicationKey] = Text(value = "Application")
-    Theme[fileListItemMimeTypeImageKey] = Text(value = "Image")
-    Theme[fileListItemMimeTypeVideoKey] = Text(value = "Video")
-    Theme[fileListItemMimeTypeAudioKey] = Text(value = "Audio")
-    Theme[fileListItemMimeTypeTextKey] = Text(value = "Text")
+    Theme[fileListItemMimeTypeApplicationKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Application")
+    Theme[fileListItemMimeTypeImageKey] = io.github.excu101.pluginsystem.model.Text(value = "Image")
+    Theme[fileListItemMimeTypeVideoKey] = io.github.excu101.pluginsystem.model.Text(value = "Video")
+    Theme[fileListItemMimeTypeAudioKey] = io.github.excu101.pluginsystem.model.Text(value = "Audio")
+    Theme[fileListItemMimeTypeTextKey] = io.github.excu101.pluginsystem.model.Text(value = "Text")
 
     // Item : Size
-    Theme[fileListItemSizeBKey] = Text(value = "B")
-    Theme[fileListItemSizeKiBKey] = Text(value = "KB")
-    Theme[fileListItemSizeMiBKey] = Text(value = "MB")
-    Theme[fileListItemSizeGiBKey] = Text(value = "GB")
-    Theme[fileListItemSizeTiBKey] = Text(value = "TB")
-    Theme[fileListItemSizePiBKey] = Text(value = "PB")
-    Theme[fileListItemSizeEiBKey] = Text(value = "EB")
-    Theme[fileListItemSizeZiBKey] = Text(value = "ZB")
-    Theme[fileListItemSizeYiBKey] = Text(value = "YB")
+    Theme[fileListItemSizeBKey] = io.github.excu101.pluginsystem.model.Text(value = "B")
+    Theme[fileListItemSizeKiBKey] = io.github.excu101.pluginsystem.model.Text(value = "KB")
+    Theme[fileListItemSizeMiBKey] = io.github.excu101.pluginsystem.model.Text(value = "MB")
+    Theme[fileListItemSizeGiBKey] = io.github.excu101.pluginsystem.model.Text(value = "GB")
+    Theme[fileListItemSizeTiBKey] = io.github.excu101.pluginsystem.model.Text(value = "TB")
+    Theme[fileListItemSizePiBKey] = io.github.excu101.pluginsystem.model.Text(value = "PB")
+    Theme[fileListItemSizeEiBKey] = io.github.excu101.pluginsystem.model.Text(value = "EB")
+    Theme[fileListItemSizeZiBKey] = io.github.excu101.pluginsystem.model.Text(value = "ZB")
+    Theme[fileListItemSizeYiBKey] = io.github.excu101.pluginsystem.model.Text(value = "YB")
 
     // Item
-    Theme[fileListItemNameKey] = Text(value = specialSymbol)
-    Theme[fileListItemSizeKey] = Text(value = specialSymbol)
+    Theme[fileListItemNameKey] = io.github.excu101.pluginsystem.model.Text(value = stringSpecifier)
+    Theme[fileListItemSizeKey] = io.github.excu101.pluginsystem.model.Text(value = stringSpecifier)
+    Theme[fileListItemInfoSeparatorKey] = io.github.excu101.pluginsystem.model.Text(value = " | ")
 
     // Item : Directory Content
-    Theme[fileListItemsCountKey] = Text(value = "Items $specialSymbol")
-    Theme[fileListItemCountKey] = Text(value = "One item")
-    Theme[fileListItemEmptyKey] = Text(value = "Empty")
+    Theme[fileListItemsCountKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Items $integerSpecifier")
+    Theme[fileListItemCountKey] = io.github.excu101.pluginsystem.model.Text(value = "One item")
+    Theme[fileListItemEmptyKey] = io.github.excu101.pluginsystem.model.Text(value = "Empty")
 
     // Operation
-    Theme[fileListGroupOperationDefaultActionTitleKey] = Text(value = "Default")
+    Theme[fileListOperationDeleteItemTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Deleting $stringSpecifier")
+    Theme[fileListOperationDeleteItemTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Deletion performed")
 
-    Theme[fileListOperationSwapNamesActionTitleKey] = Text(value = "Swap names")
-    Theme[fileListOperationDeleteActionTitleKey] = Text(value = "Delete")
-    Theme[fileListOperationRenameActionTitleKey] = Text(value = "Rename")
-    Theme[fileListOperationCopyActionTitleKey] = Text(value = "Copy")
-    Theme[fileListOperationCutActionTitleKey] = Text(value = "Cut")
-    Theme[fileListOperationAddActionNewTitleKey] = Text(value = "Add new")
+    Theme[fileListGroupOperationDefaultActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Default")
 
-    Theme[vortexServiceConnectedKey] = Text(value = "Vortex Service is connected!")
-    Theme[vortexServiceDisconnectedKey] = Text(value = "Vortex Service is disconnected!")
+    Theme[fileListOperationSwapNamesActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Swap names")
+    Theme[fileListOperationDeleteActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Delete")
+    Theme[fileListOperationRenameActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Rename")
+    Theme[fileListOperationCopyActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Copy")
+    Theme[fileListOperationCutActionTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Cut")
+    Theme[fileListOperationAddActionNewTitleKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Add new")
+
+    Theme[vortexServiceConnectedKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Vortex Service is connected!")
+    Theme[vortexServiceDisconnectedKey] =
+        io.github.excu101.pluginsystem.model.Text(value = "Vortex Service is disconnected!")
 }

@@ -2,12 +2,12 @@ package io.github.excu101.vortex.ui.component.menu
 
 import android.content.Context
 import android.content.res.ColorStateList.valueOf
-import android.graphics.Color
 import android.graphics.drawable.RippleDrawable
 import android.view.View.MeasureSpec.*
 import android.widget.ImageView
 import android.widget.TextView
 import io.github.excu101.pluginsystem.model.Action
+import io.github.excu101.pluginsystem.model.action
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.pluginsystem.utils.EmptyDrawable
@@ -30,7 +30,7 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
             invalidate()
         }
 
-    var action: Action = Action(title = "", icon = EmptyDrawable)
+    var action: Action = action(title = "", icon = EmptyDrawable)
         set(value) {
             field = value
             titleView.text = value.title

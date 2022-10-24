@@ -1,6 +1,26 @@
 package io.github.excu101.vortex.ui.component.theme.key
 
-const val specialSymbol = "%s"
+import io.github.excu101.pluginsystem.annotation.StringSpecifier
+
+// Format Specifiers
+// %c - char
+// %d - decimal int (base 10)
+// %f - float
+// %i - int (base 10)
+// %o - octal (base 8)
+// %s - string
+// %u - unsigned decimal int
+// %x - hexadecimal (base 16)
+// %t - date/time
+const val charSpecifier = "%c"
+const val decimalSpecifier = "%d"
+const val floatSpecifier = "%f"
+const val integerSpecifier = "%d"
+const val octalSpecifier = "%o"
+const val stringSpecifier = "%s"
+const val unsignedIntegerSpecifier = "%u"
+const val hexadecimalSpecifier = "x"
+const val dateSpecifier = "%t"
 
 const val fileListLoadingInitiatingTitleKey = "fileListLoadingInitiatingTitle"
 const val fileListLoadingNavigatingTitleKey = "fileListLoadingNavigatingTitle"
@@ -28,6 +48,10 @@ const val fileListWarningNotificationAccessActionTitleKey =
 const val fileListSearchActionTitleKey = "fileListSearchActionTitle"
 const val fileListMoreActionTitleKey = "fileListMoreActionTitle"
 const val fileListSortActionTitleKey = "fileListSortActionTitle"
+
+// Storage list : Create dialog
+const val fileListCreateDialogNameHintTitleKey = "fileListCreateDialogNameHintTitle"
+const val fileListCreateDialogPathHintTitleKey = "fileListCreateDialogPathHintTitle"
 
 // Storage list : Trail
 const val fileListTrailCopyPathActionTitleKey = "fileListTrailCopyPathActionTitle"
@@ -73,6 +97,8 @@ const val fileListDirectoriesCountTitleKey = "fileListDirectoriesCountTitle"
 const val fileListSelectionTitleKey = "fileListSelectionTitle"
 
 const val fileListFilesCountSectionKey = "fileListFilesCountSection"
+
+@StringSpecifier
 const val fileListDirectoriesCountSectionKey = "fileListDirectoriesCountSection"
 
 // Item : MimeType
@@ -97,6 +123,7 @@ const val fileListItemSizeYiBKey = "fileListItemSizeYiB"
 const val fileListItemNameKey = "fileListItemName"
 
 const val fileListItemSizeKey = "fileListItemSize"
+const val fileListItemInfoSeparatorKey = "fileListItemInfoSeparator"
 
 // Item : Directory Content
 const val fileListItemsCountKey = "fileListItemsCount"
@@ -104,6 +131,9 @@ const val fileListItemCountKey = "fileListItemCount"
 const val fileListItemEmptyKey = "fileListItemEmpty"
 
 // Operation
+const val fileListOperationDeleteItemTitleKey = "fileListOperationDeleteItemTitleKey"
+const val fileListOperationDeleteItemPerformedTitleKey = "fileListOperationDeleteItemPerformedTitle"
+
 const val fileListGroupOperationDefaultActionTitleKey = "fileListGroupOperationDefaultActionTitle"
 
 const val fileListOperationSwapNamesActionTitleKey = "fileListOperationSwapNamesActionTitle"

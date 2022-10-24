@@ -18,11 +18,12 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 import com.google.android.material.shape.MaterialShapeUtils
 import io.github.excu101.pluginsystem.model.Action
+import io.github.excu101.pluginsystem.model.Color
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.menu.ActionListener
+import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.menu.MenuLayout
 import io.github.excu101.vortex.ui.component.theme.key.*
 import kotlin.math.min
@@ -53,6 +54,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_ALWAYS
         initializeElevationOverlay(context)
         setUseTintColorForShadow(true)
+        setShadowColor(Color.Blue.value)
         setTint(ThemeColor(mainBarSurfaceColorKey))
     }
 
@@ -66,6 +68,8 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     private val titleView = TextView(context).apply {
         textSize = 18F
+//        ellipsize = TextUtils.TruncateAt.END
+        setLines(1)
         setTextColor(ThemeColor(mainBarTitleTextColorKey))
     }
 
@@ -151,7 +155,6 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     override fun setElevation(elevation: Float) {
         super.setElevation(elevation)
-
         MaterialShapeUtils.setElevation(this, elevation)
     }
 
@@ -180,7 +183,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         }
     }
 
-    fun setNavigationClickListener(listener: OnClickListener) {
+    fun setNavigationClickListener(listener: OnClickListener?) {
         navigationIconView.setOnClickListener(listener)
     }
 
@@ -214,11 +217,11 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         menuView.removeItem(action)
     }
 
-    fun registerListener(listener: ActionListener) {
+    fun registerListener(listener: MenuActionListener) {
         menuView.addListener(listener)
     }
 
-    fun unregisterListener(listener: ActionListener) {
+    fun unregisterListener(listener: MenuActionListener) {
         menuView.removeListener(listener)
     }
 
@@ -284,14 +287,14 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         var widthPosition = horizontalPadding
-        var heightPosition = verticalPadding
+        var textHeightPosition = 8.dp
 
         if (containsNavigationIcon) {
             navigationIconView.layout(
                 widthPosition,
-                heightPosition,
+                verticalPadding,
                 widthPosition + navigationIconView.measuredWidth,
-                heightPosition + navigationIconView.measuredHeight
+                verticalPadding + navigationIconView.measuredHeight
             )
             widthPosition += navigationIconView.measuredWidth
         }
@@ -300,32 +303,28 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
             widthPosition += titleHorizontalPadding
         }
 
-        if (containsSubtitle) {
-            subtitleView.layout(
-                widthPosition,
-                8.dp + titleView.lineHeight,
-                widthPosition + subtitleView.measuredWidth,
-                8.dp + titleView.lineHeight + subtitleView.lineHeight + 3.dp
-            )
+        if (!containsSubtitle) {
+            textHeightPosition *= 2
         }
 
         if (containsTitle) {
-            if (!containsSubtitle) {
-                titleView.layout(
-                    widthPosition,
-                    heightPosition,
-                    widthPosition + titleView.measuredWidth,
-                    heightPosition + titleView.lineHeight
-                )
-            } else {
-                titleView.layout(
-                    widthPosition,
-                    8.dp,
-                    widthPosition + titleView.measuredWidth,
-                    8.dp + titleView.lineHeight
-                )
 
-            }
+            titleView.layout(
+                widthPosition,
+                textHeightPosition,
+                widthPosition + titleView.measuredWidth,
+                textHeightPosition + titleView.lineHeight
+            )
+            textHeightPosition += titleView.lineHeight
+        }
+
+        if (containsSubtitle) {
+            subtitleView.layout(
+                widthPosition,
+                textHeightPosition,
+                widthPosition + subtitleView.measuredWidth,
+                textHeightPosition + subtitleView.lineHeight + 3.dp
+            )
         }
 
         widthPosition += textWidth

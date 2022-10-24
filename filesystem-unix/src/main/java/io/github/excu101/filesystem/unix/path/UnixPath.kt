@@ -3,7 +3,6 @@ package io.github.excu101.filesystem.unix.path
 import io.github.excu101.filesystem.fs.FileSystem
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.UnixFileSystem
-import kotlin.math.min
 
 class UnixPath internal constructor(
     private val path: ByteArray,
@@ -68,6 +67,13 @@ class UnixPath internal constructor(
     override fun startsWith(other: Path): Boolean {
         if (other.isEmpty) return false
         if (isEmpty) return false
+
+        for (i in 0..other.length) {
+            val segment1 = bytes[i]
+            val segment2 = other.bytes[i]
+
+            if (segment1 != segment2) return false
+        }
 
         return true
     }

@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity.CENTER
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
@@ -18,7 +19,7 @@ import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.menu.ActionListener
+import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.theme.key.storageListWarningActionContentColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListWarningBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListWarningIconTintColorKey
@@ -30,7 +31,7 @@ class WarningView : ThemeLinearLayout {
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
-    private val listeners = mutableListOf<ActionListener>()
+    private val listeners = mutableListOf<WarningActionListener>()
 
     private val iconSize = 56.dp
     private val messagePadding = 32.dp
@@ -128,17 +129,18 @@ class WarningView : ThemeLinearLayout {
         }
     }
 
-    fun registerListener(listener: ActionListener) {
+    fun registerListener(listener: WarningActionListener) {
         listeners.add(listener)
     }
 
     private fun getItem(action: Action): MaterialButton {
         return MaterialButton(
-            context
+            context,
+            null,
+            com.google.android.material.R.style.Widget_MaterialComponents_Button_TextButton
         ).apply {
             icon = action.icon
             text = action.title
-            elevation = 0F
             updatePadding(
                 top = 4.dp,
                 bottom = 4.dp
@@ -150,7 +152,7 @@ class WarningView : ThemeLinearLayout {
             layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
             setOnClickListener { view ->
                 listeners.forEach { listener ->
-                    listener.onCall(action)
+                    listener.onWarningActionCall(action)
                 }
             }
         }

@@ -10,7 +10,7 @@ static void clearErrno() {
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_io_github_excu101_filesystem_unix_channel_UnixFileChannelCalls_readImpl__IJI(
+Java_io_github_excu101_filesystem_unix_calls_UnixFileChannelCalls_readImpl__IJI(
         JNIEnv *env,
         jobject thiz,
         jint descriptor,
@@ -33,7 +33,7 @@ Java_io_github_excu101_filesystem_unix_channel_UnixFileChannelCalls_readImpl__IJ
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_io_github_excu101_filesystem_unix_channel_UnixFileChannelCalls_writeImpl__IJI(
+Java_io_github_excu101_filesystem_unix_calls_UnixFileChannelCalls_writeImpl__IJI(
         JNIEnv *env,
         jobject thiz,
         jint descriptor,
@@ -57,7 +57,7 @@ Java_io_github_excu101_filesystem_unix_channel_UnixFileChannelCalls_writeImpl__I
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_io_github_excu101_filesystem_unix_channel_UnixFileChannelCalls_readImpl__I_3JI(
+Java_io_github_excu101_filesystem_unix_calls_UnixFileChannelCalls_readImpl__I_3JI(
         JNIEnv *env,
         jobject thiz,
         jint descriptor,
@@ -69,7 +69,7 @@ Java_io_github_excu101_filesystem_unix_channel_UnixFileChannelCalls_readImpl__I_
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_io_github_excu101_filesystem_unix_channel_UnixFileChannelCalls_writeImpl__I_3JI(
+Java_io_github_excu101_filesystem_unix_calls_UnixFileChannelCalls_writeImpl__I_3JI(
         JNIEnv *env,
         jobject thiz,
         jint descriptor,

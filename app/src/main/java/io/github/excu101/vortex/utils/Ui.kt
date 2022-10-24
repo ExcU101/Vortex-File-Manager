@@ -2,8 +2,8 @@ package io.github.excu101.vortex.utils
 
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 
-val ItemViewTypes.STORAGE: Int
-    get() = 3
+val ItemViewTypes.storageItem: Int
+    get() = 50
 
-val ItemViewTypes.TRAIL: Int
-    get() = 4
+val ItemViewTypes.trailItem: Int
+    get() = 51

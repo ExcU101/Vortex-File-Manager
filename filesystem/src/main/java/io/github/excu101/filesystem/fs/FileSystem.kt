@@ -16,6 +16,8 @@ abstract class FileSystem(
     open val containsHelper: Boolean
         get() = helper != null
 
+    abstract val stores: Iterable<FileStore>
+
     abstract fun isOpen(): Boolean
 
     abstract fun isReadOnly(): Boolean

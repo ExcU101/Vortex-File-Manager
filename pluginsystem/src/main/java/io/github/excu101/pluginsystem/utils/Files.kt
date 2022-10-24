@@ -1,6 +1,6 @@
 package io.github.excu101.pluginsystem.utils
 
-import io.github.excu101.pluginsystem.provider.PluginManager.pluginExtensionName
+import io.github.excu101.pluginsystem.provider.PluginManagerImpl.pluginExtensionName
 import java.io.File
 import java.net.URL
 

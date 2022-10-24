@@ -1,5 +1,6 @@
 package io.github.excu101.filesystem.unix
 
+import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.FileSystem
 import io.github.excu101.filesystem.fs.FileSystemProvider
 import io.github.excu101.filesystem.fs.path.Path
@@ -51,6 +52,14 @@ class UnixFileSystem(
     override fun isOpen(): Boolean = true
 
     override fun isReadOnly(): Boolean = false
+
+    override val stores: Iterable<FileStore>
+        get() = UnixFileStore.entries.map { entry ->
+            UnixFileStore.from(
+                system = this,
+                entry = entry
+            )
+        }
 
     override fun getPath(first: String, vararg other: String): Path {
         return UnixPath(

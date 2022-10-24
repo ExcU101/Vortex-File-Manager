@@ -1,7 +1,6 @@
 package io.github.excu101.vortex.service.impl
 
 import android.content.Context
-import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.unix.UnixFileSystem
 import io.github.excu101.filesystem.unix.UnixFileSystemProvider
 import io.github.excu101.vortex.VortexServiceApi
@@ -19,10 +18,6 @@ class VortexServiceImpl(private val context: Context) : VortexServiceApi.Stub() 
 
     private val vortexProvider = VortexFileSystemProvider(provider)
     private val vortexSystem = VortexFileSystem(system, vortexProvider)
-
-    init {
-        FileProvider.installDefault(system)
-    }
 
     override fun getSystem(): RemoteFileSystem {
         return vortexSystem

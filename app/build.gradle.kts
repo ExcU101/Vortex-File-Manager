@@ -85,6 +85,7 @@ dependencies {
     implementation(project(Deps.Application.FileSystem))
     implementation(project(Deps.Application.FileSystemUnix))
     implementation(project(Deps.Application.PluginSystem))
+    implementation(project(Deps.Application.PluginSystemUi))
     implementation(project(Deps.Application.PluginSystemCommon))
     implementation(project(Deps.Application.UiComponent))
     implementation(project(Deps.Application.VortexService))

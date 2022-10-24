@@ -4,9 +4,9 @@ import android.content.res.Configuration.*
 import android.os.Build
 import androidx.multidex.MultiDexApplication
 import dagger.hilt.android.HiltAndroidApp
-import io.github.excu101.pluginsystem.common.DefaultOperationsPlugin
-import io.github.excu101.pluginsystem.provider.PluginManager
-import io.github.excu101.vortex.base.utils.logIt
+import io.github.excu101.filesystem.FileProvider
+import io.github.excu101.filesystem.unix.UnixFileSystem
+import io.github.excu101.filesystem.unix.UnixFileSystemProvider
 import io.github.excu101.vortex.ui.component.theme.value.*
 
 @HiltAndroidApp
@@ -14,6 +14,8 @@ class App : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        val provider = UnixFileSystemProvider()
+        val system = UnixFileSystem(provider)
 
         when (val mode = resources.configuration.uiMode and UI_MODE_NIGHT_MASK) {
             UI_MODE_NIGHT_YES -> {
@@ -34,7 +36,7 @@ class App : MultiDexApplication() {
             resources.configuration.locale
         }
 
-        when (locale.language.logIt()) {
+        when (locale.language) {
             "en" -> initVortexTextValuesEN()
             "ua" -> initVortexTextValuesUA()
             "ru" -> initVortexTextValuesRU()
@@ -42,7 +44,7 @@ class App : MultiDexApplication() {
             else -> initVortexTextValuesCustom(lines = emptyList())
         }
 
-        PluginManager.activate(DefaultOperationsPlugin())
+        FileProvider.installDefault(system)
     }
 
 }

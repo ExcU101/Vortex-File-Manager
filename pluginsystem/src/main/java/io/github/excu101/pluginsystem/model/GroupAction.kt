@@ -5,5 +5,5 @@ import android.graphics.drawable.Drawable
 data class GroupAction(
     val name: String,
     val icon: Drawable? = null,
-    val actions: Collection<Action> = listOf()
+    val actions: Collection<Action> = listOf(),
 )

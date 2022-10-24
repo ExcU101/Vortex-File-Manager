@@ -1,16 +1,17 @@
 package io.github.excu101.vortex.provider.storage
 
-import androidx.annotation.DrawableRes
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.pluginsystem.provider.ActionProvider
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
+import io.github.excu101.pluginsystem.utils.action
 import io.github.excu101.pluginsystem.utils.groupItem
 import io.github.excu101.pluginsystem.utils.item
 import io.github.excu101.vortex.R
+import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.provider.ResourceProvider
 import io.github.excu101.vortex.ui.component.theme.key.*
-import io.github.excu101.vortex.ui.screen.storage.list.StorageListScreen
+import io.github.excu101.vortex.ui.screen.storage.list.page.list.StorageListPageScreen
 import io.github.excu101.vortex.utils.Config
 import javax.inject.Inject
 import kotlin.random.Random
@@ -19,29 +20,39 @@ open class StorageActionProvider @Inject constructor(
     private val resources: ResourceProvider,
 ) : ActionProvider {
 
-    private fun action(title: String, @DrawableRes icon: Int): Action {
-        return Action(title = title, icon = resources[icon])
-    }
-
-    open fun trailActions(): MutableList<GroupAction> = mutableListOf<GroupAction>().apply {
-        groupItem(title = "Default") {
-            item {
-                title = ThemeText(fileListTrailCopyPathActionTitleKey)
-                icon = resources[R.drawable.ic_copy_24]
+    open fun onSingleItem(
+        item: PathItem,
+    ) = mutableListOf<GroupAction>().apply {
+        groupItem(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
+            if (item.isDirectory) {
+                item {
+                    title = "Add new"
+                    icon = resources[R.drawable.ic_add_24]
+                }
             }
             item {
-                title = ThemeText(fileListOperationDeleteActionTitleKey)
-                icon = resources[R.drawable.ic_delete_24]
+                title = ThemeText(fileListOperationRenameActionTitleKey)
+                icon = resources[R.drawable.ic_edit_24]
+            }
+            item {
+                title = "Create symbolic link"
+                icon = resources[R.drawable.ic_link_24]
+            }
+        }
+        groupItem(title = "Additional") {
+            item {
+                title = ThemeText(fileListMoreInfoActionTitleKey)
+                icon = resources[R.drawable.ic_info_24]
             }
         }
     }
 
-    open fun onItems(
-        state: StorageListScreen.Content,
-    ): MutableList<GroupAction> = mutableListOf<GroupAction>().apply {
+    open fun onSelectedItems(
+        selected: List<PathItem>,
+    ) = mutableListOf<GroupAction>().apply {
         groupItem(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
-            if (state.selectedCount == 1) {
-                val item = state.selected.first()
+            if (selected.size == 1) {
+                val item = selected.first()
                 if (item.isDirectory) {
                     item {
                         title = "Add new"
@@ -52,7 +63,18 @@ open class StorageActionProvider @Inject constructor(
                     title = ThemeText(fileListOperationRenameActionTitleKey)
                     icon = resources[R.drawable.ic_edit_24]
                 }
+                item {
+                    title = "Create symbolic link"
+                    icon = resources[R.drawable.ic_link_24]
+                }
             }
+        }
+    }
+
+    open fun onItems(
+        state: StorageListPageScreen.Content,
+    ): MutableList<GroupAction> = mutableListOf<GroupAction>().apply {
+        groupItem(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
             if (state.selectedCount == 2) {
                 item {
                     title = ThemeText(fileListOperationSwapNamesActionTitleKey)
@@ -122,7 +144,7 @@ open class StorageActionProvider @Inject constructor(
     }
 
     open fun moreActions(
-        state: StorageListScreen.Content,
+        state: StorageListPageScreen.Content,
     ): MutableList<GroupAction> = mutableListOf<GroupAction>().apply {
         groupItem(title = "Default") {
             if (!state.isEmpty) {
@@ -171,21 +193,39 @@ open class StorageActionProvider @Inject constructor(
         if (Config.isDebug) {
             groupItem(title = "Developer") {
                 item {
+                    title = "Shuffle list"
+                }
+                item {
                     title = "Add random-name directory"
                 }
                 item {
                     title = "Add random-name file"
+                }
+                item {
+                    title = "Add random-name link"
+                }
+                item {
+                    title = "Get file system info"
                 }
             }
         }
     }
 
     override fun barActions(): MutableList<Action> {
-        return mutableListOf(
-            action(title = ThemeText(fileListMoreActionTitleKey), icon = R.drawable.ic_more_24),
-            action(title = ThemeText(fileListSortActionTitleKey), icon = R.drawable.ic_filter_24),
-            action(title = ThemeText(fileListSearchActionTitleKey), icon = R.drawable.ic_search_24),
-        )
+        return mutableListOf<Action>().apply {
+            action {
+                title = ThemeText(fileListMoreActionTitleKey)
+                icon = resources[R.drawable.ic_more_24]
+            }
+            action {
+                title = ThemeText(fileListSortActionTitleKey)
+                icon = resources[R.drawable.ic_filter_24]
+            }
+            action {
+                title = ThemeText(fileListSearchActionTitleKey)
+                icon = resources[R.drawable.ic_search_24]
+            }
+        }
     }
 
     override fun drawerActions(): MutableList<GroupAction> = mutableListOf<GroupAction>().apply {

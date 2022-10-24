@@ -5,6 +5,6 @@ import io.github.excu101.pluginsystem.ui.theme.Theme
 
 fun initVortexTextValuesCustom(lines: List<Pair<String, String>>) {
     lines.forEach { (key, value) ->
-        Theme[key] = Text(value = value)
+        Theme[key] = io.github.excu101.pluginsystem.model.Text(value = value)
     }
 }

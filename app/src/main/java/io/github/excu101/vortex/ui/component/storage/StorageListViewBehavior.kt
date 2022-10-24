@@ -3,8 +3,10 @@ package io.github.excu101.vortex.ui.component.storage
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.cardview.widget.CardView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.updatePadding
+import com.google.android.material.card.MaterialCardView
 import io.github.excu101.vortex.ui.component.trail.TrailListView
 
 class StorageListViewBehavior : CoordinatorLayout.Behavior<StorageListView> {

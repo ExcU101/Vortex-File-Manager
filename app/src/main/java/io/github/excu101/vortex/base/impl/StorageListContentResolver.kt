@@ -1,12 +1,11 @@
 package io.github.excu101.vortex.base.impl
 
-import io.github.excu101.pluginsystem.ui.theme.ReplacerThemeText
+import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.ui.component.header.text.TextHeaderItem
+import io.github.excu101.vortex.ui.component.item.text.TextItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.theme.key.fileListDirectoriesCountSectionKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListFilesCountSectionKey
-import io.github.excu101.vortex.ui.component.theme.key.specialSymbol
 
 typealias Sorter<T> = Comparator<T>
 
@@ -29,38 +28,59 @@ internal class ResultParserImpl : ResultParser<PathItem> {
             addAll(elements = content)
         }
 
+        var offset = 0
         val directories = content.count { it.isDirectory }
         val files = content.count { it.isFile }
+        val links = content.count { it.isLink }
 
         if (directories > 0) {
-            val dirPoint = content.indexOfFirst { it.isDirectory }
+            val dirPoint = content.indexOfFirst { it.isDirectory } + offset
 
             result.add(
                 index = dirPoint,
-                element = TextHeaderItem(
-                    value = ReplacerThemeText(
+                element = TextItem(
+                    value = FormatterThemeText(
                         key = fileListDirectoriesCountSectionKey,
-                        old = specialSymbol,
-                        new = directories.toString()
+                        directories
                     )
                 )
             )
+
+            offset++
         }
 
         if (files > 0) {
-            val filePoint = content.indexOfFirst { it.isFile }
+            val filePoint = content.indexOfFirst { it.isFile } + offset
 
             result.add(
                 index = filePoint,
-                element = TextHeaderItem(
-                    value = ReplacerThemeText(
+                element = TextItem(
+                    value = FormatterThemeText(
                         key = fileListFilesCountSectionKey,
-                        old = specialSymbol,
-                        new = files.toString()
+                        files
                     )
                 )
             )
+
+            offset++
         }
+
+        if (links > 0) {
+            val linkPoint = content.indexOfFirst { it.isLink } + offset
+
+            result.add(
+                index = linkPoint,
+                element = TextItem(
+                    value = FormatterThemeText(
+                        key = "",
+                        links
+                    )
+                )
+            )
+
+            offset++
+        }
+
         return result
     }
 }

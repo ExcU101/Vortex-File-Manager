@@ -2,6 +2,7 @@ package io.github.excu101.pluginsystem.utils
 
 import android.graphics.Canvas
 import android.graphics.ColorFilter
+import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 
 object EmptyDrawable : Drawable() {
@@ -18,7 +19,7 @@ object EmptyDrawable : Drawable() {
 
     }
 
-    override fun getOpacity(): Int = -1
+    override fun getOpacity(): Int = PixelFormat.UNKNOWN
 
 
 }

@@ -1,7 +1,6 @@
 package io.github.excu101.vortex.ui.component.menu
 
 import android.content.Context
-import android.graphics.Color
 import android.view.View.MeasureSpec.*
 import android.widget.FrameLayout
 import io.github.excu101.pluginsystem.model.Action
@@ -14,7 +13,7 @@ class MenuLayout(context: Context) : FrameLayout(context) {
     private val items = mutableListOf<Action>()
     private val views = mutableListOf<MenuItem>()
 
-    private val listeners = mutableListOf<ActionListener>()
+    private val listeners = mutableListOf<MenuActionListener>()
 
     val isVertical: Boolean
         get() = false
@@ -39,11 +38,11 @@ class MenuLayout(context: Context) : FrameLayout(context) {
         initViews()
     }
 
-    fun addListener(listener: ActionListener) {
+    fun addListener(listener: MenuActionListener) {
         listeners.add(listener)
     }
 
-    fun removeListener(listener: ActionListener) {
+    fun removeListener(listener: MenuActionListener) {
         listeners.remove(listener)
     }
 
@@ -63,7 +62,7 @@ class MenuLayout(context: Context) : FrameLayout(context) {
             action = item
             setOnClickListener { view ->
                 listeners.forEach { listener ->
-                    listener.onCall(item)
+                    listener.onMenuActionCall(item)
                 }
             }
         }

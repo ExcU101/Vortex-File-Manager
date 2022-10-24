@@ -34,14 +34,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.*
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.VortexServiceApi
-import io.github.excu101.vortex.base.FragmentNavigator
-import io.github.excu101.vortex.base.impl.ActivityFragmentNavigator
+import io.github.excu101.vortex.base.utils.collectState
 import io.github.excu101.vortex.base.utils.snackIt
 import io.github.excu101.vortex.ui.component.bar.Bar
 import io.github.excu101.vortex.ui.component.drawer.BottomActionDrawer
+import io.github.excu101.vortex.ui.component.drawer.DrawerActionListener
+import io.github.excu101.vortex.ui.component.fragment.FragmentContainerView
 import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceConnectedKey
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceDisconnectedKey
@@ -56,6 +58,7 @@ import kotlin.math.sqrt
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
     ServiceConnection,
+    DrawerActionListener,
     ThemeSwitcherCallback,
     ThemeColorChangeListener {
 
@@ -63,10 +66,6 @@ class MainActivity : AppCompatActivity(),
 
     private var root: CoordinatorLayout? = null
     private var themeImageView: ImageView? = null
-    private var navigator: FragmentNavigator? = ActivityFragmentNavigator(
-        activity = this,
-        containerId = rootId
-    )
 
     var service: VortexServiceApi? = null
         private set
@@ -78,6 +77,8 @@ class MainActivity : AppCompatActivity(),
 
     var bar: Bar? = null
         private set
+
+    private var container: FragmentContainerView? = null
 
     var drawer: BottomActionDrawer? = null
         private set
@@ -103,17 +104,19 @@ class MainActivity : AppCompatActivity(),
             id = rootId
             layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
         }
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        bar = Bar(context = this).apply {
-            layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                gravity = BOTTOM
-            }
+        bar = Bar(root!!.context).apply {
+
         }
+        container = FragmentContainerView(root!!.context, manager = supportFragmentManager)
         themeImageView = ImageView(this).apply {
             visibility = GONE
         }
         drawer = BottomActionDrawer(context = this)
-        root?.addView(bar)
+        drawer?.registerListener(listener = this)
+        root?.addView(container, MATCH_PARENT, MATCH_PARENT)
+        root?.addView(bar, CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+            gravity = BOTTOM
+        })
         root?.addView(themeImageView, MATCH_PARENT, MATCH_PARENT)
         ViewCompat.setOnApplyWindowInsetsListener(bar!!) { view, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
@@ -129,8 +132,8 @@ class MainActivity : AppCompatActivity(),
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.screen.collect { (dest, tag) ->
-                    navigator?.navigateTo(dest, tag)
+                viewModel.collectState { state ->
+                    container?.setFragment(state.fragment, state.tag)
                 }
             }
         }
@@ -157,6 +160,15 @@ class MainActivity : AppCompatActivity(),
         root = null
         bar = null
         drawer = null
+    }
+
+    override fun onDrawerActionCall(action: Action) {
+        when (action.title) {
+            "Switch theme" -> {
+                Theme.switch()
+            }
+        }
+        drawer?.hide()
     }
 
     override fun onSwitch() {

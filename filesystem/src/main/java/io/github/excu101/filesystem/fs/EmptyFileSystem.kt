@@ -16,6 +16,8 @@ object EmptyFileSystem : FileSystem(EmptyFileSystemProvider) {
     override fun isOpen(): Boolean = true
     override fun isReadOnly(): Boolean = true
 
+    override val stores: Iterable<FileStore> = Iterable { iterator { } }
+
     override fun getPath(first: String, vararg other: String): Path = EmptyPath
 
 }

@@ -7,10 +7,10 @@ import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.utils.TRAIL
+import io.github.excu101.vortex.utils.trailItem
 
 class TrailAdapter : ItemAdapter<PathItem>(
-    ItemViewTypes.TRAIL to Factory
+    ItemViewTypes.trailItem to Factory
 ) {
 
     private var selected: Int = -1
@@ -22,7 +22,7 @@ class TrailAdapter : ItemAdapter<PathItem>(
         notifyItemChanged(old)
     }
 
-    override fun getItemViewType(position: Int): Int = ItemViewTypes.TRAIL
+    override fun getItemViewType(position: Int): Int = ItemViewTypes.trailItem
 
     override fun onBindViewHolder(holder: ViewHolder<PathItem>, position: Int) {
         super.onBindViewHolder(holder, position)

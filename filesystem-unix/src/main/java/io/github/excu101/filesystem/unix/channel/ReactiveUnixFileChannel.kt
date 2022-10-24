@@ -4,7 +4,8 @@ import io.github.excu101.filesystem.fs.buffer.ByteBuffer
 import io.github.excu101.filesystem.fs.channel.ReactiveFileChannel
 import io.github.excu101.filesystem.fs.listener.FileChannelListener
 import io.github.excu101.filesystem.unix.UnixCalls
-import io.github.excu101.filesystem.unix.channel.UnixFileChannelCalls.read
+import io.github.excu101.filesystem.unix.calls.UnixFileChannelCalls
+import io.github.excu101.filesystem.unix.calls.UnixFileChannelCalls.read
 import java.io.FileDescriptor
 
 class ReactiveUnixFileChannel(

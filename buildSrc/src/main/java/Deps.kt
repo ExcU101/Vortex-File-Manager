@@ -2,6 +2,7 @@ object Deps {
 
     // AndroidX
     object AndroidX {
+        const val Annotation = "androidx.annotation:annotation:1.5.0"
         const val DataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
         const val Multidex = "androidx.multidex:multidex:${Versions.multidexVer}"
         const val Appcompat = "androidx.appcompat:appcompat:${Versions.appcompatVer}"
@@ -45,6 +46,7 @@ object Deps {
         val FileSystem = mapOf("path" to ":filesystem")
         val FileSystemUnix = mapOf("path" to ":filesystem-unix")
         val PluginSystem = mapOf("path" to ":pluginsystem")
+        val PluginSystemUi = mapOf("path" to ":pluginsystem-ui")
         val PluginSystemCommon = mapOf("path" to ":pluginsystem-common")
         val UiComponent = mapOf("path" to ":ui-component")
         val VortexService = mapOf("path" to ":vortex-service")

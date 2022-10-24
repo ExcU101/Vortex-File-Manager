@@ -3,12 +3,13 @@ package io.github.excu101.vortex.ui.component.list.adapter
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import io.github.excu101.vortex.ui.component.list.adapter.diff.ItemDiffer
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ClickListenerRegister
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListener
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewLongListener
+import io.github.excu101.vortex.ui.component.list.adapter.selection.Selection
+import io.github.excu101.vortex.ui.component.list.adapter.selection.SelectionAdapter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
@@ -16,19 +17,24 @@ import kotlinx.coroutines.channels.actor
 interface ViewHolderFactory<T> {
     fun produceView(parent: ViewGroup): View
 
-    fun produceViewHolder(child: View): ViewHolder<T>
+    // Default impl
+    fun produceViewHolder(child: View): ViewHolder<T> {
+        return ViewHolder(child)
+    }
 }
 
 class UnsupportedViewTypeException(
     viewType: Int,
 ) : Throwable("Unsupported view type (viewType: $viewType)")
 
-open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, EditableAdapter<T>,
+open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, EditableAdapter<T>,
     ClickListenerRegister<T> {
 
     init {
         setHasStableIds(true)
     }
+
+    protected val selection = Selection<T>()
 
     // key: viewType, value: viewHolder factory
     private val factories = mutableMapOf<Int, ViewHolderFactory<T>>()
@@ -43,13 +49,15 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
     val list: List<T>
         get() = adapterList
 
+    private val scope = CoroutineScope(Dispatchers.Default)
+
     constructor(vararg types: Pair<Int, ViewHolderFactory<T>>) {
         factories.putAll(types)
     }
 
     @OptIn(ObsoleteCoroutinesApi::class)
     private val refresher =
-        CoroutineScope(Dispatchers.Default).actor<Pair<DiffUtil.Callback, List<T>>>(capacity = Channel.CONFLATED) {
+        scope.actor<Pair<DiffUtil.Callback, List<T>>>(capacity = Channel.CONFLATED) {
             for ((differ, items) in channel) {
                 val result = DiffUtil.calculateDiff(differ)
                 withContext(SupervisorJob() + Dispatchers.Main) {
@@ -79,40 +87,48 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
         }
     }
 
-    open fun isSelected(position: Int): Boolean {
-        return false
+    override fun select(item: T) {
+        if (isSelected(item)) {
+            selection.remove(item)
+        } else {
+            selection.add(item)
+        }
+
+        changed(item)
+    }
+
+    override fun replaceSelected(selected: List<T>) {
+        if (selected == selection) return
+        if (selected.isEmpty()) {
+            selection.removeAll { item ->
+                changed(item)
+                true
+            }
+        }
+
+        selection.removeAll {
+            if (it !in selected) {
+                changed(it)
+                true
+            } else {
+                false
+            }
+        }
+
+        for (newItem in selected) {
+            if (newItem !in selection) {
+                selection.add(newItem)
+                changed(newItem)
+            }
+        }
+    }
+
+    override fun isSelected(position: Int): Boolean {
+        return isSelected(item = item(position))
     }
 
     open fun isSelected(item: T): Boolean {
-        return false
-    }
-
-    inline fun findElement(predicate: (T) -> Boolean): T? {
-        return list.find(predicate)
-    }
-
-    inline fun findPosition(predicate: (Int) -> Boolean): Int {
-        var position = -1
-
-        for (i in list.indices) {
-            if (predicate(i)) {
-                position = i
-            }
-        }
-
-        return position
-    }
-
-    inline fun findPositionByElement(predicate: (T) -> Boolean): Int {
-        var position = -1
-
-        for (i in list.indices) {
-            if (predicate(item(i))) {
-                position = i
-            }
-        }
-
-        return position
+        return selection.contains(item)
     }
 
     override fun onBindViewHolder(
@@ -129,6 +145,8 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
 
     override fun getItemId(position: Int): Long = item(position).id
 
+    fun getItem(id: Long) = list.find { item -> item.id == id }
+
     override fun getItemCount(): Int = adapterList.size
 
     override fun getItemViewType(position: Int): Int = adapterList[position].type
@@ -142,6 +160,10 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
 
     fun add(type: Int, factory: ViewHolderFactory<T>) {
         factories[type] = factory
+    }
+
+    fun add(vararg types: Pair<Int, ViewHolderFactory<T>>) {
+        factories.putAll(types)
     }
 
     fun removeFactory(type: Int) {
@@ -165,6 +187,10 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
     override fun position(item: T): Int = adapterList.indexOf(item)
 
     override fun item(position: Int): T = adapterList[position]
+
+    override fun changed(position: Int) {
+        notifyItemChanged(position)
+    }
 
     open fun replace(items: List<T>) = replace(
         items = items,
@@ -195,10 +221,6 @@ open class ItemAdapter<T : Item<*>> : RecyclerView.Adapter<ViewHolder<T>>, Edita
 
     override fun registerLong(listener: ItemViewLongListener<T>) {
         itemViewLongListeners.add(listener)
-    }
-
-    protected fun notifyAdd() {
-
     }
 
     protected fun notify(view: View, item: T, position: Int) {

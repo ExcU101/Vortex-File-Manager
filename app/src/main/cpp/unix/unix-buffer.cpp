@@ -7,7 +7,7 @@ static T cast(jlong address) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_io_github_excu101_filesystem_unix_channel_UnixBufferCalls_putImpl(
+Java_io_github_excu101_filesystem_unix_calls_UnixBufferCalls_putImpl(
         JNIEnv *env,
         jobject thiz,
         jlong address,
@@ -18,7 +18,7 @@ Java_io_github_excu101_filesystem_unix_channel_UnixBufferCalls_putImpl(
 
 extern "C"
 JNIEXPORT jbyte JNICALL
-Java_io_github_excu101_filesystem_unix_channel_UnixBufferCalls_getImpl(
+Java_io_github_excu101_filesystem_unix_calls_UnixBufferCalls_getImpl(
         JNIEnv *env,
         jobject thiz,
         jlong address

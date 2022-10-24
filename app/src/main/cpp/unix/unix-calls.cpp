@@ -2,11 +2,13 @@
 #include "dirent.h"
 #include "string"
 #include <cerrno>
+#include "mntent.h" // Mount entry
 #include "../log.h"
 #include "classes.cpp"
 #include "dirent.h"
 #include "jni.h"
 #include "attrs.cpp"
+#include "operations/symlink.cpp"
 #include "operations.cpp"
 
 static void clearErrno() {
@@ -25,6 +27,19 @@ static char *fromByteArrayToPath(
     env->ReleaseByteArrayElements(path, segments, JNI_ABORT);
     cPath[length] = '\0';
     return cPath;
+}
+
+static jbyteArray createByteArray(JNIEnv *env, char *name) {
+    size_t length = strlen(name);
+    auto javaLength = (jsize) length;
+    jbyteArray bytes = env->NewByteArray(javaLength);
+
+    if (bytes == NULL) {
+        return NULL;
+    }
+
+    env->SetByteArrayRegion(bytes, 0, javaLength, (jbyte *) name);
+    return bytes;
 }
 
 static jobject getUnixStatusStructure(
@@ -104,8 +119,6 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_allocateImpl(
 ) {
     size_t cSize = size;
     auto result = (uintptr_t) malloc(cSize);
-
-    LOGV("Allocating %i", result)
 
     return result;
 }
@@ -232,12 +245,12 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_unlink(
 ) {
     clearErrno();
     char *cPath = fromByteArrayToPath(env, path);
-    unlink(cPath);
-    free(cPath);
 
-    if (errno != 0) {
-        UNIX_ERROR(env, errno, "unlink")
+    if (unlink(cPath) != 0) {
+        throwUnixException(env, errno, "unlink");
     }
+
+    free(cPath);
 }
 
 extern "C"
@@ -436,7 +449,7 @@ static jobject doStatVfs(JNIEnv *env, const struct statvfs64 *statvfs) {
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_statVfs(
+Java_io_github_excu101_filesystem_unix_UnixCalls_getFileSystemStatusImpl(
         JNIEnv *env,
         jobject thiz,
         jbyteArray path
@@ -461,31 +474,12 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_rename(
     clearErrno();
     char *cSource = fromByteArrayToPath(env, source);
     char *cDest = fromByteArrayToPath(env, dest);
-    renameFile(cSource, cDest);
-
-    free(cSource);
-    free(cDest);
-}
-
-extern "C"
-JNIEXPORT jint JNICALL
-Java_io_github_excu101_filesystem_fs_operation_NativeCalls_pointerRead(
-        JNIEnv *env,
-        jobject thiz,
-        jint descriptor,
-        jlong address,
-        jlong length,
-        jlong pointer
-) {
-    clearErrno();
-    read(1, &address, 0);
-    jint result = pread64(descriptor, &address, length, pointer);
-
-    if (errno != 0) {
+    if (!renameFile(cSource, cDest)) {
 
     }
 
-    return result;
+    free(cSource);
+    free(cDest);
 }
 
 extern "C"
@@ -580,6 +574,26 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getFileCountImpl(
 }
 
 extern "C"
+JNIEXPORT void JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_symlinkImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray target,
+        jbyteArray link
+) {
+    clearErrno();
+    char *cTarget = fromByteArrayToPath(env, target);
+    char *cLink = fromByteArrayToPath(env, link);
+
+    if (!createSymbolicLink(cTarget, cLink)) {
+        throwUnixException(env, errno, "symlink");
+    }
+
+    free(cTarget);
+    free(cLink);
+}
+
+extern "C"
 JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getCountImpl(
         JNIEnv *env,
@@ -644,25 +658,6 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectorySizeImpl(
 }
 
 extern "C"
-JNIEXPORT void JNICALL
-Java_io_github_excu101_filesystem_fs_operation_NativeCalls_close(
-        JNIEnv *env,
-        jobject thiz,
-        jint descriptor
-) {
-    closeFileDescriptor(descriptor);
-}
-extern "C"
-JNIEXPORT jint JNICALL
-Java_io_github_excu101_filesystem_fs_operation_NativeCalls_getFileDescriptor(
-        JNIEnv *env,
-        jobject thiz,
-        jobject original
-) {
-    return getIndexFromFileDescriptor(env, original);
-}
-
-extern "C"
 JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getDescriptorImpl(
         JNIEnv *env,
@@ -670,4 +665,137 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getDescriptorImpl(
         jobject descriptor
 ) {
     return getIndexFromFileDescriptor(env, descriptor);
+}
+
+// Mount
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_openMountEntryPointerImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray path,
+        jbyteArray type
+) {
+    clearErrno();
+
+    char *cPath = fromByteArrayToPath(env, path);
+    char *cType = fromByteArrayToPath(env, type);
+
+    auto result = (jlong) setmntent(cPath, cType);
+
+    free(cPath);
+    free(cType);
+
+    if (errno != 0) {
+
+    }
+
+    return result;
+}
+
+// https://android.googlesource.com/platform/bionic/+/master/libc/bionic/mntent.cpp
+static struct mntent *
+getmntentRecusively(FILE *fp, struct mntent *entry, char *buffer, int buf_length) {
+    memset(entry, 0, sizeof *entry);
+    while (fgets(buffer, buf_length, fp) != NULL) {
+        int fsname0, fsname1, dir0, dir1, type0, type1, opts0, opts1;
+        if (sscanf(buffer, " %n%*s%n %n%*s%n %n%*s%n %n%*s%n %d %d",
+                   &fsname0, &fsname1, &dir0, &dir1, &type0, &type1, &opts0, &opts1,
+                   &entry->mnt_freq, &entry->mnt_passno) == 2) {
+            entry->mnt_fsname = &buffer[fsname0];
+            buffer[fsname1] = '\0';
+            entry->mnt_dir = &buffer[dir0];
+            buffer[dir1] = '\0';
+            entry->mnt_type = &buffer[type0];
+            buffer[type1] = '\0';
+            entry->mnt_opts = &buffer[opts0];
+            buffer[opts1] = '\0';
+            return entry;
+        }
+    }
+    return NULL;
+}
+
+static jobject createUnixMountEntryStructure(JNIEnv *env, const struct mntent *entry) {
+    static jmethodID constructor = NULL;
+
+    if (constructor == NULL) {
+        constructor = findUnixMountEntryStructureInitMethod(env);
+    }
+
+    jbyteArray name = createByteArray(env, entry->mnt_fsname);
+    if (name == NULL) {
+        return NULL;
+    }
+
+    jbyteArray dir = createByteArray(env, entry->mnt_dir);
+    if (dir == NULL) {
+        return NULL;
+    }
+
+    jbyteArray type = createByteArray(env, entry->mnt_type);
+    if (type == NULL) {
+        return NULL;
+    }
+
+    jbyteArray options = createByteArray(env, entry->mnt_opts);
+    if (options == NULL) {
+        return NULL;
+    }
+
+    jint dumpFrequency = entry->mnt_freq;
+    jint passNumber = entry->mnt_passno;
+
+    return env->NewObject(
+            findUnixMountEntryStructureClass(env),
+            constructor,
+            name,
+            dir,
+            type,
+            options,
+            dumpFrequency,
+            passNumber
+    );
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_getMountEntryImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jlong pointer
+) {
+    clearErrno();
+
+    FILE *cPointer = (FILE *) pointer;
+
+    struct mntent entryBuffer = {};
+    char buffer[BUFSIZ] = {};
+    auto entry = getmntent_r(cPointer, &entryBuffer, buffer, sizeof buffer);
+
+    if (errno != 0) {
+        return NULL;
+    }
+
+    if (entry == NULL) {
+        return NULL;
+    }
+
+    return createUnixMountEntryStructure(env, entry);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_closeMountEntryPointerImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jlong pointer
+) {
+    clearErrno();
+    FILE *cPointer = (FILE *) pointer;
+
+    endmntent(cPointer);
+    if (errno != 0) {
+
+    }
 }

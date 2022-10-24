@@ -8,6 +8,7 @@ import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
 import io.github.excu101.filesystem.unix.path.UnixPath
+import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
 import io.github.excu101.filesystem.unix.utils.*
 
 internal class UnixAttributes private constructor(
