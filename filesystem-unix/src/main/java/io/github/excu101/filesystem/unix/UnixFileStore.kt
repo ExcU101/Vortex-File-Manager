@@ -93,4 +93,7 @@ internal class UnixFileStore : FileStore {
     override val unallocatedSpace: Long
         get() = status.freeBlocks * status.blockSize
 
+    override val blockSize: Long
+        get() = status.blockSize
+
 }

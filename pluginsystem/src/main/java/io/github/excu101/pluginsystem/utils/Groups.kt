@@ -35,16 +35,14 @@ internal class GroupScopeImpl(override var title: String) : GroupScope {
 
 interface ActionScope {
     var title: String
-    var icon: Drawable
+    var icon: Drawable?
 }
 
-@PublishedApi
-internal class ActionScopeImpl : ActionScope {
+class ActionScopeImpl : ActionScope {
     override var title: String = ""
-    override var icon: Drawable = EmptyDrawable
+    override var icon: Drawable? = null
 
-    @PublishedApi
-    internal fun toAction(): Action = action(title, icon)
+    fun toAction(): Action = action(title, icon)
 }
 
 interface EffectScope : ActionScope {
@@ -54,7 +52,7 @@ interface EffectScope : ActionScope {
 @PublishedApi
 internal class EffectScopeImpl : EffectScope {
     override var title: String = ""
-    override var icon: Drawable = EmptyDrawable
+    override var icon: Drawable? = EmptyDrawable
     override var onInvoke: () -> Unit = {}
 
     @PublishedApi

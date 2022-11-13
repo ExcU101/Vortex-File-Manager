@@ -4,6 +4,6 @@ import android.view.View
 
 fun interface ItemViewListener<T> {
 
-    fun onClick(view: View, value: T, position: Int)
+    fun onClick(view: View, item: T, position: Int)
 
 }

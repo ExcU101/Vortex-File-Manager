@@ -1,8 +1,8 @@
 package io.github.excu101.filesystem.unix.operation
 
-import io.github.excu101.filesystem.IdRegister
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.RenameAction
 import io.github.excu101.filesystem.unix.UnixCalls
 
 internal class UnixRenameOperation(
@@ -10,18 +10,15 @@ internal class UnixRenameOperation(
     private val dest: Path,
 ) : FileOperation() {
 
-
-    override val id: Int = IdRegister.register(IdRegister.Type.OPERATION)
-
     override suspend fun perform() {
+        action(RenameAction(source, dest))
         try {
             UnixCalls.rename(source.bytes, dest.bytes)
         } catch (exception: Throwable) {
-            notify(exception)
+            error(exception)
             return
         }
-        notify()
+        completion()
     }
-
 
 }

@@ -10,7 +10,6 @@ import io.github.excu101.filesystem.fs.error.NotAnyProviderInstalled
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.FileOperationObserver
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.fs.utils.scheme
 import kotlinx.coroutines.Job
 import kotlin.reflect.KClass
 

@@ -12,4 +12,6 @@ abstract class FileStore {
 
     abstract val unallocatedSpace: Long
 
+    abstract val blockSize: Long
+
 }

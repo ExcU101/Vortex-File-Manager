@@ -1,5 +1,6 @@
 package io.github.excu101.vortex.ui.component.list.adapter
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -30,11 +31,17 @@ class UnsupportedViewTypeException(
 open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, EditableAdapter<T>,
     ClickListenerRegister<T> {
 
+    companion object {
+        const val selectionPayload = "SELECTION"
+    }
+
     init {
         setHasStableIds(true)
     }
 
-    protected val selection = Selection<T>()
+    protected val _selection = Selection<T>()
+    val selection: Iterable<T>
+        get() = _selection
 
     // key: viewType, value: viewHolder factory
     private val factories = mutableMapOf<Int, ViewHolderFactory<T>>()
@@ -87,28 +94,45 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         }
     }
 
+    override fun onBindViewHolder(
+        holder: ViewHolder<T>,
+        position: Int,
+        payloads: List<Any>,
+    ) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+            payloads.forEach { payload ->
+                if (payload == selectionPayload) {
+                    val isSelected = isSelected(position)
+                    holder.bindSelection(isSelected)
+                }
+            }
+        }
+    }
+
     override fun select(item: T) {
         if (isSelected(item)) {
-            selection.remove(item)
+            _selection.remove(item)
         } else {
-            selection.add(item)
+            _selection.add(item)
         }
 
-        changed(item)
+        changed(item, selectionPayload)
     }
 
     override fun replaceSelected(selected: List<T>) {
-        if (selected == selection) return
+        if (selected == _selection) return
         if (selected.isEmpty()) {
-            selection.removeAll { item ->
-                changed(item)
+            _selection.removeAll { item ->
+                changed(item, selectionPayload)
                 true
             }
         }
 
-        selection.removeAll {
+        _selection.removeAll {
             if (it !in selected) {
-                changed(it)
+                changed(it, selectionPayload)
                 true
             } else {
                 false
@@ -116,9 +140,10 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         }
 
         for (newItem in selected) {
-            if (newItem !in selection) {
-                selection.add(newItem)
-                changed(newItem)
+            if (newItem !in _selection) {
+                if (_selection.add(newItem)) {
+                    changed(newItem, selectionPayload)
+                }
             }
         }
     }
@@ -128,19 +153,11 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
     }
 
     open fun isSelected(item: T): Boolean {
-        return selection.contains(item)
+        return _selection.contains(item)
     }
 
-    override fun onBindViewHolder(
-        holder: ViewHolder<T>,
-        position: Int,
-        payloads: List<Any>,
-    ) {
-        if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position)
-        } else {
-            super.onBindViewHolder(holder, position, payloads)
-        }
+    override fun contains(item: T): Boolean {
+        return list.contains(item)
     }
 
     override fun getItemId(position: Int): Long = item(position).id
@@ -192,6 +209,10 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         notifyItemChanged(position)
     }
 
+    override fun changed(position: Int, payload: Any?) {
+        notifyItemChanged(position, payload)
+    }
+
     open fun replace(items: List<T>) = replace(
         items = items,
         differ = ItemDiffer(list, items)
@@ -233,7 +254,7 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         var clicked = false
 
         itemViewLongListeners.forEach { listener ->
-            clicked = listener.onClick(view, item, position)
+            clicked = listener.onLongClick(view, item, position)
         }
 
         return clicked

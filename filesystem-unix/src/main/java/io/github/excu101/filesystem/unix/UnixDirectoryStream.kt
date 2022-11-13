@@ -4,14 +4,14 @@ import io.github.excu101.filesystem.fs.DirectoryStream
 import io.github.excu101.filesystem.fs.error.DirectoryAlreadyClosedException
 import io.github.excu101.filesystem.fs.error.SystemCallException
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.resolve
 import io.github.excu101.filesystem.unix.path.UnixPath
-import kotlinx.coroutines.flow.callbackFlow
 import java.io.IOException
 
 class UnixDirectoryStream internal constructor(
     private val dir: UnixPath,
     private val pointer: Long,
-    private val filter: DirectoryStream.Filter<UnixPath> = DirectoryStream.Filter.acceptAll(),
+    private val filter: DirectoryStream.Filter<Path> = DirectoryStream.Filter.acceptAll(),
 ) : DirectoryStream<Path> {
 
     private var iterator: LinuxPathIterator? = null
@@ -37,9 +37,6 @@ class UnixDirectoryStream internal constructor(
     }
 
     override fun iterator(): Iterator<Path> {
-        callbackFlow<Path> {
-            iterator?.next()?.let { trySend(it) }
-        }
         synchronized(locker) {
             if (isClosed) {
                 throw DirectoryAlreadyClosedException()
@@ -93,11 +90,7 @@ class UnixDirectoryStream internal constructor(
                 }
 
                 val path = dir.resolve(
-                    other =
-                    UnixPath(
-                        _system = dir.system as UnixFileSystem,
-                        path = dirent.name
-                    )
+                    bytes = dirent.name
                 ) as UnixPath
                 val accepted = try {
                     filter.accept(path)

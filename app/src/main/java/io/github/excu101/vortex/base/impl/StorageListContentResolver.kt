@@ -42,7 +42,7 @@ internal class ResultParserImpl : ResultParser<PathItem> {
                     value = FormatterThemeText(
                         key = fileListDirectoriesCountSectionKey,
                         directories
-                    )
+                    ),
                 )
             )
 
@@ -58,7 +58,7 @@ internal class ResultParserImpl : ResultParser<PathItem> {
                     value = FormatterThemeText(
                         key = fileListFilesCountSectionKey,
                         files
-                    )
+                    ),
                 )
             )
 
@@ -72,7 +72,7 @@ internal class ResultParserImpl : ResultParser<PathItem> {
                 index = linkPoint,
                 element = TextItem(
                     value = FormatterThemeText(
-                        key = "",
+                        key = "Link",
                         links
                     )
                 )

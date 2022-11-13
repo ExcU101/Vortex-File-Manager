@@ -40,7 +40,7 @@ abstract class SelectionListAdapterImpl<T, VH : RecyclerView.ViewHolder>(
         var clicked = false
 
         longListeners.forEach { listener ->
-            clicked = listener.onClick(view, item, position)
+            clicked = listener.onLongClick(view, item, position)
         }
 
         return clicked

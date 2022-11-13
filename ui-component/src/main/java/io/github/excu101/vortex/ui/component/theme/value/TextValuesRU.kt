@@ -1,8 +1,11 @@
 package io.github.excu101.vortex.ui.component.theme.value
 
-import io.github.excu101.pluginsystem.model.Text
 import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemCountKey
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemEmptyKey
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemNameKey
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemsCountKey
 
 fun initVortexTextValuesRU() {
     Theme[fileListSearchActionTitleKey] = io.github.excu101.pluginsystem.model.Text(value = "Поиск")

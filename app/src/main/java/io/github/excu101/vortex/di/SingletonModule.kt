@@ -7,8 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.github.excu101.vortex.provider.ResourceProvider
-import io.github.excu101.vortex.provider.storage.StorageActionProvider
-import io.github.excu101.vortex.provider.storage.StorageProvider
+import io.github.excu101.vortex.provider.main.MainAction
 import javax.inject.Singleton
 
 @Module
@@ -17,20 +16,14 @@ object SingletonModule {
 
     @Singleton
     @Provides
-    fun storageProvider(@ApplicationContext context: Context): StorageProvider {
-        return StorageProvider(context)
-    }
-
-    @Singleton
-    @Provides
-    fun resourceProvider(@ApplicationContext context: Context): ResourceProvider {
+    fun resources(@ApplicationContext context: Context): ResourceProvider {
         return ResourceProvider(context)
     }
 
     @Singleton
     @Provides
-    fun storageActionProvider(resources: ResourceProvider): StorageActionProvider {
-        return StorageActionProvider(resources)
+    fun actions(resources: ResourceProvider): MainAction {
+        return MainAction(resources)
     }
 
 }

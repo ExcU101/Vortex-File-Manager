@@ -4,6 +4,6 @@ import android.view.View
 
 fun interface ItemViewLongListener<T> {
 
-    fun onClick(view: View, value: T, position: Int): Boolean
+    fun onLongClick(view: View, item: T, position: Int): Boolean
 
 }

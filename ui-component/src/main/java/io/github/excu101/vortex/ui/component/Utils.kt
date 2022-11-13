@@ -77,6 +77,11 @@ fun ThemeDp(key: String): Int {
 }
 
 context(View)
+fun ThemeUDp(key: String): Int {
+    return ThemeDimen(key).udp
+}
+
+context(View)
 val Int.dp: Int
     get() = ceil(context.resources.displayMetrics.density * this).roundToInt()
 

@@ -3,27 +3,31 @@ package io.github.excu101.vortex.ui.component.warning
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.ColorStateList.valueOf
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.view.Gravity.CENTER
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.LinearLayoutCompat.LayoutParams.WRAP_CONTENT
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.shape.MaterialShapeDrawable
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.pluginsystem.utils.EmptyDrawable
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.theme.key.storageListWarningActionContentColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListWarningBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListWarningIconTintColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListWarningTitleTextColorKey
+import org.xml.sax.Attributes
 
 class WarningView : ThemeLinearLayout {
 
@@ -35,16 +39,6 @@ class WarningView : ThemeLinearLayout {
 
     private val iconSize = 56.dp
     private val messagePadding = 32.dp
-
-    private val buttonStates = arrayOf(
-        arrayOf(android.R.attr.state_checked).toIntArray(),
-        arrayOf(-android.R.attr.state_checked).toIntArray()
-    )
-
-    private val buttonColors = arrayOf(
-        ThemeColor(storageListWarningActionContentColorKey),
-        ThemeColor(storageListWarningBackgroundColorKey)
-    ).toIntArray()
 
     private val iconView = ImageView(context).apply {
         minimumHeight = iconSize
@@ -136,8 +130,6 @@ class WarningView : ThemeLinearLayout {
     private fun getItem(action: Action): MaterialButton {
         return MaterialButton(
             context,
-            null,
-            com.google.android.material.R.style.Widget_MaterialComponents_Button_TextButton
         ).apply {
             icon = action.icon
             text = action.title
@@ -145,7 +137,8 @@ class WarningView : ThemeLinearLayout {
                 top = 4.dp,
                 bottom = 4.dp
             )
-            backgroundTintList = ColorStateList(buttonStates, buttonColors)
+            backgroundTintList = valueOf(ThemeColor(storageListWarningBackgroundColorKey))
+            elevation = 0F
             rippleColor = valueOf(ThemeColor(storageListWarningActionContentColorKey))
             iconTint = valueOf(ThemeColor(storageListWarningActionContentColorKey))
             setTextColor(ThemeColor(storageListWarningActionContentColorKey))

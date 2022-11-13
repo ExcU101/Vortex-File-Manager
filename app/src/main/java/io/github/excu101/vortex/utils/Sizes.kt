@@ -2,16 +2,15 @@ package io.github.excu101.vortex.utils
 
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
-import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.*
 
 fun Size.convertToThemeText(): String {
     return convertSi()
 }
 
 private fun Size.convertSi(): String {
-    var result = ""
     toSiType()
-    when (name) {
+    val replaceValue = when (name) {
         "YB" -> ThemeText(fileListItemSizeYiBKey)
         "ZB" -> ThemeText(fileListItemSizeZiBKey)
         "EB" -> ThemeText(fileListItemSizeEiBKey)
@@ -22,7 +21,5 @@ private fun Size.convertSi(): String {
         "KB" -> ThemeText(fileListItemSizeKiBKey)
         else -> ThemeText(fileListItemSizeBKey)
     }
-    result += memory
-    result += name
-    return result
+    return toSiType().replace(name, replaceValue)
 }

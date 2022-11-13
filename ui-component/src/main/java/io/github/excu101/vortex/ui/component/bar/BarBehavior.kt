@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewPropertyAnimator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import io.github.excu101.vortex.ui.component.item.ItemRecyclerView
 
 private const val STATE_SCROLLED_DOWN = 1
 private const val STATE_SCROLLED_UP = 2
@@ -39,10 +40,12 @@ class BarBehavior : CoordinatorLayout.Behavior<Bar> {
         type: Int,
         consumed: IntArray,
     ) {
-        if (dyConsumed > 0) {
-            slideDown(child)
-        } else if (dyConsumed < 0) {
-            slideUp(child)
+        if (target !is ItemRecyclerView) {
+            if (dyConsumed > 0) {
+                slideDown(child)
+            } else if (dyConsumed < 0) {
+                slideUp(child)
+            }
         }
     }
 

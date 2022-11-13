@@ -65,6 +65,7 @@ android {
 dependencies {
     implementation(Deps.AndroidX.Core)
     implementation(Deps.AndroidX.Fragment)
+    implementation(Deps.AndroidX.NavigationFragment)
     implementation(Deps.AndroidX.DataStorePreferences)
     implementation(Deps.AndroidX.Multidex)
     implementation(Deps.AndroidX.Appcompat)
@@ -89,4 +90,5 @@ dependencies {
     implementation(project(Deps.Application.PluginSystemCommon))
     implementation(project(Deps.Application.UiComponent))
     implementation(project(Deps.Application.VortexService))
+    implementation(project(Deps.Application.Navigation))
 }

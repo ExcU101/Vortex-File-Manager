@@ -12,4 +12,10 @@ class VortexFileStore(
 
     override fun getUnallocatedSpace(): Long = local.unallocatedSpace
 
+    override fun getBlockSize(): Long = local.blockSize
+
+    override fun getName(): String = local.name
+
+    override fun getType(): String = local.type
+
 }

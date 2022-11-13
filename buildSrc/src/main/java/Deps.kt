@@ -8,6 +8,8 @@ object Deps {
         const val Appcompat = "androidx.appcompat:appcompat:${Versions.appcompatVer}"
         const val Core = "androidx.core:core-ktx:${Versions.coreVer}"
         const val Fragment = "androidx.fragment:fragment-ktx:${Versions.fragmentVer}"
+        const val NavigationFragment =
+            "androidx.navigation:navigation-fragment-ktx:${Versions.navigationVer}"
         const val Collection = "androidx.collection:collection-ktx:${Versions.collectionVer}"
     }
 
@@ -50,6 +52,7 @@ object Deps {
         val PluginSystemCommon = mapOf("path" to ":pluginsystem-common")
         val UiComponent = mapOf("path" to ":ui-component")
         val VortexService = mapOf("path" to ":vortex-service")
+        val Navigation = mapOf("path" to ":navigation")
     }
 
     object UnitTest {

@@ -5,6 +5,7 @@
 #include "mntent.h" // Mount entry
 #include "../log.h"
 #include "classes.cpp"
+#include "sys/sendfile.h"
 #include "dirent.h"
 #include "jni.h"
 #include "attrs.cpp"
@@ -136,14 +137,22 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_lstatImpl(
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl(
+Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl__Ljava_io_FileDescriptor_2(
+        JNIEnv *env,
+        jobject thiz,
+        jobject descriptor
+) {
+    return doStat(env, getIndexFromFileDescriptor(env, descriptor));
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl__I(
         JNIEnv *env,
         jobject thiz,
         jint descriptor
 ) {
-    int cDescriptor = descriptor;
-
-    return doStat(env, cDescriptor);
+    return doStat(env, descriptor);
 }
 
 extern "C"
@@ -286,13 +295,13 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_openDir(
     return openDirectory(env, fromByteArrayToPath(env, path));
 }
 
-static jobject newLinuxDirentStruct(
+static jobject newLinuxDirectoryEntryStruct(
         JNIEnv *env,
         const struct dirent64 *directory
 ) {
     static jmethodID constructor(nullptr);
     if (!constructor) {
-        constructor = findUnixDirentStructureInitMethod(env);
+        constructor = findUnixDirectoryEntryStructureInitMethod(env);
     }
 
     auto inode = (jlong) directory->d_ino;
@@ -307,7 +316,7 @@ static jobject newLinuxDirentStruct(
     env->SetByteArrayRegion(bytes, 0, javaLength, (jbyte *) name);
 
     return env->NewObject(
-            findUnixDirentStructureClass(env),
+            findUnixDirectoryEntryStructureClass(env),
             constructor,
             inode,
             offset,
@@ -353,7 +362,7 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_readDirImpl(
         return nullptr;
     }
 
-    return newLinuxDirentStruct(env, directory);
+    return newLinuxDirectoryEntryStruct(env, directory);
 }
 
 static jobject openFileDescriptor(JNIEnv *env, int descriptor) {
@@ -398,7 +407,7 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_openImpl(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_io_github_excu101_filesystem_unix_UnixCalls_mkdir(
+Java_io_github_excu101_filesystem_unix_UnixCalls_mkdirImpl(
         JNIEnv *env,
         jobject thiz,
         jbyteArray path,
@@ -409,6 +418,10 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_mkdir(
     auto cMode = (mode_t) mode;
     makeDirectory(cPath, cMode);
     free(cPath);
+
+    if (errno != 0) {
+//        throwUnixException(env, errno, "mkdir");
+    }
 }
 
 static jobject doStatVfs(JNIEnv *env, const struct statvfs64 *statvfs) {
@@ -586,7 +599,7 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_symlinkImpl(
     char *cLink = fromByteArrayToPath(env, link);
 
     if (!createSymbolicLink(cTarget, cLink)) {
-        throwUnixException(env, errno, "symlink");
+//        throwUnixException(env, errno, "symlink");
     }
 
     free(cTarget);
@@ -798,4 +811,44 @@ Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_closeMountEntryPoint
     if (errno != 0) {
 
     }
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_moveBytesImpl(
+        JNIEnv *env, jobject thiz,
+        jobject from_descriptor,
+        jobject to_descriptor,
+        jobject offset,
+        jlong count
+) {
+    clearErrno();
+
+    int inFileDescriptor = getIndexFromFileDescriptor(env, from_descriptor);
+    int outFileDescriptor = getIndexFromFileDescriptor(env, to_descriptor);
+
+    off64_t offVal = 0;
+    off64_t *_offset = nullptr;
+    if (offset != nullptr) {
+        offVal = env->GetLongField(offset, findInt64RefValueField(env));
+        _offset = &offVal;
+    }
+    size_t cCount = count;
+
+    jlong size = sendfile64(
+            outFileDescriptor,
+            inFileDescriptor,
+            _offset,
+            cCount
+    );
+
+    if (errno != 0) {
+
+    }
+
+    if (offset != nullptr) {
+        env->SetLongField(offset, findInt64RefValueField(env), offVal);
+    }
+
+    return size;
 }

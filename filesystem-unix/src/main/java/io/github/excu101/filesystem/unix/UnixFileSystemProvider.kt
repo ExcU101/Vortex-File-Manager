@@ -3,22 +3,27 @@ package io.github.excu101.filesystem.unix
 import android.system.OsConstants.O_CREAT
 import android.system.OsConstants.O_EXCL
 import io.github.excu101.filesystem.fs.DirectoryStream
+import io.github.excu101.filesystem.fs.DirectoryStream.Filter
 import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.FileSystemProvider
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.EmptyAttrs
-import io.github.excu101.filesystem.fs.attr.Option
-import io.github.excu101.filesystem.fs.attr.StandardOptions
 import io.github.excu101.filesystem.fs.channel.Channel
 import io.github.excu101.filesystem.fs.channel.FileChannel
 import io.github.excu101.filesystem.fs.channel.ReactiveFileChannel
 import io.github.excu101.filesystem.fs.error.SystemCallException
+import io.github.excu101.filesystem.fs.operation.FileOperation.Option
+import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.resolve
 import io.github.excu101.filesystem.unix.attr.UnixAttributes
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
 import io.github.excu101.filesystem.unix.channel.ReactiveUnixFileChannel
 import io.github.excu101.filesystem.unix.channel.UnixFileChannel
 import io.github.excu101.filesystem.unix.path.UnixPath
+import io.github.excu101.filesystem.unix.structure.UnixDirectoryEntryStructure
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.reflect.KClass
 
 
@@ -42,10 +47,10 @@ class UnixFileSystemProvider : FileSystemProvider() {
         flags: Set<Option>,
         mode: Int,
     ): ReactiveFileChannel {
-        val readable = flags.contains(StandardOptions.READ)
-        val writable = flags.contains(StandardOptions.WRITE)
-        val appendable = flags.contains(StandardOptions.APPEND)
-        val createNew = flags.contains(StandardOptions.CREATE_NEW)
+        val readable = flags.contains(Options.Open.Read)
+        val writable = flags.contains(Options.Open.Write)
+        val appendable = flags.contains(Options.Open.Append)
+        val createNew = flags.contains(Options.Open.CreateNew)
 
         var cFlags = if (readable && writable) 2 else if (readable) 0 else 1
         if (appendable) {
@@ -68,10 +73,10 @@ class UnixFileSystemProvider : FileSystemProvider() {
     }
 
     override fun newFileChannel(path: Path, flags: Set<Option>, mode: Int): FileChannel {
-        val readable = flags.contains(StandardOptions.READ)
-        val writable = flags.contains(StandardOptions.WRITE)
-        val appendable = flags.contains(StandardOptions.APPEND)
-        val createNew = flags.contains(StandardOptions.CREATE_NEW)
+        val readable = flags.contains(Options.Open.Read)
+        val writable = flags.contains(Options.Open.Write)
+        val appendable = flags.contains(Options.Open.Append)
+        val createNew = flags.contains(Options.Open.CreateNew)
 
         var cFlags = if (readable && writable) 2 else if (readable) 0 else 1
         if (appendable) {
@@ -103,12 +108,39 @@ class UnixFileSystemProvider : FileSystemProvider() {
         return source.getName().bytes[0] == '.'.code.toByte()
     }
 
-    override fun newDirectorySteam(path: Path): DirectoryStream<Path> = try {
-        UnixDirectoryStream(
-            dir = path as UnixPath, UnixCalls.openDir(path.bytes),
-        )
-    } catch (exception: SystemCallException) {
-        throw exception
+    override fun newDirectorySteam(path: Path): DirectoryStream<Path> {
+        return try {
+            UnixDirectoryStream(
+                dir = path as UnixPath, pointer = UnixCalls.openDir(path.bytes),
+            )
+        } catch (exception: SystemCallException) {
+            throw exception
+        }
+    }
+
+    override fun newDirectoryFlow(
+        directory: Path,
+        filter: Filter<Path>,
+    ): Flow<Path> = flow {
+        val pointer = UnixCalls.openDir(directory.bytes)
+
+        var entry = getNextEntry(pointer)
+        while (entry != null) {
+            val path = directory.resolve(entry.name)
+
+            if (filter.accept(path)) {
+                emit(path)
+            }
+            entry = getNextEntry(pointer)
+        }
+
+        UnixCalls.closeDir(pointer)
+    }
+
+    private fun getNextEntry(
+        pointer: Long,
+    ): UnixDirectoryEntryStructure? {
+        return UnixCalls.readDir(pointer)
     }
 
     override fun getFileStore(path: Path): FileStore {
@@ -116,5 +148,5 @@ class UnixFileSystemProvider : FileSystemProvider() {
     }
 
     override val scheme: String
-        get() = "file"
+        get() = "unix"
 }

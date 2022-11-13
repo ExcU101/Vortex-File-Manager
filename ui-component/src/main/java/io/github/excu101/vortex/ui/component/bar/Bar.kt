@@ -3,14 +3,17 @@ package io.github.excu101.vortex.ui.component.bar
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.ColorStateList.valueOf
-import android.graphics.drawable.Drawable
+import android.graphics.Paint
 import android.graphics.drawable.RippleDrawable
 import android.view.View
 import android.view.View.MeasureSpec.*
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.coordinatorlayout.widget.CoordinatorLayout.AttachedBehavior
 import androidx.core.view.children
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -18,10 +21,10 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 import com.google.android.material.shape.MaterialShapeUtils
 import io.github.excu101.pluginsystem.model.Action
-import io.github.excu101.pluginsystem.model.Color
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.ui.component.bar.NavigationIcon.Type.CLOSE
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.menu.MenuLayout
@@ -41,6 +44,10 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
             invalidate()
         }
 
+    private val icon = NavigationIcon().apply {
+        type = CLOSE
+    }
+
     private val horizontalPadding = 16.dp
     private val verticalPadding = 16.dp
     private val titleHorizontalPadding = 32.dp
@@ -52,9 +59,8 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     private val shape = MaterialShapeDrawable().apply {
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_ALWAYS
+        paintStyle = Paint.Style.FILL
         initializeElevationOverlay(context)
-        setUseTintColorForShadow(true)
-        setShadowColor(Color.Blue.value)
         setTint(ThemeColor(mainBarSurfaceColorKey))
     }
 
@@ -64,9 +70,10 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         background =
             RippleDrawable(valueOf(ThemeColor(mainBarNavigationIconTintColorKey)), null, null)
         setColorFilter(ThemeColor(mainBarNavigationIconTintColorKey))
+        setImageDrawable(icon)
     }
 
-    private val titleView = TextView(context).apply {
+    private val titleView: TextView = TextView(context).apply {
         textSize = 18F
 //        ellipsize = TextUtils.TruncateAt.END
         setLines(1)
@@ -82,12 +89,8 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     }
 
-    var navigationIcon: Drawable?
-        get() = navigationIconView.drawable
-        set(value) {
-            ensureContainingNavigationIcon()
-            navigationIconView.setImageDrawable(value)
-        }
+    val navigationIcon: NavigationIcon
+        get() = icon
 
     var animatesTitleChanges: Boolean = true
     var animatesSubtitleChanges: Boolean = true
@@ -137,7 +140,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         }
 
     val containsTitle: Boolean
-        get() = titleView in children
+        get() = if (titleView == null) false else titleView in children
 
     val containsSubtitle: Boolean
         get() = subtitleView in children
@@ -151,11 +154,19 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
     init {
         background = shape
         elevation = 4F.dp
+        ensureContainingNavigationIcon()
     }
 
     override fun setElevation(elevation: Float) {
-        super.setElevation(elevation)
-        MaterialShapeUtils.setElevation(this, elevation)
+        shape.elevation = elevation
+    }
+
+    override fun setBackgroundTintList(tint: ColorStateList?) {
+        shape.tintList = tint
+    }
+
+    override fun getBackgroundTintList(): ColorStateList? {
+        return shape.tintList
     }
 
     private fun ensureContainingTitle() {
@@ -190,6 +201,10 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
+
+        if (parent is ViewGroup) {
+            (parent as ViewGroup).clipChildren = false
+        }
     }
 
     override fun getBehavior() = behavior
@@ -308,7 +323,6 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         }
 
         if (containsTitle) {
-
             titleView.layout(
                 widthPosition,
                 textHeightPosition,

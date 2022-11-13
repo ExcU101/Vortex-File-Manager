@@ -1,26 +1,31 @@
 package io.github.excu101.pluginsystem.ui.theme
 
 import io.github.excu101.pluginsystem.model.Color
+import io.github.excu101.pluginsystem.model.DataHolder
+import io.github.excu101.pluginsystem.model.Icon
+import io.github.excu101.pluginsystem.model.Text
 
-abstract class ThemeInfo<T> {
+abstract class ThemeInfo<T : DataHolder<*>> {
     abstract val name: String
-    abstract val pairs: Map<String, T>
-
-    val values: Collection<T>
-        get() = pairs.values
-
-    val keys: Collection<String>
-        get() = pairs.keys
+    abstract val keys: List<String>
 }
 
-class ColorInfo : ThemeInfo<Color>() {
+class ThemeColorInfo(
+    override val name: String,
+    override val keys: List<String>,
+) : ThemeInfo<Color>()
 
-    override val name: String
-        get() = ""
+class ThemeDimenInfo(
+    override val name: String,
+    override val keys: List<String>,
+) : ThemeInfo<Text>()
 
-    private val _pairs = mutableMapOf<String, io.github.excu101.pluginsystem.model.Color>()
+class ThemeIconInfo(
+    override val name: String,
+    override val keys: List<String>,
+) : ThemeInfo<Icon>()
 
-    override val pairs: Map<String, io.github.excu101.pluginsystem.model.Color>
-        get() = _pairs
-
-}
+class ThemeTextInfo(
+    override val name: String,
+    override val keys: List<String>,
+) : ThemeInfo<Text>()

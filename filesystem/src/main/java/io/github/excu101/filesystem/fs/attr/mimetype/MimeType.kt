@@ -3,9 +3,10 @@ package io.github.excu101.filesystem.fs.attr.mimetype
 import io.github.excu101.filesystem.fs.utils.*
 
 interface MimeType {
-    val type: String
-    val subtype: String
+    val extension: String
+    val internetMediaType: String
     val isNotStandard: Boolean
+    val type: String
     val isVendor: Boolean
     override fun toString(): String
 
@@ -22,16 +23,19 @@ interface MimeType {
             ?: textMimeType[extension] ?: return EmptyMimeType
 
             return object : MimeType {
-                override val type: String
+                override val extension: String
                     get() = extension
-                override val subtype: String
+                override val internetMediaType: String
                     get() = subtype
+                override val type: String
+                    get() = subtype.substringBefore('/')
+
                 override val isNotStandard: Boolean
                     get() = subtype.startsWith("x-")
                 override val isVendor: Boolean
                     get() = subtype.startsWith("vnd")
 
-                override fun toString(): String = "$type/$subtype"
+                override fun toString(): String = "${extension}/$subtype"
             }
         }
     }

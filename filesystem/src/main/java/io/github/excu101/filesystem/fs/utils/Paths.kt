@@ -3,14 +3,18 @@ package io.github.excu101.filesystem.fs.utils
 import io.github.excu101.filesystem.fs.DirectoryStream
 import io.github.excu101.filesystem.fs.attr.DirectoryProperties
 import io.github.excu101.filesystem.fs.attr.DirectoryPropertiesImpl
-import io.github.excu101.filesystem.fs.attr.Option
-import io.github.excu101.filesystem.fs.attr.StandardOptions
 import io.github.excu101.filesystem.fs.attr.size.Size
+import io.github.excu101.filesystem.fs.operation.FileOperation
+import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
+import java.nio.charset.Charset
+import kotlin.text.Charsets.UTF_8
 
 const val defaultMode = 777
 
 infix fun Path.resolve(other: String) = resolve(system.getPath(other))
+
+fun Path.resolve(bytes: ByteArray, charset: Charset = UTF_8): Path = resolve(String(bytes, charset))
 
 fun Path.startsWith(prefix: String) = startsWith(system.getPath(first = prefix))
 
@@ -33,14 +37,22 @@ inline val Path.store
 inline val Path.list
     get() = system.provider.newDirectorySteam(this).toList()
 
-inline val Path.scheme
-    get() = system.scheme
+inline val Path.flow
+    get() = system.provider.newDirectoryFlow(this)
 
 inline val Path.count: Int
     get() = system.helper?.getCount(this) ?: -1
 
+inline val Path.stream
+    get() = system.provider.newDirectorySteam(path = this)
+
 fun Path.channel(
-    flags: Set<Option> = StandardOptions.values().toSet(),
+    flags: Set<FileOperation.Option> = setOf(
+        Options.Open.Read,
+        Options.Open.Write,
+        Options.Open.Append,
+        Options.Open.CreateNew
+    ),
     mode: Int = defaultMode,
 ) {
     system.provider.newReactiveFileChannel(
@@ -57,4 +69,4 @@ inline val Path.fileCount: Int
     get() = system.helper?.getFileCount(this) ?: -1
 
 inline val Path.directorySize: Size
-    get() = Size(system.helper?.getDirectorySize(this) ?: -1L)
+    get() = Size(system.helper?.getDirectorySize(this) ?: 0L)

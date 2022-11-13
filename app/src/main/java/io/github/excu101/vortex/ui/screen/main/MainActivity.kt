@@ -14,195 +14,169 @@ import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.IBinder
-import android.view.Gravity.BOTTOM
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewAnimationUtils
-import android.view.ViewGroup.LayoutParams
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.ImageView
-import androidx.activity.viewModels
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.ui.theme.*
-import io.github.excu101.vortex.R
-import io.github.excu101.vortex.VortexServiceApi
-import io.github.excu101.vortex.base.utils.collectState
+import io.github.excu101.pluginsystem.utils.EmptyDrawable
+import io.github.excu101.vortex.*
 import io.github.excu101.vortex.base.utils.snackIt
+import io.github.excu101.vortex.navigation.FragmentNavigationController
+import io.github.excu101.vortex.navigation.HostNavigationController
+import io.github.excu101.vortex.navigation.NavigationController
+import io.github.excu101.vortex.provider.ResourceProvider
+import io.github.excu101.vortex.service.VortexService
+import io.github.excu101.vortex.ui.component.BarOwner
 import io.github.excu101.vortex.ui.component.bar.Bar
-import io.github.excu101.vortex.ui.component.drawer.BottomActionDrawer
 import io.github.excu101.vortex.ui.component.drawer.DrawerActionListener
-import io.github.excu101.vortex.ui.component.fragment.FragmentContainerView
+import io.github.excu101.vortex.ui.component.dsl.scope
+import io.github.excu101.vortex.ui.component.item.drawer.drawerItem
 import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.text.navigation.navigationVortexFileManagerActionTitleKey
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceConnectedKey
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceDisconnectedKey
-import io.github.excu101.vortex.ui.component.theme.value.initVortexDarkColorValues
-import io.github.excu101.vortex.ui.component.theme.value.initVortexLightColorValues
-import io.github.excu101.vortex.ui.screen.main.MainViewModel.Companion.rootId
-import io.github.excu101.vortex.utils.vortexPackageName
-import io.github.excu101.vortex.utils.vortexServiceActionName
-import kotlinx.coroutines.launch
+import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanDarkColorValues
+import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanLightColorValues
+import io.github.excu101.vortex.ui.navigation.ActionNavigator
+import io.github.excu101.vortex.ui.navigation.AppNavigation
+import io.github.excu101.vortex.ui.navigation.NavigationActions
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
-    ServiceConnection,
-    DrawerActionListener,
-    ThemeSwitcherCallback,
-    ThemeColorChangeListener {
+    ServiceConnection, DrawerActionListener,
+    ThemeSwitcherCallback, ThemeColorChangeListener, BarOwner, HostNavigationController {
 
-    private val viewModel by viewModels<MainViewModel>()
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            binding?.root?.hide()
+        }
+    }
 
-    private var root: CoordinatorLayout? = null
-    private var themeImageView: ImageView? = null
+    var binding: MainLayoutBinding? = null
+        private set
 
-    var service: VortexServiceApi? = null
+    var service: VortexFileManagerService? = null
         private set
     var isServiceBounded = false
         private set
 
+    override val controller: NavigationController by lazy {
+        FragmentNavigationController
+            .from(
+                graph = AppNavigation.Graph,
+                manager = supportFragmentManager,
+                containerId = binding?.container?.id ?: -1
+            )
+            .bindOnBackPressedDispatcher(dispatcher = onBackPressedDispatcher)
+            .enableOnBackPressedCallback(enabled = true)
+    }
+
+    private val navigator by lazy { ActionNavigator(controller) }
+
     // Test data
     var isDarkTheme = true
 
-    var bar: Bar? = null
-        private set
-
-    private var container: FragmentContainerView? = null
-
-    var drawer: BottomActionDrawer? = null
-        private set
+    override val bar: Bar?
+        get() = binding?.bar
 
     private val intentService by lazy {
-        Intent(vortexServiceActionName).apply {
-            `package` = vortexPackageName
-        }
+        Intent(this, VortexService::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startService(intentService)
-        bindService(
-            intentService,
-            this,
-            Context.BIND_AUTO_CREATE
-        )
+        startVortexService()
+        binding = MainLayoutBinding(context = this)
         Theme.attachCallback(this)
         Theme.registerColorChangeListener(this)
-
-        root = CoordinatorLayout(this).apply {
-            id = rootId
-            layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        binding?.root?.registerListener(listener = this)
+        binding?.root?.replaceNavigation(NavigationActions(ResourceProvider(this)).actions)
+        binding?.bar?.setNavigationClickListener {
+            binding?.root?.toggle()
         }
-        bar = Bar(root!!.context).apply {
-
-        }
-        container = FragmentContainerView(root!!.context, manager = supportFragmentManager)
-        themeImageView = ImageView(this).apply {
-            visibility = GONE
-        }
-        drawer = BottomActionDrawer(context = this)
-        drawer?.registerListener(listener = this)
-        root?.addView(container, MATCH_PARENT, MATCH_PARENT)
-        root?.addView(bar, CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-            gravity = BOTTOM
-        })
-        root?.addView(themeImageView, MATCH_PARENT, MATCH_PARENT)
         ViewCompat.setOnApplyWindowInsetsListener(bar!!) { view, insets ->
             val navigationInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            view.updatePadding(
-                bottom = navigationInsets.bottom
-            )
+            view.updatePadding(bottom = navigationInsets.bottom)
             insets
         }
 
         isDarkTheme = resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
 
-        setContentView(root)
+        setContentView(binding?.root)
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.collectState { state ->
-                    container?.setFragment(state.fragment, state.tag)
-                }
-            }
-        }
+        onBackPressedDispatcher.addCallback(onBackPressedCallback)
     }
 
     override fun onStart() {
         super.onStart()
-        root?.apply {
-            bar?.navigationIcon = getDrawable(this@MainActivity, R.drawable.ic_menu_24)
+        bindVortexService(this, Context.BIND_AUTO_CREATE)
+        binding?.apply {
             Theme.notifyColorsChanged()
         }
     }
 
     override fun onStop() {
         super.onStop()
+        if (isServiceBounded) {
+            unbindVortexService(this)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        stopService(intentService)
-        service = null
+        stopVortexService()
         Theme.unregisterColorChangeListener(this)
         Theme.detachCallback(this)
-        root = null
-        bar = null
-        drawer = null
+        binding?.onDestroy()
     }
 
     override fun onDrawerActionCall(action: Action) {
-        when (action.title) {
-            "Switch theme" -> {
-                Theme.switch()
+        navigator.navigate(action) {
+            when (action.title) {
+                "Switch theme" -> {
+                    Theme.switch()
+                }
             }
         }
-        drawer?.hide()
+        binding?.root?.hide()
     }
 
     override fun onSwitch() {
-        val width = root?.width?.div(2)
-        val height = root?.height?.div(2)
+        val width = binding?.root?.width?.div(2)
+        val height = binding?.root?.height?.div(2)
         val startRadius = 0F
         val finalRadius =
             sqrt(((width?.times(width) ?: 0) + (height?.times(height) ?: 0)).toFloat())
 
         isDarkTheme = if (!isDarkTheme) {
-            initVortexDarkColorValues()
+            initOceanDarkColorValues()
             true
         } else {
-            initVortexLightColorValues()
+            initOceanLightColorValues()
             false
         }
 
-        val bitmap = createBitmap(
-            root?.measuredWidth ?: 0,
-            root?.measuredHeight ?: 0,
-            Bitmap.Config.ARGB_8888
-        )
+        val bitmap = createBitmap(binding?.root?.measuredWidth ?: 0,
+            binding?.root?.measuredHeight ?: 0,
+            Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        root?.draw(canvas)
-        themeImageView?.setImageBitmap(bitmap)
-        themeImageView?.visibility = VISIBLE
+        binding?.root?.draw(canvas)
+        binding?.screenImage?.setImageBitmap(bitmap)
+        binding?.screenImage?.visibility = VISIBLE
 
-
-        val animation = ViewAnimationUtils.createCircularReveal(root,
-            (bitmap.width / 2) ?: 0,
-            (bitmap.height / 2) ?: 0,
+        val animation = ViewAnimationUtils.createCircularReveal(binding?.root,
+            width?.div(2) ?: 0,
+            height?.div(2) ?: 0,
             startRadius,
-            finalRadius
-        ).apply {
+            finalRadius).apply {
             duration = 350L
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
@@ -210,8 +184,8 @@ class MainActivity : AppCompatActivity(),
                 }
 
                 override fun onAnimationEnd(animation: Animator) {
-                    themeImageView?.setImageDrawable(null)
-                    themeImageView?.visibility = GONE
+                    binding?.screenImage?.setImageDrawable(null)
+                    binding?.screenImage?.visibility = GONE
                 }
             })
         }
@@ -225,20 +199,17 @@ class MainActivity : AppCompatActivity(),
                 vortexServiceConnectedKey
             } else {
                 vortexServiceDisconnectedKey
-            }).snackIt(
-                view = view,
-                anchorView = view
-            )
+            }).snackIt(view = view, anchorView = view)
         }
     }
 
     override fun onChanged() {
-        root?.background = ColorDrawable(ThemeColor(backgroundColorKey))
+        binding?.root?.background = ColorDrawable(ThemeColor(backgroundColorKey))
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-//        val binder = IVortexService.Stub.asInterface(service)
-//        this.service = binder
+        val binder = VortexFileManagerService.Stub.asInterface(service)
+        this.service = binder
         isServiceBounded = true
         notifyConnection()
     }

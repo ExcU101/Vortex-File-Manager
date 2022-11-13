@@ -64,6 +64,9 @@ class UnixPath internal constructor(
     override val system: FileSystem
         get() = _system
 
+    override val scheme: String
+        get() = system.scheme
+
     override fun startsWith(other: Path): Boolean {
         if (other.isEmpty) return false
         if (isEmpty) return false

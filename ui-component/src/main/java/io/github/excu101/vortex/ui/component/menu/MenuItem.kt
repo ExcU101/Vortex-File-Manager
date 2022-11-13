@@ -10,7 +10,6 @@ import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.action
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
-import io.github.excu101.pluginsystem.utils.EmptyDrawable
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.mainBarActionIconTintColorKey
 import kotlin.math.min
@@ -30,7 +29,7 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
             invalidate()
         }
 
-    var action: Action = action(title = "", icon = EmptyDrawable)
+    var action: Action = action(title = "", icon = null)
         set(value) {
             field = value
             titleView.text = value.title

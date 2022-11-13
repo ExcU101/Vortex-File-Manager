@@ -8,14 +8,16 @@ operator fun String.getValue(source: Any?, property: KProperty<*>): MimeType {
 }
 
 val EmptyMimeType = object : MimeType {
-    override val type: String
+    override val extension: String
         get() = ""
-    override val subtype: String
+    override val internetMediaType: String
         get() = ""
     override val isNotStandard: Boolean
         get() = false
     override val isVendor: Boolean
         get() = false
+    override val type: String
+        get() = ""
 
     override fun toString(): String = ""
 }

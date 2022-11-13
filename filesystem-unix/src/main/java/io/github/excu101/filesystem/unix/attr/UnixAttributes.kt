@@ -1,6 +1,6 @@
 package io.github.excu101.filesystem.unix.attr
 
-import android.system.OsConstants.S_IXGRP
+import io.github.excu101.filesystem.fs.attr.InodeOwner
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.fs.attr.time.Instant.Companion.of
@@ -13,7 +13,7 @@ import io.github.excu101.filesystem.unix.utils.*
 
 internal class UnixAttributes private constructor(
     private val structure: UnixStatusStructure,
-) : PosixAttrs {
+) : PosixAttrs, InodeOwner {
 
     companion object {
         fun from(path: UnixPath, followLinks: Boolean): UnixAttributes {
@@ -26,6 +26,7 @@ internal class UnixAttributes private constructor(
     private var _perms = mutableSetOf<PosixPermission>()
 
     init {
+
         if (structure.mode and S_IRUSR > 0) {
             _perms += PosixPermission.Owner.READ_OWNER
         }
@@ -52,7 +53,7 @@ internal class UnixAttributes private constructor(
         if (structure.mode and S_IWOTH > 0) {
             _perms += PosixPermission.Other.WRITE_OTHER
         }
-        if (structure.mode and S_IOTH > 0) {
+        if (structure.mode and S_IXOTH > 0) {
             _perms += PosixPermission.Other.EXECUTE_OTHER
         }
     }
@@ -65,6 +66,9 @@ internal class UnixAttributes private constructor(
 
     override val perms: Set<PosixPermission>
         get() = _perms
+
+    override val inode: Long
+        get() = structure.inode
 
     override val isDirectory: Boolean
         get() = structure.mode modeWith S_IFDIR

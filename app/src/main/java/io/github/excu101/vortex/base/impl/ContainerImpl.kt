@@ -6,6 +6,7 @@ import io.github.excu101.vortex.base.Logger
 import io.github.excu101.vortex.base.utils.ContainerScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Unconfined
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

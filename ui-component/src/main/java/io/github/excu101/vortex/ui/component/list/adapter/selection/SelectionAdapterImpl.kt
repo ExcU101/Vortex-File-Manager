@@ -96,7 +96,7 @@ abstract class SelectionAdapterImpl<T, VH : RecyclerView.ViewHolder>(protected v
         var clicked = false
 
         longListeners.forEach { listener ->
-            clicked = listener.onClick(view, item, position)
+            clicked = listener.onLongClick(view, item, position)
         }
 
         return clicked

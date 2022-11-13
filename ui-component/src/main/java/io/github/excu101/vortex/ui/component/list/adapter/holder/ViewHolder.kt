@@ -7,40 +7,37 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
 open class ViewHolder<T>(itemView: View) : ViewHolder(itemView) {
 
-    // Bind itemView with given item (data)
     @Suppress("UNCHECKED_CAST")
+    private val delegate = itemView as? RecyclableView<T>
+
+    // Bind itemView with given item (data)
     open fun bind(item: T) {
-        (itemView as? RecyclableView<T>)?.onBind(item)
+        delegate?.onBind(item)
     }
 
     // Unbind view, when it's recycled
-    @Suppress("UNCHECKED_CAST")
     open fun unbind() {
-        (itemView as? RecyclableView<T>)?.onUnbind()
+        delegate?.onUnbind()
     }
 
-    @Suppress("UNCHECKED_CAST")
     open fun bindSelection(isSelected: Boolean) {
-        (itemView as? RecyclableView<T>)?.onBindSelection(isSelected)
+        delegate?.onBindSelection(isSelected)
     }
 
-    @Suppress("UNCHECKED_CAST")
     open fun bindListener(listener: OnClickListener) {
-        (itemView as? RecyclableView<T>)?.onBindListener(listener)
+        delegate?.onBindListener(listener)
     }
 
-    @Suppress("UNCHECKED_CAST")
     open fun bindLongListener(listener: OnLongClickListener) {
-        (itemView as? RecyclableView<T>)?.onBindLongListener(listener)
+        delegate?.onBindLongListener(listener)
     }
 
     open fun bindSelectionListener(listener: OnClickListener) {}
 
     open fun bindSelectionLongListener(listener: OnLongClickListener) {}
 
-    @Suppress("UNCHECKED_CAST")
     open fun unbindListeners() {
-        (itemView as? RecyclableView<T>)?.onUnbindListeners()
+        delegate?.onUnbindListeners()
     }
 
     interface RecyclableView<T> {

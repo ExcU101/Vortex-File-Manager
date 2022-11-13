@@ -1,13 +1,13 @@
 package io.github.excu101.vortex.service.data
 
 import android.os.Parcelable
+import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.FileOperationObserver
-import io.github.excu101.filesystem.fs.path.Path
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 open class ParcelableFileOperationObserver : Parcelable, FileOperationObserver {
-    override fun onAction(value: Path) {
+    override fun onAction(action: FileOperation.Action) {
 
     }
 
@@ -19,4 +19,24 @@ open class ParcelableFileOperationObserver : Parcelable, FileOperationObserver {
 
     }
 
+}
+
+inline fun parcelableObserver(
+    crossinline onAction: (action: FileOperation.Action) -> Unit = {},
+    crossinline onError: (Throwable) -> Unit = {},
+    crossinline onComplete: () -> Unit = {},
+): ParcelableFileOperationObserver {
+    return object : ParcelableFileOperationObserver() {
+        override fun onAction(action: FileOperation.Action) {
+            onAction.invoke(action)
+        }
+
+        override fun onError(value: Throwable) {
+            onError.invoke(value)
+        }
+
+        override fun onComplete() {
+            onComplete.invoke()
+        }
+    }
 }

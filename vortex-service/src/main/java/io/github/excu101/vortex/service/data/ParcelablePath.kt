@@ -9,6 +9,6 @@ import kotlinx.parcelize.WriteWith
 @Parcelize
 class ParcelablePath(
     val src: @WriteWith<PathParceler> Path,
-) : Parcelable, Path by src
+) : Parcelable
 
 fun Path.asParcelable() = ParcelablePath(src = this)

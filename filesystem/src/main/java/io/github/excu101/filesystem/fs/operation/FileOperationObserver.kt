@@ -1,10 +1,8 @@
 package io.github.excu101.filesystem.fs.operation
 
-import io.github.excu101.filesystem.fs.path.Path
-
 interface FileOperationObserver {
 
-    fun onAction(value: Path)
+    fun onAction(action: FileOperation.Action)
 
     fun onError(value: Throwable)
 
@@ -13,13 +11,13 @@ interface FileOperationObserver {
 }
 
 inline fun observer(
-    crossinline onNext: (value: Path) -> Unit = {},
+    crossinline onAction: (action: FileOperation.Action) -> Unit = {},
     crossinline onError: (value: Throwable) -> Unit = {},
     crossinline onComplete: () -> Unit = {},
 ): FileOperationObserver {
     return object : FileOperationObserver {
-        override fun onAction(value: Path) {
-            onNext(value)
+        override fun onAction(action: FileOperation.Action) {
+            onAction.invoke(action)
         }
 
         override fun onError(value: Throwable) {

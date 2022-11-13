@@ -41,6 +41,7 @@ dependencies {
     implementation(project(Deps.Application.FileSystem))
     implementation(project(Deps.Application.FileSystemUnix))
     implementation(Deps.Lifecycle.Service)
+    implementation(Deps.Lifecycle.Runtime)
     implementation(Deps.Lifecycle.Process)
     implementation(Deps.Coroutines.Android)
 }

@@ -1,5 +1,8 @@
 package io.github.excu101.vortex
 
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.res.Configuration.*
 import android.os.Build
 import androidx.multidex.MultiDexApplication
@@ -7,7 +10,11 @@ import dagger.hilt.android.HiltAndroidApp
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.unix.UnixFileSystem
 import io.github.excu101.filesystem.unix.UnixFileSystemProvider
-import io.github.excu101.vortex.ui.component.theme.value.*
+import io.github.excu101.vortex.service.VortexService
+import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanDarkColorValues
+import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanLightColorValues
+import io.github.excu101.vortex.ui.component.theme.value.initVortexDimenValues
+import io.github.excu101.vortex.ui.component.theme.value.text.en.initVortexTextValuesEN
 
 @HiltAndroidApp
 class App : MultiDexApplication() {
@@ -19,13 +26,13 @@ class App : MultiDexApplication() {
 
         when (val mode = resources.configuration.uiMode and UI_MODE_NIGHT_MASK) {
             UI_MODE_NIGHT_YES -> {
-                initVortexDarkColorValues()
+                initOceanDarkColorValues()
             }
             UI_MODE_NIGHT_NO -> {
-                initVortexLightColorValues()
+                initOceanLightColorValues()
             }
 
-            else -> initVortexDarkColorValues()
+            else -> initOceanDarkColorValues()
         }
 
         initVortexDimenValues()
@@ -36,15 +43,43 @@ class App : MultiDexApplication() {
             resources.configuration.locale
         }
 
-        when (locale.language) {
-            "en" -> initVortexTextValuesEN()
-            "ua" -> initVortexTextValuesUA()
-            "ru" -> initVortexTextValuesRU()
-            "de" -> initVortexTextValuesDE()
-            else -> initVortexTextValuesCustom(lines = emptyList())
-        }
+//        when (locale.language) {
+//            "en" ->
+//            "ua" -> initVortexTextValuesUA()
+//            "ru" -> initVortexTextValuesRU()
+//            "de" -> initVortexTextValuesDE()
+//            else -> initVortexTextValuesCustom(lines = emptyList())
+//        }
+        initVortexTextValuesEN()
 
         FileProvider.installDefault(system)
     }
 
+}
+
+fun Context.startVortexService() {
+    Intent(this, VortexService::class.java).also {
+        startService(it)
+    }
+}
+
+fun Context.stopVortexService() {
+    Intent(this, VortexService::class.java).also {
+        stopService(it)
+    }
+}
+
+fun Context.bindVortexService(
+    connection: ServiceConnection,
+    flags: Int,
+) {
+    Intent(this, VortexService::class.java).also {
+        bindService(it, connection, flags)
+    }
+}
+
+fun Context.unbindVortexService(
+    connection: ServiceConnection,
+) {
+    unbindService(connection)
 }

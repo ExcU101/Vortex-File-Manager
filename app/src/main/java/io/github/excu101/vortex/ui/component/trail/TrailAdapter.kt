@@ -36,9 +36,6 @@ class TrailAdapter : ItemAdapter<PathItem>(
         return isSelected(position(item))
     }
 
-    val selectedCount: Int
-        get() = if (selected >= 0) 1 else 0
-
     private object Factory : ViewHolderFactory<PathItem> {
         override fun produceView(parent: ViewGroup): View {
             return TrailItemView(parent.context)

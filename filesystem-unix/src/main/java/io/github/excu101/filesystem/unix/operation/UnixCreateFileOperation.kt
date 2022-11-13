@@ -1,9 +1,9 @@
 package io.github.excu101.filesystem.unix.operation
 
-import io.github.excu101.filesystem.IdRegister
-import io.github.excu101.filesystem.fs.attr.Option
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.CreateDirectoryAction
+import io.github.excu101.filesystem.fs.utils.CreateFileAction
 
 internal class UnixCreateFileOperation(
     private val path: Path,
@@ -11,16 +11,15 @@ internal class UnixCreateFileOperation(
     private val mode: Int,
 ) : FileOperation() {
 
-    override val id: Int = IdRegister.register(IdRegister.Type.OPERATION)
-
     override suspend fun perform() {
+        action(CreateFileAction(path))
         try {
             path.system.provider.newReactiveFileChannel(path, flags, mode).close()
         } catch (exception: Exception) {
-            notify(error = exception)
+            error(error = exception)
             return
         }
-        notify()
+        completion()
     }
 
 }

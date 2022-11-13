@@ -22,6 +22,7 @@ include(
     ":pluginsystem-common",
     ":ui-component",
     ":vortex-service",
-    ":manifest-dsl"
+    ":manifest-dsl",
+    ":pluginsystem-ui",
+    ":navigation"
 )
-include(":pluginsystem-ui")

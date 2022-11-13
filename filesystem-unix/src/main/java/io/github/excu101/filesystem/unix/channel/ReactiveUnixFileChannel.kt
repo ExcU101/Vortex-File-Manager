@@ -36,11 +36,11 @@ class ReactiveUnixFileChannel(
                 )
             }
         } else {
+            val addresses = readBuffers.map { (it as UnixByteBuffer).address }.toLongArray()
+
             readBytes = read(
                 descriptor = index,
-                addresses = readBuffers.map {
-                    (it as UnixByteBuffer).address
-                }.toLongArray(),
+                addresses = addresses,
                 count = readBuffers.maxBy {
                     it.remaining
                 }.remaining
@@ -85,7 +85,6 @@ class ReactiveUnixFileChannel(
     override fun write(): ReactiveUnixFileChannel {
         if (isClosed) return this
         if (writeBuffers.isEmpty()) return this
-
         var writeBytes = -1
 
         if (writeBuffers.size == 1) {

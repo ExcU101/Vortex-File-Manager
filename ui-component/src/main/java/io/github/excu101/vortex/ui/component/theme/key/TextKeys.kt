@@ -12,15 +12,24 @@ import io.github.excu101.pluginsystem.annotation.StringSpecifier
 // %u - unsigned decimal int
 // %x - hexadecimal (base 16)
 // %t - date/time
-const val charSpecifier = "%c"
-const val decimalSpecifier = "%d"
-const val floatSpecifier = "%f"
-const val integerSpecifier = "%d"
-const val octalSpecifier = "%o"
-const val stringSpecifier = "%s"
-const val unsignedIntegerSpecifier = "%u"
-const val hexadecimalSpecifier = "x"
-const val dateSpecifier = "%t"
+inline val charSpecifier
+    get() = "%c"
+inline val decimalSpecifier
+    get() = "%d"
+inline val floatSpecifier
+    get() = "%f"
+inline val integerSpecifier
+    get() = "%d"
+inline val octalSpecifier
+    get() = "%o"
+inline val stringSpecifier
+    get() = "%s"
+inline val unsignedIntegerSpecifier
+    get() = "%u"
+inline val hexadecimalSpecifier
+    get() = "x"
+inline val dateSpecifier
+    get() = "%t"
 
 const val fileListLoadingInitiatingTitleKey = "fileListLoadingInitiatingTitle"
 const val fileListLoadingNavigatingTitleKey = "fileListLoadingNavigatingTitle"
@@ -63,7 +72,7 @@ const val fileListGroupSortActionTitleKey = "fileListGroupSortActionTitle"
 const val fileListGroupFilterActionTitleKey = "fileListGroupFilterActionTitle"
 
 // Storage list : Drawer Groups : View
-const val fileListViewColumnActionTitleKey = "fileListViewColumnActionTitle"
+const val fileListViewListActionTitleKey = "fileListViewListActionTitle"
 const val fileListViewGridActionTitleKey = "fileListViewGridActionTitle"
 
 // Storage list : Drawer Groups : Order
@@ -100,35 +109,6 @@ const val fileListFilesCountSectionKey = "fileListFilesCountSection"
 
 @StringSpecifier
 const val fileListDirectoriesCountSectionKey = "fileListDirectoriesCountSection"
-
-// Item : MimeType
-const val fileListItemMimeTypeApplicationKey = "fileListItemMimeTypeApplication"
-const val fileListItemMimeTypeImageKey = "fileListItemMimeTypeImage"
-const val fileListItemMimeTypeVideoKey = "fileListItemMimeTypeVideo"
-const val fileListItemMimeTypeAudioKey = "fileListItemMimeTypeAudio"
-const val fileListItemMimeTypeTextKey = "fileListItemMimeTypeText"
-
-// Item : Size
-const val fileListItemSizeBKey = "fileListItemSizeB"
-const val fileListItemSizeKiBKey = "fileListItemSizeKiB"
-const val fileListItemSizeMiBKey = "fileListItemSizeMiB"
-const val fileListItemSizeGiBKey = "fileListItemSizeGiB"
-const val fileListItemSizeTiBKey = "fileListItemSizeTiB"
-const val fileListItemSizePiBKey = "fileListItemSizePiB"
-const val fileListItemSizeEiBKey = "fileListItemSizeEiB"
-const val fileListItemSizeZiBKey = "fileListItemSizeZiB"
-const val fileListItemSizeYiBKey = "fileListItemSizeYiB"
-
-// Item
-const val fileListItemNameKey = "fileListItemName"
-
-const val fileListItemSizeKey = "fileListItemSize"
-const val fileListItemInfoSeparatorKey = "fileListItemInfoSeparator"
-
-// Item : Directory Content
-const val fileListItemsCountKey = "fileListItemsCount"
-const val fileListItemCountKey = "fileListItemCount"
-const val fileListItemEmptyKey = "fileListItemEmpty"
 
 // Operation
 const val fileListOperationDeleteItemTitleKey = "fileListOperationDeleteItemTitleKey"

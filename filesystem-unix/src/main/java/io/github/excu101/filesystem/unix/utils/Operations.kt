@@ -1,19 +1,23 @@
 package io.github.excu101.filesystem.unix.utils
 
-import io.github.excu101.filesystem.fs.attr.Option
-import io.github.excu101.filesystem.fs.attr.StandardOptions
 import io.github.excu101.filesystem.fs.operation.FileOperation
+import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.operation.*
-import kotlin.reflect.KClass
 
 fun unixDelete(
     data: Collection<Path>,
 ): FileOperation = UnixDeleteOperation(
-    data
+    data = data
 )
 
-fun unixDeleteClass(): KClass<out FileOperation> = UnixDeleteOperation::class
+fun unixCopy(
+    sources: Set<Path>,
+    dest: Path,
+): FileOperation = UnixCopyOperation(
+    sources = sources,
+    dest = dest
+)
 
 fun unixCreateSymbolicLink(
     target: Path,
@@ -41,11 +45,11 @@ fun unixCreateDirectory(
 
 fun unixCreateFile(
     source: Path,
-    flags: Set<Option> = setOf(
-        StandardOptions.CREATE_NEW,
-        StandardOptions.READ,
-        StandardOptions.WRITE,
-        StandardOptions.APPEND
+    flags: Set<FileOperation.Option> = setOf(
+        Options.Open.CreateNew,
+        Options.Open.Read,
+        Options.Open.Write,
+        Options.Open.Append
     ),
     mode: Int = 777,
 ): FileOperation = UnixCreateFileOperation(

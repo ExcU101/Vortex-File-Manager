@@ -11,3 +11,8 @@ interface SelectableAdapter<T> : EditableAdapter<T> {
     fun replaceSelected(selected: List<T>)
 
 }
+
+fun <T> SelectableAdapter<T>.replaceSelected(vararg selected: T) =
+    replaceSelected(selected.toList())
+
+fun <T> SelectableAdapter<T>.replaceSelected(item: T) = replaceSelected(listOf(item))

@@ -5,9 +5,9 @@ import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.storage.PathItemPartInfoParser
-import io.github.excu101.vortex.ui.component.theme.key.fileListItemCountKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListItemEmptyKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListItemsCountKey
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemCountKey
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemEmptyKey
+import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemsCountKey
 
 class ItemCountPartInfoParsers : PathItemPartInfoParser {
 

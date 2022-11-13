@@ -5,8 +5,10 @@ import io.github.excu101.vortex.service.data.ParcelablePath
 
 class VortexFileSystem(
     private val local: FileSystem,
-    private val provider: VortexFileSystemProvider,
+    val provider: VortexFileSystemProvider,
 ) : RemoteFileSystem.Stub() {
+
+    override fun getProvider(): RemoteFileSystemProvider = provider
 
     override fun isOpen(): Boolean = local.isOpen()
 

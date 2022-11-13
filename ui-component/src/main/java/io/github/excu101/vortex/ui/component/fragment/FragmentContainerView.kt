@@ -7,42 +7,19 @@ import android.view.WindowInsets
 import android.widget.FrameLayout
 import androidx.core.view.forEach
 import androidx.core.view.get
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 
 class FragmentContainerView(
     context: Context,
-    private val manager: FragmentManager,
 ) : FrameLayout(context) {
 
-    private var lastFragment: Fragment? = null
-    private var lastFragmentTag: String? = null
+    init {
+        id = View.generateViewId()
+    }
+
     private val transitionFragmentView = mutableListOf<View>()
     private val disappearingFragmentView = mutableListOf<View>()
 
     private var drawDisappearingViewsFirst = true
-
-    fun setFragment(
-        fragment: Fragment,
-        tag: String? = null,
-    ) {
-        lastFragment = fragment
-        lastFragmentTag = tag
-        if (isAttachedToWindow) {
-            addFragment(lastFragment!!, lastFragmentTag)
-        }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        lastFragment?.let { fragment ->
-            addFragment(fragment = fragment, tag = lastFragmentTag)
-        }
-    }
-
-    init {
-        id = generateViewId()
-    }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         forEach { view ->
@@ -133,16 +110,5 @@ class FragmentContainerView(
         if (view.animation != null && transitionFragmentView.contains(view)) {
             disappearingFragmentView.add(view)
         }
-    }
-
-    private fun addFragment(
-        fragment: Fragment,
-        tag: String?,
-    ) {
-        if (!manager.fragments.contains(fragment))
-            manager.beginTransaction()
-                .setReorderingAllowed(true)
-                .add(id, fragment, tag)
-                .commitNow()
     }
 }

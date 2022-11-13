@@ -2,10 +2,15 @@ package io.github.excu101.vortex.base.utils
 
 import io.github.excu101.vortex.base.Container
 import io.github.excu101.vortex.base.ContainerHandler
+import kotlinx.coroutines.CoroutineScope
 
 data class IntentScope<S, E>(val scope: ContainerScope<S, E>) {
     val state: S
         get() = scope.getState()
+
+    fun async() {
+
+    }
 }
 
 data class StateContext<S>(val state: S)

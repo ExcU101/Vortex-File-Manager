@@ -23,6 +23,23 @@ static jclass findJavaFileDescriptorClass(JNIEnv *env) {
     return clazz;
 }
 
+static jclass findInt64RefClass(JNIEnv *env) {
+    static jclass clazz = nullptr;
+    if (!clazz) {
+        clazz = findClass(env, "android/system/Int64Ref");
+    }
+
+    return clazz;
+}
+
+static jfieldID findInt64RefValueField(JNIEnv *env) {
+    static jfieldID field = nullptr;
+    if (!field) {
+        field = env->GetFieldID(findInt64RefClass(env), "value", "J");
+    }
+    return field;
+}
+
 static _jmethodID *findJavaFileDescriptorInitMethod(JNIEnv *env) {
     return env->GetMethodID(findJavaFileDescriptorClass(env), "<init>", "()V");
 }
@@ -104,18 +121,18 @@ static jmethodID findUnixStatusStructureInitMethod(
     );
 }
 
-static jclass findUnixDirentStructureClass(JNIEnv *env) {
+static jclass findUnixDirectoryEntryStructureClass(JNIEnv *env) {
     jclass local = env->FindClass(
-            "io/github/excu101/filesystem/unix/structure/UnixDirentStructure"
+            "io/github/excu101/filesystem/unix/structure/UnixDirectoryEntryStructure"
     );
     auto global = (jclass) env->NewGlobalRef(local);
     env->DeleteLocalRef(local);
     return global;
 }
 
-static jmethodID findUnixDirentStructureInitMethod(JNIEnv *env) {
+static jmethodID findUnixDirectoryEntryStructureInitMethod(JNIEnv *env) {
     return env->GetMethodID(
-            findUnixDirentStructureClass(env),
+            findUnixDirectoryEntryStructureClass(env),
             "<init>", "(JJII[B)V"
     );
 }

@@ -1,13 +1,16 @@
 package io.github.excu101.vortex.ui.component.trail
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.RippleDrawable
 import android.view.Gravity.CENTER
 import android.widget.ImageView
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.contains
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -17,40 +20,46 @@ import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.R
-import io.github.excu101.vortex.ui.component.ThemeDp
+import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.foundtation.InnerPaddingOwner
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.theme.key.*
 
-class TrailItemView(context: Context) : ThemeLinearLayout(context), InnerPaddingOwner,
-    ThemeColorChangeListener {
+class TrailItemView(context: Context) : ThemeLinearLayout(context),
+    InnerPaddingOwner,
+    ThemeColorChangeListener,
+    ViewHolder.RecyclableView<PathItem> {
 
     companion object {
         private const val TITLE_INDEX = 0
         private const val ARROW_INDEX = 1
     }
 
-    private val shape = MaterialShapeDrawable(
+    private val surface = MaterialShapeDrawable(
         builder().setAllCorners(
-            ROUNDED, 16F.dp
+            ROUNDED, 50F.dp
         ).build()
     ).apply {
         setTint(ThemeColor(trailSurfaceColorKey))
         initializeElevationOverlay(context)
-        setUseTintColorForShadow(true)
     }
 
-
-    private var background = RippleDrawable(
+    private val foreground = RippleDrawable(
         valueOf(ThemeColor(trailItemTitleTextColorKey)),
-        shape,
-        null
+        surface,
+        null,
     )
 
-    private var isItemSelected = false
+    var isArrowVisible
+        get() = arrow in children || arrow.isVisible
+        set(value) {
+            setArrowVisibility(value)
+        }
 
     private val minWidth = 36.dp
-    private val desireHeight = ThemeDp(trailItemHeightKey)
+    private val desireHeight = ThemeUDp(trailItemHeightKey)
 
     override val innerLargePadding = 16.dp
     override val innerMediumPadding = 8.dp
@@ -61,7 +70,7 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context), InnerPadding
         minimumHeight = desireHeight
         isClickable = true
         isFocusable = true
-        setBackground(background)
+        setBackground(foreground)
     }
 
     override fun setElevation(elevation: Float) {
@@ -96,6 +105,33 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context), InnerPadding
         title.text = value
     }
 
+    override fun onBind(item: PathItem) {
+        setTitle(value = item.name)
+    }
+
+    override fun onBindSelection(isSelected: Boolean) {
+        updateStateLists()
+        setSelected(isSelected)
+    }
+
+    override fun onUnbind() {
+        setTitle(null)
+        setArrowVisibility(false)
+    }
+
+    override fun onBindListener(listener: OnClickListener) {
+        setOnClickListener(listener)
+    }
+
+    override fun onBindLongListener(listener: OnLongClickListener) {
+        setOnLongClickListener(listener)
+    }
+
+    override fun onUnbindListeners() {
+        setOnClickListener(null)
+        setOnLongClickListener(null)
+    }
+
     fun setArrowVisibility(isVisible: Boolean) {
         ensureContainingArrow()
         arrow.visibility = if (isVisible) {
@@ -105,33 +141,60 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context), InnerPadding
         }
     }
 
-    fun updateSelection(isSelected: Boolean) {
-        isItemSelected = isSelected
-        updateSelectionState()
-    }
-
-    fun updateSelectionState() {
-        if (isItemSelected) {
-            background.setColor(valueOf(ThemeColor(trailItemRippleSelectedTintColorKey)))
-            title.setTextColor(ThemeColor(trailItemTitleSelectedTextColorKey))
-            arrow.setColorFilter(ThemeColor(trailItemArrowSelectedTintColorKey))
-        } else {
-            background.setColor(valueOf(ThemeColor(trailItemRippleTintColorKey)))
-            title.setTextColor(ThemeColor(trailItemTitleTextColorKey))
-            arrow.setColorFilter(ThemeColor(trailItemArrowTintColorKey))
-        }
+    private fun updateStateLists() {
+        title.setTextColor(createTitleStateList())
+        arrow.imageTintList = createArrowStateList()
+        foreground.setColor(createRippleStateList())
+        surface.setTint(ThemeColor(trailSurfaceColorKey))
     }
 
     override fun onChanged() {
-        updateSelectionState()
-        shape.setTint(ThemeColor(trailSurfaceColorKey))
+        updateStateLists()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
+        MaterialShapeUtils.setParentAbsoluteElevation(this, surface)
     }
 
+    private fun createRippleStateList(): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_selected),
+                intArrayOf(),
+            ),
+            intArrayOf(
+                ThemeColor(trailItemRippleSelectedTintColorKey),
+                ThemeColor(trailItemRippleTintColorKey),
+            )
+        )
+    }
+
+    private fun createArrowStateList(): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_selected),
+                intArrayOf(),
+            ),
+            intArrayOf(
+                ThemeColor(trailItemArrowSelectedTintColorKey),
+                ThemeColor(trailItemArrowTintColorKey),
+            )
+        )
+    }
+
+    private fun createTitleStateList(): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_selected),
+                intArrayOf(),
+            ),
+            intArrayOf(
+                ThemeColor(trailItemTitleSelectedTextColorKey),
+                ThemeColor(trailItemTitleTextColorKey),
+            )
+        )
+    }
 
 //    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
 //        val widthSize = MeasureSpec.getSize(widthSpec)

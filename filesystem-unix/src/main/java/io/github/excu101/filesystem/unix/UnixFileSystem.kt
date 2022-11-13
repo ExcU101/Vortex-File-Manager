@@ -43,7 +43,7 @@ class UnixFileSystem(
     }
 
     override val scheme: String
-        get() = "file"
+        get() = provider.scheme
 
     override val helper: FileSystemHelper = UnixFileSystemHelper()
 

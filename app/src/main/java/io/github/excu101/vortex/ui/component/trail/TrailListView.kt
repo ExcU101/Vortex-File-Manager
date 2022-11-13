@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowInsets
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat.Type.statusBars
@@ -18,13 +19,13 @@ import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
+import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.foundtation.MarginItemDecoration
 import io.github.excu101.vortex.ui.component.theme.key.trailElevationKey
 import io.github.excu101.vortex.ui.component.theme.key.trailHeightKey
 import io.github.excu101.vortex.ui.component.theme.key.trailSurfaceColorKey
 import io.github.excu101.vortex.ui.component.theme.key.trailWidthKey
-import io.github.excu101.vortex.ui.component.udp
 import kotlin.math.min
 
 class TrailListView : RecyclerView,
@@ -73,12 +74,11 @@ class TrailListView : RecyclerView,
     private val shape = MaterialShapeDrawable().apply {
         setTint(ThemeColor(trailSurfaceColorKey))
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_NEVER
-        setUseTintColorForShadow(false)
         initializeElevationOverlay(context)
     }
 
-    private val desireWidth = ThemeDimen(trailWidthKey).udp
-    private val desireHeight = ThemeDimen(trailHeightKey).dp
+    private val desireWidth = ThemeUDp(trailWidthKey)
+    private val desireHeight = ThemeUDp(trailHeightKey)
 
     init {
         background = shape
@@ -108,6 +108,10 @@ class TrailListView : RecyclerView,
         Theme.registerColorChangeListener(listener = this)
 
         MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
+
+        if (parent is ViewGroup) {
+            (parent as ViewGroup).clipChildren = false
+        }
     }
 
     override fun onDetachedFromWindow() {

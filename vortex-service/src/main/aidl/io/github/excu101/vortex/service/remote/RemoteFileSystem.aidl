@@ -1,6 +1,7 @@
 package io.github.excu101.vortex.service.remote;
 
 import io.github.excu101.vortex.service.data.ParcelablePath;
+import io.github.excu101.vortex.service.remote.RemoteFileSystemProvider;
 
 interface RemoteFileSystem {
 
@@ -9,6 +10,8 @@ interface RemoteFileSystem {
     boolean isReadOnly();
 
     byte getSeparator();
+
+    RemoteFileSystemProvider getProvider();
 
     String getScheme();
 

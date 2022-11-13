@@ -1,9 +1,11 @@
 package io.github.excu101.filesystem.unix
 
+import android.system.Int64Ref
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.unix.structure.UnixDirentStructure
+import io.github.excu101.filesystem.unix.structure.UnixDirectoryEntryStructure
 import io.github.excu101.filesystem.unix.structure.UnixFileSystemStatusStructure
 import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
+import java.io.File
 import java.io.FileDescriptor
 
 internal object UnixCalls {
@@ -39,7 +41,11 @@ internal object UnixCalls {
 
     private external fun lstatImpl(path: ByteArray): UnixStatusStructure
 
+    internal fun fstat(descriptor: FileDescriptor): UnixStatusStructure = fstatImpl(descriptor)
+
     internal fun fstat(descriptor: Int): UnixStatusStructure = fstatImpl(descriptor)
+
+    private external fun fstatImpl(descriptor: FileDescriptor): UnixStatusStructure
 
     private external fun fstatImpl(descriptor: Int): UnixStatusStructure
 
@@ -73,7 +79,9 @@ internal object UnixCalls {
         mode: Int,
     ): FileDescriptor?
 
-    external fun mkdir(path: ByteArray, mode: Int)
+    internal fun mkdir(path: ByteArray, mode: Int) = mkdirImpl(path, mode)
+
+    private external fun mkdirImpl(path: ByteArray, mode: Int)
 
     internal fun symlink(target: ByteArray, link: ByteArray) = symlinkImpl(target, link)
 
@@ -81,7 +89,7 @@ internal object UnixCalls {
 
     internal fun readDir(pointer: Long) = readDirImpl(pointer)
 
-    private external fun readDirImpl(pointer: Long): UnixDirentStructure?
+    private external fun readDirImpl(pointer: Long): UnixDirectoryEntryStructure?
 
     internal fun close(descriptor: Int) = closeImpl(descriptor)
 
@@ -89,8 +97,26 @@ internal object UnixCalls {
 
     external fun closeDir(pointer: Long)
 
-
     internal fun getFileSystemStatus(path: ByteArray) = getFileSystemStatusImpl(path)
+
+    internal fun moveBytes(
+        fromDescriptor: FileDescriptor,
+        toDescriptor: FileDescriptor,
+        offset: Int64Ref?,
+        count: Long,
+    ) = moveBytesImpl(
+        fromDescriptor = fromDescriptor,
+        toDescriptor = toDescriptor,
+        offset = offset,
+        count = count
+    )
+
+    private external fun moveBytesImpl(
+        fromDescriptor: FileDescriptor,
+        toDescriptor: FileDescriptor,
+        offset: Int64Ref?,
+        count: Long,
+    ): Long
 
     private external fun getFileSystemStatusImpl(path: ByteArray): UnixFileSystemStatusStructure
 

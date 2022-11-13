@@ -22,6 +22,9 @@ interface Path : Comparable<Path> {
 
     val system: FileSystem
 
+    val scheme: String
+        get() = system.scheme
+
     infix fun startsWith(other: Path): Boolean
 
     infix fun endsWith(other: Path): Boolean

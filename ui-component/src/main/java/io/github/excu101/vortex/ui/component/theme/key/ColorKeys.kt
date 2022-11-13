@@ -37,7 +37,7 @@ const val mainDrawerItemTitleSelectedTextColorKey = "mainDrawerItemTitleSelected
 
 // Storage List Screen
 
-const val storageListListBackgroundColorKey = "storageListListBackgroundColor"
+const val storageListBackgroundColorKey = "storageListBackgroundColor"
 
 // Storage List Screen : Additional menu
 
@@ -67,18 +67,19 @@ const val storageListWarningActionContentColorKey = "storageListWarningActionCon
 
 // Storage List Screen : storageList Item
 const val storageListItemSurfaceColorKey = "storageListItemSurfaceColor"
+const val storageListItemSurfaceRippleColorKey = "storageListItemSurfaceRippleColor"
 const val storageListItemTitleTextColorKey = "storageListItemTitleTextColor"
 const val storageListItemSecondaryTextColorKey = "storageListItemSecondaryTextColor"
 const val storageListItemIndexTextColorKey = "storageListItemIndexTextColor"
 const val storageListItemIconTintColorKey = "storageListItemIconTintColor"
 const val storageListItemIconBackgroundColorKey = "storageListItemIconBackgroundColor"
 
-const val storageListItemSurfaceRippleColorKey = "storageListItemSurfaceRippleColor"
-
 // Storage List Screen : storageList Item (selected)
 const val storageListItemSurfaceSelectedColorKey = "storageListItemSurfaceSelectedColor"
+const val storageListItemSurfaceRippleSelectedColorKey = "storageListItemSurfaceRippleSelectedColor"
 const val storageListItemIconSelectedTintColorKey = "storageListItemIconSelectedTintColor"
-const val storageListItemIconBackgroundSelectedColorKey = "storageListItemIconBackgroundSelectedColor"
+const val storageListItemIconBackgroundSelectedColorKey =
+    "storageListItemIconBackgroundSelectedColor"
 const val storageListItemTitleSelectedTextColorKey = "storageListItemTitleSelectedTextColor"
 const val storageListItemSecondarySelectedTextColorKey = "storageListItemSecondarySelectedTextColor"
 

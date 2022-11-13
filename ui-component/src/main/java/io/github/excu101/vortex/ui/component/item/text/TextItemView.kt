@@ -12,6 +12,7 @@ import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerTitleColorKey
 import kotlin.math.min
@@ -26,7 +27,7 @@ class TextItemView(
     private val desireHeight = 48.dp
 
     private val title = TextView(context).apply {
-        setTextColor(ThemeColor(mainDrawerTitleColorKey))
+        setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
         textSize = 14F
     }
 
@@ -49,7 +50,18 @@ class TextItemView(
     }
 
     fun setTitleAlignment(alignment: Int) {
+        ensureContainingTitle()
         title.textAlignment = alignment
+    }
+
+    fun setTitleColor(color: Int) {
+        ensureContainingTitle()
+        title.setTextColor(color)
+    }
+
+    fun setTitleTextSize(size: Float) {
+        ensureContainingTitle()
+        title.textSize = size
     }
 
     init {
@@ -118,7 +130,9 @@ class TextItemView(
 
     override fun onBind(item: TextItem) {
         setTitle(item.value)
-        setTitleAlignment(item.alignment)
+        setTitleAlignment(item.attrs.alignment)
+        setTitleColor(item.attrs.color)
+        setTitleTextSize(item.attrs.size)
     }
 
     override fun onUnbind() {

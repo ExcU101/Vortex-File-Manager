@@ -1,16 +1,20 @@
 package io.github.excu101.vortex.ui.component.storage
 
-import android.os.FileObserver
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.EditableAdapter
-import io.github.excu101.vortex.ui.screen.storage.list.StorageListPagerFragment
-import io.github.excu101.vortex.ui.screen.storage.list.page.list.StorageListPageFragment
+import io.github.excu101.vortex.ui.screen.storage.pager.page.list.StorageListPageFragment
 
 class StorageListPageAdapter(
-    pager: StorageListPagerFragment,
-) : FragmentStateAdapter(pager), EditableAdapter<Fragment> {
+    manager: FragmentManager,
+    lifecycle: Lifecycle,
+) : FragmentStateAdapter(
+    manager,
+    lifecycle
+), EditableAdapter<Fragment> {
 
     override fun replace(items: List<Fragment>, differ: DiffUtil.Callback?) {
         instances.clear()

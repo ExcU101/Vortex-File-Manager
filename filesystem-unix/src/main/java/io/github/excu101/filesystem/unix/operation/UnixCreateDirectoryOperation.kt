@@ -1,8 +1,8 @@
 package io.github.excu101.filesystem.unix.operation
 
-import io.github.excu101.filesystem.IdRegister
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.utils.CreateDirectoryAction
 import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.error.UnixException
 
@@ -11,18 +11,15 @@ internal class UnixCreateDirectoryOperation(
     private val mode: Int,
 ) : FileOperation() {
 
-    override val id: Int
-        get() = IdRegister.register(IdRegister.Type.OPERATION)
-
     override suspend fun perform() {
+        action(CreateDirectoryAction(path))
         try {
-            notify(path)
             UnixCalls.mkdir(path.bytes, mode)
         } catch (exception: UnixException) {
-            notify(exception)
+            error(exception)
             return
         }
 
-        notify()
+        completion()
     }
 }

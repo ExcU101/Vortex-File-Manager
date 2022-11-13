@@ -51,7 +51,7 @@ internal class UnixFileChannel(
     override val size: Long
         get() {
             requireOpen()
-            val structure = UnixCalls.fstat(indexDescriptor)
+            val structure = UnixCalls.fstat(descriptor)
             return structure.size
         }
 

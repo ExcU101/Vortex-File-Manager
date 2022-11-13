@@ -7,3 +7,6 @@ val ItemViewTypes.storageItem: Int
 
 val ItemViewTypes.trailItem: Int
     get() = 51
+
+val ItemViewTypes.navigationDrawerHeader: Int
+    get() = 52

@@ -2,7 +2,7 @@ package io.github.excu101.vortex.data.trail
 
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.provider.storage.StorageProvider
+import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +33,7 @@ class TrailNavigator : Iterable<PathItem> {
 
             while (true) {
                 if (isSlicePathEnabled) {
-                    if (cPath == StorageProvider.EXTERNAL_STORAGE.parent) break
+                    if (cPath == StorageProviderImpl.EXTERNAL_STORAGE.parent) break
                 }
                 segments += PathItem(cPath)
                 cPath = cPath.parent ?: break

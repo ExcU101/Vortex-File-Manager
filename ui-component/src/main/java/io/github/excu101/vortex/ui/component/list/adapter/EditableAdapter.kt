@@ -2,7 +2,12 @@ package io.github.excu101.vortex.ui.component.list.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 
-interface EditableAdapter<T> {
+interface CheckAdapter<T> {
+    fun contains(position: Int): Boolean = false
+    fun contains(item: T): Boolean = false
+}
+
+interface EditableAdapter<T> : CheckAdapter<T> {
 
     operator fun get(index: Int): T = item(index)
 
@@ -35,6 +40,12 @@ interface EditableAdapter<T> {
     fun changed(item: T) = changed(position(item))
 
     fun changed(position: Int)
+
+    fun changed(item: T, payload: Any?) = changed(position(item), payload)
+
+    fun changed(position: Int, payload: Any?) = changed(position)
+
+    override fun contains(position: Int) = contains(item(position))
 
 }
 
