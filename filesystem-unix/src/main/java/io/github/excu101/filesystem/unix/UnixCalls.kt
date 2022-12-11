@@ -5,7 +5,6 @@ import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.structure.UnixDirectoryEntryStructure
 import io.github.excu101.filesystem.unix.structure.UnixFileSystemStatusStructure
 import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
-import java.io.File
 import java.io.FileDescriptor
 
 internal object UnixCalls {
@@ -96,6 +95,43 @@ internal object UnixCalls {
     private external fun closeImpl(descriptor: Int): Boolean
 
     external fun closeDir(pointer: Long)
+
+    internal fun manipulateDescriptor(
+        descriptor: Int,
+        command: Int,
+    ) = manipulateDescriptorImpl(descriptor, command)
+
+    internal fun manipulateDescriptor(
+        descriptor: FileDescriptor,
+        command: Int,
+    ) = manipulateDescriptorImpl(getIndexDescriptor(descriptor), command)
+
+    private external fun manipulateDescriptorImpl(
+        descriptor: Int,
+        command: Int,
+    ): Int
+
+    internal fun createSocketPair(
+        domain: Int,
+        type: Int,
+        protocol: Int,
+        firstDescriptor: FileDescriptor,
+        secondDescriptor: FileDescriptor,
+    ) = createSocketPairImpl(
+        domain,
+        type,
+        protocol,
+        firstDescriptor,
+        secondDescriptor
+    )
+
+    private external fun createSocketPairImpl(
+        domain: Int,
+        type: Int,
+        protocol: Int,
+        firstDescriptor: FileDescriptor,
+        secondDescriptor: FileDescriptor,
+    )
 
     internal fun getFileSystemStatus(path: ByteArray) = getFileSystemStatusImpl(path)
 

@@ -3,15 +3,18 @@ package io.github.excu101.vortex.ui.component.storage.standard.linear
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.ColorStateList.valueOf
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
-import android.view.View.MeasureSpec.*
+import android.text.TextUtils
+import android.view.View.MeasureSpec.AT_MOST
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
-import android.widget.ImageView
 import android.widget.ImageView.ScaleType
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.contains
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -20,20 +23,20 @@ import com.google.android.material.shape.ShapeAppearanceModel.builder
 import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
-import io.github.excu101.vortex.ViewIds.StorageListItem.iconId
-import io.github.excu101.vortex.ViewIds.StorageListItem.rootId
+import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.ui.component.StorageCellBadgeIcon
 import io.github.excu101.vortex.ui.component.ThemeDp
-import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
+import io.github.excu101.vortex.ui.component.storage.StorageCell
 import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemNameKey
-import kotlin.math.min
+import io.github.excu101.vortex.ui.component.themeMeasure
 
 
 class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
-    RecyclableView<PathItem> {
+    RecyclableView<PathItem>, StorageCell {
 
     private val largeInnerPadding = 16.dp
     private val middleInnerPadding = 8.dp
@@ -41,19 +44,16 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private val titlePadding = ThemeDp(storageListItemHorizontalTitlePaddingKey)
     private val infoPadding = ThemeDp(storageListItemHorizontalInfoPaddingKey)
 
-    private val desireWidth = ThemeUDp(storageListItemLinearWidthDimenKey)
-    private val desireHeight = ThemeUDp(storageListItemLinearHeightDimenKey)
-
     private val iconSize = 40.dp
 
     private val containsTitle: Boolean
-        get() = contains(title)
+        get() = contains(titleView)
 
     private val containsInfo: Boolean
-        get() = contains(info)
+        get() = contains(infoView)
 
     private val containsIcon: Boolean
-        get() = contains(icon)
+        get() = contains(iconView)
 
     private val iconSurface = MaterialShapeDrawable(
         builder().setAllCorners(ROUNDED, 500F).build()
@@ -80,10 +80,20 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         null
     )
 
-    private val icon = ImageView(context).apply {
+    private val iconBadge = StorageCellBadgeIcon(iconSize, iconSize).apply {
+        duration = 500L
+    }
+
+    private val iconView = object : AppCompatImageView(context) {
+//        override fun onDraw(canvas: Canvas) {
+//            super.onDraw(canvas)
+//            iconBadge.draw(canvas)
+//        }
+
+    }.apply {
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         scaleType = ScaleType.CENTER_INSIDE
-        id = iconId
+        id = ViewIds.Storage.Item.iconId
         minimumWidth = iconSize
         minimumHeight = iconSize
         isClickable = true
@@ -95,53 +105,79 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         }
     }
 
-    private val title = TextView(context).apply {
+    private val titleView = TextView(context).apply {
         textSize = 16F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        isSingleLine = true
+        maxLines = 1
+        ellipsize = TextUtils.TruncateAt.MARQUEE
+        marqueeRepeatLimit = -1
     }
 
-    private val info = TextView(context).apply {
+    private val infoView = TextView(context).apply {
         textSize = 14F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        isSingleLine = true
+        maxLines = 1
+        ellipsize = TextUtils.TruncateAt.MARQUEE
+        marqueeRepeatLimit = -1
     }
+
+    override var title: String?
+        get() = titleView.text.toString()
+        set(value) {
+            ensureContainingTitle()
+            titleView.text = value
+        }
+
+    override var info: String?
+        get() = infoView.text.toString()
+        set(value) {
+            ensureContainingInfo()
+            infoView.text = value
+        }
+
+    override var icon: Drawable?
+        get() = iconView.drawable
+        set(value) {
+            ensureContainingIcon()
+            iconView.setImageDrawable(value)
+        }
+
+    override var isCellSelected: Boolean
+        get() = isSelected
+        set(value) {
+            iconBadge.isSelected = value
+            isSelected = value
+        }
+
+    override var isBookmarked: Boolean = false
+        set(value) {
+            iconBadge.isBookmarked = value
+            field = value
+        }
 
     private fun ensureContainingTitle() {
         if (!containsTitle) {
-            addView(title)
+            addView(titleView)
         }
     }
-
-    fun setTitle(value: String? = null) {
-        ensureContainingTitle()
-        title.text = value
-    }
-
 
     private fun ensureContainingInfo() {
         if (!containsInfo) {
-            addView(info)
+            addView(infoView)
         }
-    }
-
-    fun setInfo(value: String? = null) {
-        ensureContainingInfo()
-        info.text = value
     }
 
     private fun ensureContainingIcon() {
         if (!containsIcon) {
-            addView(icon)
+            addView(iconView)
         }
-    }
-
-    fun setIcon(drawable: Drawable? = null) {
-        ensureContainingIcon()
-        icon.setImageDrawable(drawable)
     }
 
     fun setIcon(@DrawableRes id: Int) {
         ensureContainingIcon()
-        icon.setImageResource(id)
+        iconView.setImageResource(id)
     }
 
     override fun onChanged() {
@@ -155,7 +191,7 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     init {
-        id = rootId
+        id = ViewIds.Storage.Item.rootId
         isClickable = true
         isFocusable = true
         clipToOutline = true
@@ -165,12 +201,13 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         updateStateLists()
     }
 
+
     fun setOnIconClickListener(listener: OnClickListener?) {
-        icon.setOnClickListener(listener)
+        iconView.setOnClickListener(listener)
     }
 
     fun setOnIconLongClickListener(listener: OnLongClickListener?) {
-        icon.setOnLongClickListener(listener)
+        iconView.setOnLongClickListener(listener)
     }
 
     override fun setBackgroundTintList(tint: ColorStateList?) {
@@ -178,77 +215,74 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val widthSize = getSize(widthMeasureSpec)
-        val widthMode = getMode(widthMeasureSpec)
-        val heightSize = getSize(heightMeasureSpec)
-        val heightMode = getMode(heightMeasureSpec)
-
-        val width = when (widthMode) {
-            EXACTLY -> widthSize
-            AT_MOST -> min(desireWidth, widthSize)
-            else -> desireWidth
-        }
-        val height = when (heightMode) {
-            EXACTLY -> heightSize
-            AT_MOST -> min(desireHeight, heightSize)
-            else -> desireHeight
-        }
+        val (width, height) = themeMeasure(
+            widthMeasureSpec,
+            heightMeasureSpec,
+            widthKey = storageListItemLinearWidthDimenKey,
+            heightKey = storageListItemLinearHeightDimenKey
+        )
 
         setMeasuredDimension(width, height)
 
         val availableWidth = width - largeInnerPadding
         if (containsIcon) {
-//            measureChild(icon, widthMeasureSpec, heightMeasureSpec)
-            icon.measure(makeMeasureSpec(iconSize, AT_MOST), makeMeasureSpec(iconSize, AT_MOST))
+            iconView.measure(makeMeasureSpec(iconSize, AT_MOST), makeMeasureSpec(iconSize, AT_MOST))
         }
         if (containsTitle) {
-//            measureChild(title, widthMeasureSpec, heightMeasureSpec)
-            title.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(24.dp, AT_MOST))
+            titleView.measure(makeMeasureSpec(availableWidth, AT_MOST),
+                makeMeasureSpec(24.dp, AT_MOST))
         }
         if (containsInfo) {
-//            measureChild(info, widthMeasureSpec, heightMeasureSpec)
-            info.measure(makeMeasureSpec(availableWidth, AT_MOST), makeMeasureSpec(20.dp, AT_MOST))
+            infoView.measure(makeMeasureSpec(availableWidth, AT_MOST),
+                makeMeasureSpec(20.dp, AT_MOST))
         }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         var widthLeft = largeInnerPadding
         if (containsIcon) {
-            icon.layout(widthLeft,
+            iconView.layout(
+                widthLeft,
                 middleInnerPadding,
-                widthLeft + icon.measuredWidth,
-                height - middleInnerPadding)
-            widthLeft += icon.measuredWidth
+                widthLeft + iconView.measuredWidth,
+                height - middleInnerPadding
+            )
+            widthLeft += iconView.measuredWidth
         }
         if (containsTitle) {
-            title.layout(widthLeft + titlePadding,
+            titleView.layout(
+                widthLeft + titlePadding,
                 middleInnerPadding,
-                widthLeft + titlePadding + title.measuredWidth,
-                middleInnerPadding + 3.dp + title.lineHeight)
+                widthLeft + titlePadding + titleView.measuredWidth,
+                middleInnerPadding + 3.dp + titleView.lineHeight
+            )
         }
         if (containsInfo) {
-            info.layout(widthLeft + infoPadding,
-                middleInnerPadding + title.lineHeight,
-                widthLeft + infoPadding + info.measuredWidth,
-                middleInnerPadding + 3.dp + title.lineHeight + info.lineHeight)
+            infoView.layout(
+                widthLeft + infoPadding,
+                middleInnerPadding + titleView.lineHeight,
+                widthLeft + infoPadding + infoView.measuredWidth,
+                middleInnerPadding + 3.dp + titleView.lineHeight + infoView.lineHeight
+            )
         }
     }
 
-    override fun onBind(item: PathItem) {
+    override fun onBind(item: PathItem) = with(item) {
         onChanged()
-        setTitle(FormatterThemeText(key = fileListItemNameKey, item.name))
-        setIcon(item.icon)
-        setInfo(item.info)
+        title = FormatterThemeText(key = fileListItemNameKey, name)
+        this@StandardStorageLinearCell.icon = icon
+        this@StandardStorageLinearCell.info = info
+        isBookmarked = bookmarkExists
     }
 
     override fun onUnbind() {
-        title.text = null
-        info.text = null
-        icon.setImageDrawable(null)
+        titleView.text = null
+        infoView.text = null
+        iconView.setImageDrawable(null)
     }
 
     override fun onBindSelection(isSelected: Boolean) {
-        setSelected(isSelected)
+        isCellSelected = isSelected
     }
 
     override fun onBindListener(listener: OnClickListener) {
@@ -271,20 +305,20 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun updateStateLists() {
         surface.tintList = createSurfaceStateList()
         foreground.setColor(createRippleStateList())
-        title.setTextColor(createTitleStateList())
-        info.setTextColor(createInfoStateList())
-        icon.imageTintList = createIconStateList()
+        titleView.setTextColor(createTitleStateList())
+        infoView.setTextColor(createInfoStateList())
+        iconView.imageTintList = createIconStateList()
         iconSurface.tintList = createIconSurfaceStateList()
     }
 
     private fun createSurfaceStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-                intArrayOf(android.R.attr.state_selected),
+//                intArrayOf(android.R.attr.state_selected),
                 intArrayOf(),
             ),
             intArrayOf(
-                ThemeColor(storageListItemSurfaceSelectedColorKey),
+//                ThemeColor(storageListItemSurfaceSelectedColorKey),
                 ThemeColor(storageListItemSurfaceColorKey)
             )
         )
@@ -293,11 +327,11 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createRippleStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-                intArrayOf(android.R.attr.state_selected),
+//                intArrayOf(android.R.attr.state_selected),
                 intArrayOf() // default
             ),
             intArrayOf(
-                ThemeColor(storageListItemSurfaceRippleSelectedColorKey),
+//                ThemeColor(storageListItemSurfaceRippleSelectedColorKey),
                 ThemeColor(storageListItemSurfaceRippleColorKey) // default
             ))
     }
@@ -305,11 +339,11 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createTitleStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-                intArrayOf(android.R.attr.state_selected),
+//                intArrayOf(android.R.attr.state_selected),
                 intArrayOf(),
             ),
             intArrayOf(
-                ThemeColor(storageListItemTitleSelectedTextColorKey),
+//                ThemeColor(storageListItemTitleSelectedTextColorKey),
                 ThemeColor(storageListItemTitleTextColorKey)
             )
         )
@@ -317,29 +351,37 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
 
     private fun createInfoStateList(): ColorStateList {
         return ColorStateList(arrayOf(
-            intArrayOf(android.R.attr.state_selected),
+//            intArrayOf(android.R.attr.state_selected),
             intArrayOf(),
         ),
-            intArrayOf(ThemeColor(storageListItemSecondarySelectedTextColorKey),
-                ThemeColor(storageListItemSecondaryTextColorKey)))
+            intArrayOf(
+//                ThemeColor(storageListItemSecondarySelectedTextColorKey),
+                ThemeColor(storageListItemSecondaryTextColorKey)
+            ))
     }
 
     private fun createIconStateList(): ColorStateList {
-        return ColorStateList(arrayOf(
-            intArrayOf(android.R.attr.state_selected),
-            intArrayOf(),
-        ),
-            intArrayOf(ThemeColor(storageListItemIconSelectedTintColorKey),
-                ThemeColor(storageListItemIconTintColorKey)))
+        return ColorStateList(
+            arrayOf(
+//                intArrayOf(android.R.attr.state_selected),
+                intArrayOf(),
+            ),
+            intArrayOf(
+//                ThemeColor(storageListItemIconSelectedTintColorKey),
+                ThemeColor(storageListItemIconTintColorKey)
+            )
+        )
     }
 
     private fun createIconSurfaceStateList(): ColorStateList {
         return ColorStateList(arrayOf(
-            intArrayOf(android.R.attr.state_selected),
+//            intArrayOf(android.R.attr.state_selected),
             intArrayOf(),
         ),
-            intArrayOf(ThemeColor(storageListItemIconBackgroundSelectedColorKey),
-                ThemeColor(storageListItemIconBackgroundColorKey)))
+            intArrayOf(
+//                ThemeColor(storageListItemIconBackgroundSelectedColorKey),
+                ThemeColor(storageListItemIconBackgroundColorKey))
+        )
     }
 
 }

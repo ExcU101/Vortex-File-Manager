@@ -34,7 +34,7 @@ fun CreateSymbolicLinkAction(
 fun CutAction(
     source: Path,
     destination: Path,
-): CutAction = object : CutAction {
+): MoveAction = object : MoveAction {
     override val source: Path = source
     override val destination: Path = destination
 }
@@ -54,4 +54,6 @@ fun RenameAction(
 }
 
 fun ReadAction(): ReadAction = object : ReadAction {}
-fun WriteAction(): WriteAction = object : WriteAction {}
+fun WriteAction(bytes: Long): WriteAction = object : WriteAction {
+    override val bytes: Long = bytes
+}

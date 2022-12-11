@@ -4,9 +4,14 @@ import android.view.View
 
 object ViewIds {
 
-    object StorageListItem {
-        val rootId = View.generateViewId()
-        val iconId = View.generateViewId()
+    object Storage {
+        object Item {
+            val rootId = View.generateViewId()
+            val iconId = View.generateViewId()
+        }
+        object Trail {
+            val rootId = View.generateViewId()
+        }
     }
 
 }

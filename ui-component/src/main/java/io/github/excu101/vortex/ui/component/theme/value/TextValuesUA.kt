@@ -10,9 +10,6 @@ fun initVortexTextValuesUA() {
     Theme[fileListMoreActionTitleKey] = Text(value = "Більше")
     Theme[fileListSortActionTitleKey] = Text(value = "Сортування")
 
-    // Trail
-    Theme[fileListTrailCopyPathActionTitleKey] = Text(value = "Копіювати шлях")
-
     // Group
     Theme[fileListGroupViewActionTitleKey] = Text(value = "Перегляд")
     Theme[fileListGroupSortActionTitleKey] = Text(value = "Сортувати виділене")
@@ -58,19 +55,17 @@ fun initVortexTextValuesUA() {
     Theme[fileListItemSizeYiBKey] = Text(value = "ЙБ")
 
     Theme[fileListItemNameKey] = Text(value = stringSpecifier)
-    Theme[fileListItemsCountKey] =
-        Text(value = "Об'єкти: $integerSpecifier")
+    Theme[fileListItemsCountKey] = Text(value = "Об'єкти: $integerSpecifier")
     Theme[fileListItemCountKey] = Text(value = "Один об'єкт")
     Theme[fileListItemEmptyKey] = Text(value = "Пусто")
 
     // Operation
-    Theme[fileListGroupOperationDefaultActionTitleKey] =
-        Text(value = "Стандартні")
+    Theme[fileListGroupOperationDefaultActionTitleKey] = Text(value = "Стандартні")
 
-    Theme[fileListOperationDeleteActionTitleKey] = Text(value = "Видалити")
-    Theme[fileListOperationRenameActionTitleKey] = Text(value = "Перейменувати")
-    Theme[fileListOperationCopyActionTitleKey] = Text(value = "Копіювати")
-    Theme[fileListOperationCutActionTitleKey] = Text(value = "Вирізати")
+    Theme[storageListOperationDeleteActionTitleKey] = Text(value = "Видалити")
+    Theme[storageListOperationRenameActionTitleKey] = Text(value = "Перейменувати")
+    Theme[storageListOperationCopyActionTitleKey] = Text(value = "Копіювати")
+    Theme[storageListOperationCutActionTitleKey] = Text(value = "Вирізати")
 
     Theme[vortexServiceConnectedKey] = Text(value = "Vortex Service підключено!")
     Theme[vortexServiceDisconnectedKey] = Text(value = "Vortex Service відключено!")

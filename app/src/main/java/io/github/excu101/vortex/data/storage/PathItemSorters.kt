@@ -26,19 +26,19 @@ object PathItemSorters {
     val LastModifiedTime: Sorter<PathItem> = compareByDescending<PathItem> { item ->
         item.isDirectory
     }.thenBy {
-        it.lastModifiedTime.toNanos()
+        it.lastModifiedTime.nanos
     }
 
     val LastAccessTime: Sorter<PathItem> = compareByDescending<PathItem> { item ->
         item.isDirectory
     }.thenBy {
-        it.lastAccessTime.toNanos()
+        it.lastAccessTime.nanos
     }
 
     val CreationTime: Sorter<PathItem> = compareByDescending<PathItem> { item ->
         item.isDirectory
     }.thenBy {
-        it.creationTime.toNanos()
+        it.creationTime.nanos
     }
 
 }

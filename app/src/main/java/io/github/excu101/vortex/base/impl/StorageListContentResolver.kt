@@ -6,6 +6,7 @@ import io.github.excu101.vortex.ui.component.item.text.TextItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.theme.key.fileListDirectoriesCountSectionKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListFilesCountSectionKey
+import kotlin.random.Random
 
 typealias Sorter<T> = Comparator<T>
 
@@ -50,6 +51,7 @@ internal class ResultParserImpl : ResultParser<PathItem> {
         }
 
         if (files > 0) {
+
             val filePoint = content.indexOfFirst { it.isFile } + offset
 
             result.add(
@@ -79,6 +81,14 @@ internal class ResultParserImpl : ResultParser<PathItem> {
             )
 
             offset++
+        }
+
+        if (Random.nextBoolean()) {
+            result.add(
+                TextItem(
+                    value = "He-he-he :D",
+                )
+            )
         }
 
         return result

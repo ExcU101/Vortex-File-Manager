@@ -6,14 +6,10 @@ import io.github.excu101.pluginsystem.provider.ActionProvider
 import io.github.excu101.pluginsystem.provider.GroupActionProvider
 import io.github.excu101.pluginsystem.utils.groupItem
 import io.github.excu101.pluginsystem.utils.item
-import io.github.excu101.vortex.R
-import io.github.excu101.vortex.provider.ResourceProvider
-import javax.inject.Inject
+import io.github.excu101.vortex.ui.icon.Icons
 import kotlin.random.Random
 
-open class MainAction @Inject constructor(
-    private val resources: ResourceProvider,
-) : ActionProvider, GroupActionProvider {
+open class MainAction : ActionProvider, GroupActionProvider {
 
     override fun getActions(): List<Action> {
         return listOf()
@@ -24,11 +20,11 @@ open class MainAction @Inject constructor(
             groupItem(title = "Vortex") {
                 item {
                     title = "File Manager"
-                    icon = resources[R.drawable.ic_folder_24]
+                    icon = Icons.Rounded.Folder
                 }
                 item {
                     title = "Bookmarks"
-                    icon = resources[R.drawable.ic_bookmark_24]
+                    icon = Icons.Rounded.Bookmark
                 }
             }
 
@@ -36,14 +32,14 @@ open class MainAction @Inject constructor(
                 item {
                     title = "Switch theme"
                     icon = if (Random.nextBoolean()) {
-                        resources[R.drawable.ic_light_mode_24]
+                        Icons.Rounded.DarkMode
                     } else {
-                        resources[R.drawable.ic_dark_mode_24]
+                        Icons.Rounded.LightMode
                     }
                 }
                 item {
                     title = "Settings"
-                    icon = resources[R.drawable.ic_settings_24]
+                    icon = Icons.Rounded.Settings
                 }
             }
         }

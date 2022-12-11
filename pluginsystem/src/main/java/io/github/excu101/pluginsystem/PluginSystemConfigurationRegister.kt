@@ -10,7 +10,7 @@ object PluginSystemConfigurationRegister {
         get() = _configuration ?: EmptyPluginSystemConfiguration
 
     fun register(configuration: PluginSystemConfiguration) {
-        if (configuration != null) throw IllegalArgumentException("Configuration already setted")
+        if (_configuration != null) throw IllegalArgumentException("Configuration already setted")
 
         this._configuration = configuration
     }

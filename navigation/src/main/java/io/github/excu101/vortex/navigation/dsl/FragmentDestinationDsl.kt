@@ -12,6 +12,15 @@ inline fun <reified T : Fragment> NavigationGraph.Builder<Fragment>.fragment(
     addDestination(ReflectionFragmentDestination(T::class, route = route, graph = null))
 }
 
+fun NavigationGraph.Builder<Fragment>.fragment(
+    route: String,
+    factory: FragmentFactory<out Fragment>,
+) {
+    addDestination(object : FragmentDestination(route = route, graph = null) {
+        override fun createFragment(args: Bundle?): Fragment = factory.create(args)
+    })
+}
+
 inline fun <reified T : Fragment> NavigationGraph.Builder<Fragment>.fragment(
     route: String,
     crossinline onCreateFragment: (Bundle?) -> T,

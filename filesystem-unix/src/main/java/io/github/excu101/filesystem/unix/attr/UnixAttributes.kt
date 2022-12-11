@@ -3,7 +3,6 @@ package io.github.excu101.filesystem.unix.attr
 import io.github.excu101.filesystem.fs.attr.InodeOwner
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
-import io.github.excu101.filesystem.fs.attr.time.Instant.Companion.of
 import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
@@ -84,26 +83,20 @@ internal class UnixAttributes private constructor(
 
     override val lastModifiedTime: FileTime
         get() = FileTime(
-            instant = of(
-                seconds = structure.lastModifiedTimeSeconds,
-                nanos = structure.lastModifiedTimeNanos
-            )
+            seconds = structure.lastModifiedTimeSeconds,
+            nanos = structure.lastModifiedTimeNanos
         )
 
     override val lastAccessTime: FileTime
         get() = FileTime(
-            instant = of(
-                seconds = structure.lastAccessTimeSeconds,
-                nanos = structure.lastAccessTimeNanos
-            )
+            seconds = structure.lastModifiedTimeSeconds,
+            nanos = structure.lastModifiedTimeNanos
         )
 
     override val creationTime: FileTime
         get() = FileTime(
-            instant = of(
-                seconds = structure.lastAccessTimeSeconds,
-                nanos = structure.lastAccessTimeNanos
-            )
+            seconds = structure.lastAccessTimeSeconds,
+            nanos = structure.lastAccessTimeNanos
         )
 
     override val size: Size

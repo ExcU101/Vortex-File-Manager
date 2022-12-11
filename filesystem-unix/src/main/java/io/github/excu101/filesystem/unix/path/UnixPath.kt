@@ -3,6 +3,8 @@ package io.github.excu101.filesystem.unix.path
 import io.github.excu101.filesystem.fs.FileSystem
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.UnixFileSystem
+import kotlin.math.min
+
 
 class UnixPath internal constructor(
     private val path: ByteArray,
@@ -121,11 +123,58 @@ class UnixPath internal constructor(
     }
 
     override fun normalize(): Path {
-        TODO("Not yet implemented")
+        val normalizedSegments = mutableListOf<Byte>()
+        for (byte in bytes) {
+            if (byte == '.'.code.toByte()) {
+//
+            } else if (byte == "..".toByte()) {
+                if (normalizedSegments.isEmpty()) {
+                    if (!isAbsolute) {
+                        normalizedSegments += byte
+                    }
+                } else {
+                    if (normalizedSegments.last() == "..".toByte()) {
+                        normalizedSegments += byte
+                    } else {
+                        normalizedSegments.removeLast()
+                    }
+                }
+            } else {
+                normalizedSegments += byte
+            }
+        }
+        if (!isAbsolute && normalizedSegments.isEmpty()) {
+            return UnixPath(_system = _system, path = byteArrayOf(0))
+        }
+
+        return UnixPath(_system = _system, path = normalizedSegments.toByteArray())
     }
 
     override fun relativize(other: Path): Path {
-        TODO("Not yet implemented")
+        require(isAbsolute == other.isAbsolute) {
+            "The other path must be as absolute as this path"
+        }
+        if (other == this) return UnixPath(byteArrayOf(0), _system)
+        if (isEmpty) return other
+//        if (other.isEmpty) return this
+        val size = length
+        val otherSize = other.length
+        val minimal = min(size, otherSize)
+        var common = 0
+        while (common < minimal && bytes[common] == other.bytes[common]) {
+            ++common
+        }
+        val relatives = mutableListOf<Byte>()
+        val dotCount = size - common
+
+        if (dotCount > 0) {
+            repeat(dotCount) { relatives += "..".toByte() }
+        }
+        if (common < otherSize) {
+            relatives.addAll(other.bytes.copyOfRange(common, otherSize).toTypedArray())
+        }
+
+        return UnixPath(relatives.toByteArray(), _system)
     }
 
     override fun sub(from: Int, to: Int): Path {

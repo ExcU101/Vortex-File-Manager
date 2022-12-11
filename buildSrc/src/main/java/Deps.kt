@@ -8,14 +8,11 @@ object Deps {
         const val Appcompat = "androidx.appcompat:appcompat:${Versions.appcompatVer}"
         const val Core = "androidx.core:core-ktx:${Versions.coreVer}"
         const val Fragment = "androidx.fragment:fragment-ktx:${Versions.fragmentVer}"
-        const val NavigationFragment =
-            "androidx.navigation:navigation-fragment-ktx:${Versions.navigationVer}"
         const val Collection = "androidx.collection:collection-ktx:${Versions.collectionVer}"
     }
 
     object Ui {
         const val RecyclerView = "androidx.recyclerview:recyclerview:1.2.1"
-        const val RecyclerViewSelection = "androidx.recyclerview:recyclerview-selection:1.1.0"
         const val Material = "com.google.android.material:material:${Versions.materialVer}"
     }
 
@@ -24,6 +21,7 @@ object Deps {
         const val Core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutinesVer}"
         const val Android =
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesVer}"
+        const val Coil = "io.coil-kt:coil:${Versions.coilVer}"
         const val Test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutinesVer}"
     }
 

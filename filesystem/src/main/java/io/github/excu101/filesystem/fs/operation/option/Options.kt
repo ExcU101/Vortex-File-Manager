@@ -9,4 +9,9 @@ object Options {
         val CreateNew = object : CreateNewOpenOption {}
         val Append = object : AppendOpenOption {}
     }
+
+    object Copy {
+        val NoFollowLinks = object : NoFollowLinks {}
+        val ReplaceExists = object : ReplaceExists {}
+    }
 }

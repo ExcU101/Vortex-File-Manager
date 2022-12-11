@@ -62,9 +62,6 @@ const val fileListSortActionTitleKey = "fileListSortActionTitle"
 const val fileListCreateDialogNameHintTitleKey = "fileListCreateDialogNameHintTitle"
 const val fileListCreateDialogPathHintTitleKey = "fileListCreateDialogPathHintTitle"
 
-// Storage list : Trail
-const val fileListTrailCopyPathActionTitleKey = "fileListTrailCopyPathActionTitle"
-
 // Storage list : Drawer Groups
 const val fileListGroupViewActionTitleKey = "fileListGroupViewActionTitle"
 const val fileListGroupOrderActionTitleKey = "fileListGroupOrderActionTitleKey"
@@ -90,6 +87,12 @@ const val fileListSortCreationTimeActionTitleKey = "fileListSortCreationTimeActi
 // Storage list : Drawer Groups : Filter
 const val fileListFilterOnlyFilesActionTitleKey = "fileListFilterOnlyFilesActionTitle"
 const val fileListFilterOnlyFoldersActionTitleKey = "fileListFilterOnlyFoldersActionTitle"
+const val fileListFilterOnlyApplicationFileActionTitleKey =
+    "fileListFilterOnlyApplicationFileActionTitle"
+const val fileListFilterOnlyAudioFileActionTitleKey = "fileListFilterOnlyAudioFileActionTitle"
+const val fileListFilterOnlyImageFileActionTitleKey = "fileListFilterOnlyImageFileActionTitle"
+const val fileListFilterOnlyVideoFileActionTitleKey = "fileListFilterOnlyVideoFileActionTitle"
+const val fileListFilterOnlyTextFileActionTitleKey = "fileListFilterOnlyTextFileActionTitle"
 
 // Storage list : Drawer Groups : More
 const val fileListGroupMoreActionTitleKey = "fileListGroupMoreActionTitle"
@@ -116,12 +119,17 @@ const val fileListOperationDeleteItemPerformedTitleKey = "fileListOperationDelet
 
 const val fileListGroupOperationDefaultActionTitleKey = "fileListGroupOperationDefaultActionTitle"
 
-const val fileListOperationSwapNamesActionTitleKey = "fileListOperationSwapNamesActionTitle"
-const val fileListOperationDeleteActionTitleKey = "fileListOperationDeleteActionTitle"
-const val fileListOperationRenameActionTitleKey = "fileListOperationRenameActionTitle"
-const val fileListOperationCopyActionTitleKey = "fileListOperationCopyActionTitle"
-const val fileListOperationCutActionTitleKey = "fileListOperationCutActionTitle"
-const val fileListOperationAddActionNewTitleKey = "fileListOperationAddNewActionTitle"
+const val storageListOperationAddBookmarkTitleKey = "storageListOperationAddBookmarkTitle"
+const val storageListOperationRemoveBookmarkTitleKey = "storageListOperationRemoveBookmarkTitle"
+
+const val storageListOperationOpenTitleKey = "storageListOperationOpenTitle"
+const val storageListOperationCopyPathTitleKey = "storageListOperationCopyPathTitle"
+const val storageListOperationSwapNamesActionTitleKey = "storageListOperationSwapNamesActionTitle"
+const val storageListOperationDeleteActionTitleKey = "storageListOperationDeleteActionTitle"
+const val storageListOperationRenameActionTitleKey = "storageListOperationRenameActionTitle"
+const val storageListOperationCopyActionTitleKey = "storageListOperationCopyActionTitle"
+const val storageListOperationCutActionTitleKey = "storageListOperationCutActionTitle"
+const val storageListOperationAddActionNewTitleKey = "storageListOperationAddActionNewTitle"
 
 // Vortex Service
 const val vortexServiceConnectedKey = "vortexServiceConnected"

@@ -12,12 +12,16 @@ import android.provider.DocumentsContract
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.getSystemService
+import io.github.excu101.filesystem.fs.DirectoryObserver
+import io.github.excu101.filesystem.fs.observer.PathObservableEventType
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.asPath
 import io.github.excu101.filesystem.fs.utils.flow
 import io.github.excu101.filesystem.fs.utils.resolve
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.provider.storage.StorageDirectoryObserver
 import io.github.excu101.vortex.provider.storage.StorageProvider
+import io.github.excu101.vortex.provider.storage.Task
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -26,7 +30,7 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class StorageProviderImpl @Inject constructor(
-    val context: Context,
+    private val context: Context,
     private val workContext: CoroutineContext = IO,
 ) : StorageProvider {
 
@@ -45,13 +49,18 @@ class StorageProviderImpl @Inject constructor(
             "com.android.externalstorage.documents"
     }
 
+    private val observers = mutableMapOf<Path, StorageDirectoryObserver>()
+
+    private val _tasks = mutableListOf<Task>()
+    override val tasks: List<Task>
+        get() = _tasks
+
     fun resolveSafUri(
         path: Path,
     ): String? {
         val cPath = path.toString()
         return if (restrictedDirs.contains(path)) {
-            val suffix =
-                cPath.substringAfter(getExternalStorageDirectory().absolutePath)
+            val suffix = cPath.substringAfter(getExternalStorageDirectory().absolutePath)
             val documentId = "$storageType:${suffix.substring(1)}"
 
             DocumentsContract.buildDocumentUri(
@@ -61,6 +70,23 @@ class StorageProviderImpl @Inject constructor(
         } else {
             null
         }
+    }
+
+    override fun registerTask(task: Task): Boolean {
+        return _tasks.add(task)
+    }
+
+    override fun unregisterTask(task: Task): Boolean {
+        return _tasks.remove(task)
+    }
+
+    override fun registerObserver(
+        directory: Path,
+        vararg types: PathObservableEventType
+    ): DirectoryObserver {
+        val unit = StorageDirectoryObserver(directory, types = types)
+        observers[directory] = unit
+        return unit
     }
 
     override fun requiresPermissions(): Boolean {

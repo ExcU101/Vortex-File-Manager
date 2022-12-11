@@ -22,3 +22,7 @@ static bool renameFile(const char *source, const char *dest) {
 static bool removeFile(const char *path) {
     return remove(path) == 0;
 }
+
+static bool createSymbolicLink(const char *path, const char *link) {
+    return symlink(path, link) == 0;
+}

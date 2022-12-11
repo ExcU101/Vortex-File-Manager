@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.service.remote
 
-import io.github.excu101.filesystem.fs.FileSystemProvider
+import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import io.github.excu101.vortex.service.data.ParcelableFileOperation
 import io.github.excu101.vortex.service.data.ParcelableFileOperationObserver
 import io.github.excu101.vortex.service.data.ParcelableOption

@@ -8,7 +8,6 @@ import android.view.Gravity.CENTER
 import android.widget.ImageView
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
-import androidx.core.view.children
 import androidx.core.view.contains
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -20,6 +19,7 @@ import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.R
+import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
@@ -39,7 +39,7 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
 
     private val surface = MaterialShapeDrawable(
         builder().setAllCorners(
-            ROUNDED, 50F.dp
+            ROUNDED, 16F.dp
         ).build()
     ).apply {
         setTint(ThemeColor(trailSurfaceColorKey))
@@ -52,13 +52,12 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
         null,
     )
 
-    var isArrowVisible
-        get() = arrow in children || arrow.isVisible
+    var isArrowVisible: Boolean
+        get() = arrow.isVisible
         set(value) {
             setArrowVisibility(value)
         }
 
-    private val minWidth = 36.dp
     private val desireHeight = ThemeUDp(trailItemHeightKey)
 
     override val innerLargePadding = 16.dp
@@ -66,6 +65,7 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
     override val innerSmallPadding = 4.dp
 
     init {
+        id = ViewIds.Storage.Trail.rootId
         gravity = CENTER
         minimumHeight = desireHeight
         isClickable = true

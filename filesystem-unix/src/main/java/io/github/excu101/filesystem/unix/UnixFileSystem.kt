@@ -2,9 +2,11 @@ package io.github.excu101.filesystem.unix
 
 import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.FileSystem
-import io.github.excu101.filesystem.fs.FileSystemProvider
+import io.github.excu101.filesystem.fs.observer.PathObserverService
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import io.github.excu101.filesystem.fs.utils.FileSystemHelper
+import io.github.excu101.filesystem.unix.observer.UnixPathObserverService
 import io.github.excu101.filesystem.unix.path.UnixPath
 
 class UnixFileSystem(
@@ -39,7 +41,7 @@ class UnixFileSystem(
     )
 
     init {
-        if (!defaultDirectory.isAbsolute) error("FUCK U")
+        if (!defaultDirectory.isAbsolute) error("Default dir isn't absolute")
     }
 
     override val scheme: String
@@ -71,6 +73,10 @@ class UnixFileSystem(
                 }
             }.toString().encodeToByteArray()
         )
+    }
+
+    override fun newPathObserverService(): PathObserverService {
+        return UnixPathObserverService(system = this)
     }
 
 }

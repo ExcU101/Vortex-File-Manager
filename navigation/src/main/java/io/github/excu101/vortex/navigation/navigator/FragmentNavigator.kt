@@ -1,7 +1,6 @@
 package io.github.excu101.vortex.navigation.navigator
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -59,7 +58,6 @@ class FragmentNavigator(
             with(option) {
                 if (this is Arguments) {
                     arguments = original
-                    Log.v("Loggable", "Passed args")
                 }
                 if (this is SharedElement) {
                     elements[view] = name

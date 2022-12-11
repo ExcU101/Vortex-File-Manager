@@ -3,7 +3,6 @@ package io.github.excu101.vortex.ui.component.theme.value.text.en
 import io.github.excu101.pluginsystem.model.Text
 import io.github.excu101.pluginsystem.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.*
-import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.*
 import io.github.excu101.vortex.ui.component.theme.value.text.en.navigation.initNavigationValuesEN
 import io.github.excu101.vortex.ui.component.theme.value.text.en.storage.item.initStorageItemValuesEN
 
@@ -41,9 +40,6 @@ fun initVortexTextValuesEN() {
     Theme[fileListCreateDialogNameHintTitleKey] = Text(value = "Enter name")
     Theme[fileListCreateDialogPathHintTitleKey] = Text(value = "Enter path")
 
-    // Trail
-    Theme[fileListTrailCopyPathActionTitleKey] = Text(value = "Copy path")
-
     // Storage list : Drawer Groups
     Theme[fileListGroupViewActionTitleKey] = Text(value = "View")
     Theme[fileListGroupOrderActionTitleKey] = Text(value = "Order")
@@ -69,6 +65,11 @@ fun initVortexTextValuesEN() {
     // Filter
     Theme[fileListFilterOnlyFoldersActionTitleKey] = Text(value = "Only folders")
     Theme[fileListFilterOnlyFilesActionTitleKey] = Text(value = "Only files")
+    Theme[fileListFilterOnlyApplicationFileActionTitleKey] = Text(value = "Only application files")
+    Theme[fileListFilterOnlyAudioFileActionTitleKey] = Text(value = "Only audio files")
+    Theme[fileListFilterOnlyImageFileActionTitleKey] = Text(value = "Only image files")
+    Theme[fileListFilterOnlyVideoFileActionTitleKey] = Text(value = "Only video files")
+    Theme[fileListFilterOnlyTextFileActionTitleKey] = Text(value = "Only text files")
 
     // More
     Theme[fileListGroupMoreActionTitleKey] = Text(value = "Default ($stringSpecifier)")
@@ -92,12 +93,17 @@ fun initVortexTextValuesEN() {
 
     Theme[fileListGroupOperationDefaultActionTitleKey] = Text(value = "Default")
 
-    Theme[fileListOperationSwapNamesActionTitleKey] = Text(value = "Swap names")
-    Theme[fileListOperationDeleteActionTitleKey] = Text(value = "Delete")
-    Theme[fileListOperationRenameActionTitleKey] = Text(value = "Rename")
-    Theme[fileListOperationCopyActionTitleKey] = Text(value = "Copy")
-    Theme[fileListOperationCutActionTitleKey] = Text(value = "Cut")
-    Theme[fileListOperationAddActionNewTitleKey] = Text(value = "Add new")
+    Theme[storageListOperationAddBookmarkTitleKey] = Text(value = "Add to bookmarks")
+    Theme[storageListOperationRemoveBookmarkTitleKey] = Text(value = "Remove from bookmarks")
+
+    Theme[storageListOperationOpenTitleKey] = Text(value = "Open")
+    Theme[storageListOperationCopyPathTitleKey] = Text(value = "Copy path")
+    Theme[storageListOperationSwapNamesActionTitleKey] = Text(value = "Swap names")
+    Theme[storageListOperationDeleteActionTitleKey] = Text(value = "Delete")
+    Theme[storageListOperationRenameActionTitleKey] = Text(value = "Rename")
+    Theme[storageListOperationCopyActionTitleKey] = Text(value = "Copy")
+    Theme[storageListOperationCutActionTitleKey] = Text(value = "Cut")
+    Theme[storageListOperationAddActionNewTitleKey] = Text(value = "Add new")
 
     Theme[vortexServiceConnectedKey] = Text(value = "Vortex Service is connected!")
     Theme[vortexServiceDisconnectedKey] = Text(value = "Vortex Service is disconnected!")

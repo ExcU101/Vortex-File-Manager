@@ -1,6 +1,6 @@
 package io.github.excu101.pluginsystem.provider
 
-import io.github.excu101.pluginsystem.model.Plugin
+import io.github.excu101.pluginsystem.model.plugin.Plugin
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.*

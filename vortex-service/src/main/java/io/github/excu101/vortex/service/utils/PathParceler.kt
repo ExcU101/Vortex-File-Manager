@@ -8,10 +8,13 @@ import kotlinx.parcelize.Parceler
 object PathParceler : Parceler<Path> {
 
     override fun create(parcel: Parcel): Path {
-        return FileProvider.parsePath(input = parcel.readString() ?: "")
+        val scheme = parcel.readString()
+        val path = parcel.readString()
+        return FileProvider.parsePath(scheme = scheme, input = path ?: "")
     }
 
     override fun Path.write(parcel: Parcel, flags: Int) {
+        parcel.writeString(scheme)
         parcel.writeString(toString())
     }
 

@@ -4,43 +4,15 @@
 #include <cerrno>
 #include "mntent.h" // Mount entry
 #include "../log.h"
-#include "classes.cpp"
+#include "../jni-classes.cpp"
 #include "sys/sendfile.h"
-#include "dirent.h"
-#include "jni.h"
+#include "fcntl.h"
 #include "attrs.cpp"
-#include "operations/symlink.cpp"
+#include "sys/socket.h"
 #include "operations.cpp"
 
 static void clearErrno() {
     errno = 0;
-}
-
-static char *fromByteArrayToPath(
-        JNIEnv *env,
-        jbyteArray path
-) {
-    jbyte *segments = env->GetByteArrayElements(path, NULL);
-    jsize jLength = env->GetArrayLength(path);
-    auto length = (size_t) jLength;
-    char *cPath = (char *) malloc(length + 1);
-    memcpy(cPath, segments, length);
-    env->ReleaseByteArrayElements(path, segments, JNI_ABORT);
-    cPath[length] = '\0';
-    return cPath;
-}
-
-static jbyteArray createByteArray(JNIEnv *env, char *name) {
-    size_t length = strlen(name);
-    auto javaLength = (jsize) length;
-    jbyteArray bytes = env->NewByteArray(javaLength);
-
-    if (bytes == NULL) {
-        return NULL;
-    }
-
-    env->SetByteArrayRegion(bytes, 0, javaLength, (jbyte *) name);
-    return bytes;
 }
 
 static jobject getUnixStatusStructure(
@@ -841,9 +813,9 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_moveBytesImpl(
             _offset,
             cCount
     );
-
+    printf("Errno %i", errno);
     if (errno != 0) {
-
+        printf("%i", errno);
     }
 
     if (offset != nullptr) {
@@ -851,4 +823,53 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_moveBytesImpl(
     }
 
     return size;
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_createSocketPairImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jint domain,
+        jint type,
+        jint protocol,
+        jobject first_descriptor,
+        jobject second_descriptor
+) {
+    clearErrno();
+    int sockets[2];
+
+    socketpair(domain, type, protocol, sockets);
+
+    if (errno != 0) {
+        throwUnixException(env, errno, "createSocketPairImpl");
+    }
+
+    env->SetIntField(
+            first_descriptor,
+            findJavaFileDescriptorField(env),
+            sockets[0]
+    );
+    env->SetIntField(
+            second_descriptor,
+            findJavaFileDescriptorField(env),
+            sockets[1]
+    );
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_manipulateDescriptorImpl(
+        JNIEnv *env, jobject thiz,
+        jint descriptor,
+        jint command
+) {
+
+    int result = fcntl(descriptor, command);
+
+    if (errno != 0) {
+        throwUnixException(env, errno, "manipulateDescriptorImpl");
+        return 0;
+    }
+
+    return result;
 }

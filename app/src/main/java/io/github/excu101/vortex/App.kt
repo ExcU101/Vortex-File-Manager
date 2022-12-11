@@ -9,12 +9,13 @@ import androidx.multidex.MultiDexApplication
 import dagger.hilt.android.HiltAndroidApp
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.unix.UnixFileSystem
-import io.github.excu101.filesystem.unix.UnixFileSystemProvider
+import io.github.excu101.filesystem.unix.provider.UnixFileSystemProvider
 import io.github.excu101.vortex.service.VortexService
 import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanDarkColorValues
 import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanLightColorValues
 import io.github.excu101.vortex.ui.component.theme.value.initVortexDimenValues
 import io.github.excu101.vortex.ui.component.theme.value.text.en.initVortexTextValuesEN
+import io.github.excu101.vortex.ui.icon.IconInitializer
 
 @HiltAndroidApp
 class App : MultiDexApplication() {
@@ -51,6 +52,7 @@ class App : MultiDexApplication() {
 //            else -> initVortexTextValuesCustom(lines = emptyList())
 //        }
         initVortexTextValuesEN()
+        IconInitializer.context = this
 
         FileProvider.installDefault(system)
     }

@@ -3,20 +3,19 @@ package io.github.excu101.filesystem
 import io.github.excu101.filesystem.fs.DirectoryStream
 import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.FileSystem
-import io.github.excu101.filesystem.fs.FileSystemProvider
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
-import io.github.excu101.filesystem.fs.error.FileSystemErrorHandler
 import io.github.excu101.filesystem.fs.error.NotAnyProviderInstalled
+import io.github.excu101.filesystem.fs.observer.PathObserverService
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.FileOperationObserver
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import kotlinx.coroutines.Job
 import kotlin.reflect.KClass
 
 object FileProvider {
 
     private val systems = arrayListOf<FileSystem>()
-    private val handlers = arrayListOf<FileSystemErrorHandler>()
 
     val systemCount: Int
         get() = systems.size
@@ -34,15 +33,11 @@ object FileProvider {
         return getSystem().provider
     }
 
-    private fun getSystem(scheme: String): FileSystem {
-        for (system in systems) {
-            if (system.scheme == scheme) return system
-        }
-
-        return getSystem()
+    private fun getSystem(scheme: String?): FileSystem {
+        return systems.find { it.scheme == scheme } ?: getSystem()
     }
 
-    private fun getProvider(scheme: String): FileSystemProvider {
+    private fun getProvider(scheme: String?): FileSystemProvider {
         try {
             return getSystem(scheme).provider
         } catch (exception: Throwable) {
@@ -95,20 +90,8 @@ object FileProvider {
         defaultSystem = system
     }
 
-    fun install(handler: FileSystemErrorHandler) {
-        handlers.add(handler)
-    }
-
     fun uninstall(system: FileSystem) {
         systems.remove(system)
-    }
-
-    fun uninstall(handler: FileSystemErrorHandler) {
-        handlers.remove(handler)
-    }
-
-    internal fun notify(error: Throwable) {
-        handlers.forEach { handler -> handler.onFileSystemError(error = error) }
     }
 
     fun runOperation(operation: FileOperation, observer: FileOperationObserver): Job {
@@ -122,12 +105,16 @@ object FileProvider {
         return getProvider().runOperation(operation = operation, observers = observers)
     }
 
-    fun parsePath(input: String): Path {
-        return getSystem().getPath(first = input)
+    fun parsePath(input: String, scheme: String? = null): Path {
+        return getSystem(scheme).getPath(first = input)
     }
 
     fun parsePath(first: String, vararg other: String): Path {
         return getSystem().getPath(first = first, other = other)
+    }
+
+    fun newPathObserverService(scheme: String? = null): PathObserverService {
+        return getSystem(scheme).newPathObserverService()
     }
 
 }

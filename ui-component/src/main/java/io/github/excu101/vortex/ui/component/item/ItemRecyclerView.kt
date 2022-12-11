@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
-import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 
 class ItemRecyclerView(
     context: Context,

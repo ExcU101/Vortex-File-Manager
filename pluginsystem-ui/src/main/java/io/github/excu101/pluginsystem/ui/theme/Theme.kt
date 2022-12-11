@@ -19,7 +19,7 @@ object Theme {
 
     private val dimens: HashMap<String, Dimen> = hashMapOf()
 
-    fun getOrReplace(
+    fun getOrInsert(
         key: String,
         default: Text,
     ): Text {
@@ -29,14 +29,14 @@ object Theme {
         }
     }
 
-    fun getOrReplace(key: String, default: Color): Color {
+    fun getOrInsert(key: String, default: Color): Color {
         return colors[key] ?: run {
             set(key, default)
             default
         }
     }
 
-    fun getOrReplace(
+    fun getOrInsert(
         key: String,
         default: Icon,
     ): Icon {
@@ -46,7 +46,7 @@ object Theme {
         }
     }
 
-    fun getOrReplace(key: String, default: Dimen): Dimen {
+    fun getOrInsert(key: String, default: Dimen): Dimen {
         return dimens[key] ?: run {
             dimens[key] = default
             default
@@ -71,9 +71,7 @@ object Theme {
 
     inline fun getDp(key: () -> String): Dimen = getDp(key = key())
 
-    fun getIcon(key: String): Icon =
-        icons[key] ?: Icon(
-            EmptyDrawable)
+    fun getIcon(key: String): Icon = icons[key] ?: Icon(EmptyDrawable)
 
     inline fun getIcon(key: () -> String): Icon =
         getIcon(key())

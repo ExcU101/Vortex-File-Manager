@@ -1,23 +1,45 @@
 package io.github.excu101.filesystem.fs.attr.time
 
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
-
 class FileTime(
-    private val instant: Instant,
+    val seconds: Long,
+    val nanos: Long,
 ) {
-
-    fun toNanos() = instant.nanos
-
-    fun toSeconds() = instant.seconds
+    companion object {
+        const val NanosPerSecond = 1_000_000_000
+        const val NanosPerMillis = 1_000_000
+        const val MillisPerSecond = 1_000
+        const val SecondPerMinute = 60
+        const val MinutePerHour = 60
+        const val HourPerDay = 24
+        const val DayPerMonth = 30.4167
+        const val MonthPerYear = 12
+    }
 
     override fun toString(): String {
+        val builder = StringBuilder()
 
-        return SimpleDateFormat(
-            "E MMM d",
-            Locale.getDefault()
-        ).format(TimeUnit.MILLISECONDS.toDays(toSeconds()))
+        val millis = nanos / NanosPerMillis
+        val seconds = millis / MillisPerSecond
+        val minute = seconds / SecondPerMinute
+        val hour = minute / MinutePerHour
+        val day = hour / HourPerDay
+        val month = day / DayPerMonth
+        val year = month / MonthPerYear
+
+        builder.append(month.toLong())
+        builder.append("m:")
+        builder.append(day)
+        builder.append("d:")
+        builder.append(year.toLong())
+        builder.append("y ")
+        builder.append(hour)
+        builder.append("d:")
+        builder.append(minute)
+        builder.append("m:")
+        builder.append(seconds)
+        builder.append("s")
+
+        return builder.toString()
     }
 
 }

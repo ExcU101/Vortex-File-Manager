@@ -6,8 +6,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.github.excu101.vortex.provider.ResourceProvider
-import io.github.excu101.vortex.provider.storage.StorageActionProvider
 import io.github.excu101.vortex.provider.storage.StorageBookmarkProvider
 import io.github.excu101.vortex.provider.storage.StorageOperationActionHandler
 import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl
@@ -27,12 +25,6 @@ object StorageModule {
     @Singleton
     fun StorageOperationActionHandlerProvider(): StorageOperationActionHandler {
         return StorageOperationActionHandler()
-    }
-
-    @Provides
-    @Singleton
-    fun StorageActions(resources: ResourceProvider): StorageActionProvider {
-        return StorageActionProvider(resources)
     }
 
     @Provides

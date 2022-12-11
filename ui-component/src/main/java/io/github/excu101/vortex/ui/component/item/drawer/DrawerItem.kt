@@ -10,7 +10,7 @@ import io.github.excu101.pluginsystem.utils.ActionScopeImpl
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.dsl.ItemScope
 import io.github.excu101.vortex.ui.component.list.adapter.Item
-import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 
 data class DrawerItem(
     override val value: Action,
@@ -25,7 +25,7 @@ data class DrawerItem(
     override fun hashCode(): Int = value.hashCode()
 
     override val type: Int
-        get() = ItemViewTypes.drawerItem
+        get() = ItemViewTypes.DrawerItem
 
     companion object : ViewHolderFactory<DrawerItem> {
         override fun produceView(parent: ViewGroup): View {
@@ -39,6 +39,6 @@ fun ItemScope<Item<*>>.drawerItem(value: Action) {
 }
 
 
-fun ItemScope<Item<*>>.drawerItem(scope: ActionScope.() -> Unit) {
+inline fun ItemScope<Item<*>>.drawerItem(scope: ActionScope.() -> Unit) {
     add(DrawerItem(ActionScopeImpl().apply(scope).toAction()))
 }

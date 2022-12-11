@@ -1,10 +1,10 @@
 package io.github.excu101.vortex.service.remote
 
-import io.github.excu101.filesystem.fs.channel.ReactiveFileChannel
+import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
 import io.github.excu101.vortex.service.listener.ParcelableFileChannelListener
 
 class VortexReactiveFileChannel(
-    private val local: ReactiveFileChannel,
+    private val local: AsyncFileChannel,
 ) : RemoteReactiveFileChannel.Stub() {
 
     override fun write(): RemoteReactiveFileChannel {

@@ -9,6 +9,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class TrailNavigator : Iterable<PathItem> {
 
+    data class SelectedItem(
+        val index: Int,
+        val item: PathItem?,
+    )
+
     val size: Int
         get() = _items.value.size
 
@@ -16,13 +21,12 @@ class TrailNavigator : Iterable<PathItem> {
     val items: StateFlow<List<PathItem>>
         get() = _items.asStateFlow()
 
-    private val _selectedIndex = MutableStateFlow(-1)
-    val selectedIndex: StateFlow<Int>
-        get() = _selectedIndex.asStateFlow()
-
-    private var _selectedItem = MutableStateFlow<PathItem?>(null)
-    val selectedItem: PathItem?
-        get() = items.value.getOrNull(selectedIndex.value)
+    private val _selection = MutableStateFlow(SelectedItem(
+        index = -1,
+        item = null
+    ))
+    val selection: StateFlow<SelectedItem>
+        get() = _selection.asStateFlow()
 
     companion object {
         private var isSlicePathEnabled = true
@@ -72,15 +76,15 @@ class TrailNavigator : Iterable<PathItem> {
             }
         }
         _items.emit(segments)
-        _selectedIndex.emit(selectedIndex)
+        _selection.emit(SelectedItem(selectedIndex, segments[selectedIndex]))
     }
 
     suspend fun navigateLeft() {
-        navigateTo(segments = take(selectedIndex.value).toMutableList())
+        navigateTo(segments = take(selection.value.index).toMutableList())
     }
 
     suspend fun navigateRight() {
-        navigateTo(segments = take(selectedIndex.value + 2).toMutableList())
+        navigateTo(segments = take(selection.value.index + 2).toMutableList())
     }
 
     override fun iterator(): Iterator<PathItem> {

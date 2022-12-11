@@ -2,31 +2,35 @@ package io.github.excu101.vortex.ui.navigation
 
 import io.github.excu101.vortex.navigation.dsl.fragment
 import io.github.excu101.vortex.navigation.dsl.navigation
+import io.github.excu101.vortex.ui.navigation.AppNavigation.Routes.Settings
 import io.github.excu101.vortex.ui.navigation.AppNavigation.Routes.Storage.Bookmark
+import io.github.excu101.vortex.ui.navigation.AppNavigation.Routes.Storage.Create
 import io.github.excu101.vortex.ui.navigation.AppNavigation.Routes.Storage.List
-import io.github.excu101.vortex.ui.screen.storage.pager.page.bookmark.StorageBookmarkPageFragment
-import io.github.excu101.vortex.ui.screen.storage.pager.StorageListPagerFragment
-import io.github.excu101.vortex.ui.screen.storage.pager.page.info.StorageItemInfoPageFragment
-import io.github.excu101.vortex.ui.screen.storage.pager.page.list.StorageListPageFragment
+import io.github.excu101.vortex.ui.screen.settings.SettingsPageFragment
+import io.github.excu101.vortex.ui.screen.storage.page.bookmark.StorageBookmarkPageFragment
+import io.github.excu101.vortex.ui.screen.storage.page.create.StorageItemCreatePage
+import io.github.excu101.vortex.ui.screen.storage.page.info.StorageItemInfoPageFragment
+import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageFragment
 
 object AppNavigation {
 
     val Graph = navigation {
-        fragment(route = List.Page) { args ->
-            StorageListPageFragment.create(args)
-        }
-        fragment(route = List.Pager) { args ->
-            StorageListPagerFragment.create(args)
-        }
-        fragment(route = Bookmark.Page) { args ->
-            StorageBookmarkPageFragment.create(args)
-        }
-        fragment(route = List.ItemPageInfo) { args ->
-            StorageItemInfoPageFragment.create(args)
-        }
+        fragment(route = List.Page, factory = StorageListPageFragment)
+        fragment(route = Bookmark.Page, factory = StorageBookmarkPageFragment)
+        fragment(route = List.ItemPageInfo, factory = StorageItemInfoPageFragment)
+        fragment(route = Create.Page, factory = StorageItemCreatePage)
+        fragment(route = Settings.Page, factory = SettingsPageFragment)
     }
 
     object Routes {
+        object Pager {
+            const val Pager = "Pager"
+        }
+
+        object Settings {
+            const val Page = "Settings"
+        }
+
         object Storage {
             object Bookmark {
                 const val Page = "StorageBookmarkPage"
@@ -34,8 +38,11 @@ object AppNavigation {
 
             object List {
                 const val Page = "StorageListPage"
-                const val Pager = "StorageListPager"
                 const val ItemPageInfo = "StorageItemPageInfo"
+            }
+
+            object Create {
+                const val Page = "StorageItemCreatePage"
             }
         }
     }
@@ -50,8 +57,8 @@ object AppNavigation {
                 const val PageTitleKey = "PageTitle"
             }
 
-            object Pager {
-                const val PagerCountKey = "PagerCountKey"
+            object CreatePage {
+                const val ParentDirectoryKey = "ParentDirectory"
             }
         }
     }

@@ -14,7 +14,6 @@ import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.builder
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
-import io.github.excu101.pluginsystem.utils.EmptyDrawable
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
 import io.github.excu101.vortex.ui.component.theme.key.*
@@ -58,7 +57,7 @@ class ActionItemView(context: Context) : ThemeFrameLayout(context),
         }
 
     private val isEmptyIcon: Boolean
-        get() = iconView.drawable == EmptyDrawable
+        get() = icon == null
 
     var title: CharSequence?
         get() = titleView.text

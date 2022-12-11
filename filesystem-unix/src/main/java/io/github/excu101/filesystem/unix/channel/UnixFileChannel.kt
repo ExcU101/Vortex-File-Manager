@@ -1,6 +1,5 @@
 package io.github.excu101.filesystem.unix.channel
 
-import android.system.Os
 import android.system.OsConstants.SEEK_CUR
 import android.system.OsConstants.SEEK_SET
 import io.github.excu101.filesystem.fs.buffer.ByteBuffer

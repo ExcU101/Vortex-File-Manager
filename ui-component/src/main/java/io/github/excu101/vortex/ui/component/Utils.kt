@@ -7,10 +7,8 @@ import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
-import io.github.excu101.pluginsystem.model.GroupAction
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
-import io.github.excu101.vortex.ui.component.list.adapter.Item
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -53,8 +51,8 @@ fun ThemeColorChangeListener.themeMeasure(
     val heightSize = MeasureSpec.getSize(heightSpec)
     val heightMode = MeasureSpec.getMode(heightSpec)
 
-    val desireWidth = widthKey?.let { ThemeDp(it) } ?: widthSize
-    val desireHeight = heightKey?.let { ThemeDp(it) } ?: heightSize
+    val desireWidth = widthKey?.let { ThemeUDp(it) } ?: widthSize
+    val desireHeight = heightKey?.let { ThemeUDp(it) } ?: heightSize
 
     val width = when (widthMode) {
         MeasureSpec.EXACTLY -> widthSize

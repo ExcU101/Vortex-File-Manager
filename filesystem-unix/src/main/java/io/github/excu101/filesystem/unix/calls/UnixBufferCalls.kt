@@ -3,7 +3,7 @@ package io.github.excu101.filesystem.unix.calls
 internal object UnixBufferCalls {
 
     init {
-        System.loadLibrary("unix-calls")
+        System.loadLibrary("unix-buffer")
     }
 
     internal fun put(address: Long, byte: Byte) = putImpl(address, byte)

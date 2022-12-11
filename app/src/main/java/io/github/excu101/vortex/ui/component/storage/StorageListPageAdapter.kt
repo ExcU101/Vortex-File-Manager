@@ -6,7 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.EditableAdapter
-import io.github.excu101.vortex.ui.screen.storage.pager.page.list.StorageListPageFragment
+import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageFragment
 
 class StorageListPageAdapter(
     manager: FragmentManager,

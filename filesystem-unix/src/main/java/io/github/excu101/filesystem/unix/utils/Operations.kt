@@ -14,9 +14,11 @@ fun unixDelete(
 fun unixCopy(
     sources: Set<Path>,
     dest: Path,
+    vararg options: FileOperation.Option,
 ): FileOperation = UnixCopyOperation(
     sources = sources,
-    dest = dest
+    dest = dest,
+    options = options
 )
 
 fun unixCreateSymbolicLink(

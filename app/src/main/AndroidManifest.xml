@@ -22,7 +22,7 @@
         android:theme="@style/Theme.VortexFileManager"
         tools:targetApi="31">
         <activity
-            android:name=".ui.screen.main.MainActivity"
+            android:name=".ui.screen.navigation.NavigationActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,13 +34,22 @@
         <service
             android:name=".service.VortexService"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:process=":remote">
             <intent-filter>
                 <action android:name="@string/vortex_service_action_name" />
             </intent-filter>
 
         </service>
+
+        <provider
+            android:name=".provider.storage.StorageDocumentProvider"
+            android:authorities="io.github.excu101.vortex.provider"
+            android:exported="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS"
+            android:grantUriPermissions="true">
+
+        </provider>
 
     </application>
 

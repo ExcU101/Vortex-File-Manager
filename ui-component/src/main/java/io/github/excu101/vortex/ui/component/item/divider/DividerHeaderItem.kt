@@ -2,12 +2,13 @@ package io.github.excu101.vortex.ui.component.item.divider
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updatePadding
 import com.google.android.material.divider.MaterialDivider
 import io.github.excu101.vortex.ui.component.ItemViewTypes
+import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.dsl.ItemScope
 import io.github.excu101.vortex.ui.component.list.adapter.Item
-import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
-import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 
 object DividerHeaderItem : Item<Unit>, ViewHolderFactory<DividerHeaderItem> {
 
@@ -18,10 +19,15 @@ object DividerHeaderItem : Item<Unit>, ViewHolderFactory<DividerHeaderItem> {
         get() = Unit
 
     override val type: Int
-        get() = ItemViewTypes.dividerItem
+        get() = ItemViewTypes.DividerItem
 
     override fun produceView(parent: ViewGroup): View {
-        return MaterialDivider(parent.context)
+        return MaterialDivider(parent.context).apply {
+            updatePadding(
+                top = 3.dp,
+                bottom = 3.dp
+            )
+        }
     }
 
 }

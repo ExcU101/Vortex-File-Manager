@@ -24,7 +24,7 @@ import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColor
 
 class StorageItemCreateBinding(
     context: Context,
-) : ViewBinding {
+) : ViewBinding<LinearLayout> {
 
     override val root = LinearLayout(context).apply {
         background = this@StorageItemCreateBinding.background

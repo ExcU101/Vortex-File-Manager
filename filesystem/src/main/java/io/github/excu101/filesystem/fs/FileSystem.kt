@@ -1,6 +1,8 @@
 package io.github.excu101.filesystem.fs
 
+import io.github.excu101.filesystem.fs.observer.PathObserverService
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import io.github.excu101.filesystem.fs.utils.FileSystemHelper
 
 abstract class FileSystem(
@@ -23,5 +25,7 @@ abstract class FileSystem(
     abstract fun isReadOnly(): Boolean
 
     abstract fun getPath(first: String, vararg other: String): Path
+
+    abstract fun newPathObserverService(): PathObserverService
 
 }

@@ -14,19 +14,16 @@ import com.google.android.material.shape.ShapeAppearanceModel.builder
 import com.google.android.material.shape.Shapeable
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
-import io.github.excu101.pluginsystem.utils.EmptyDrawable
-import io.github.excu101.vortex.ui.component.ThemeUDp
+import io.github.excu101.vortex.ui.component.ItemViewIds
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
 import io.github.excu101.vortex.ui.component.theme.key.*
-import kotlin.math.min
+import io.github.excu101.vortex.ui.component.themeMeasure
 
 class DrawerItemView(
     context: Context,
 ) : ThemeFrameLayout(context), Shapeable, RecyclableView<DrawerItem> {
 
-    private val desireWidth = ThemeUDp(drawerItemWidthKey)
-    private val desireHeight = ThemeUDp(drawerItemHeightKey)
     private val iconHorizontalPadding = 16.dp
     private val titleHorizontalPadding = 32.dp
     private val additionalTitleViewHeight = 2.dp
@@ -34,17 +31,17 @@ class DrawerItemView(
 
     private val rippleTintList = ColorStateList(
         arrayOf(
-            intArrayOf(android.R.attr.state_focused, android.R.attr.state_selected),
+//            intArrayOf(android.R.attr.state_focused, android.R.attr.state_selected),
             intArrayOf()
         ),
         intArrayOf(
-            ThemeColor(trailItemRippleSelectedTintColorKey),
+//            ThemeColor(trailItemRippleSelectedTintColorKey),
             ThemeColor(trailItemRippleTintColorKey)
         )
     )
 
     private val surface = MaterialShapeDrawable(
-        builder().setAllCorners(ROUNDED, 16F.dp).build()
+        builder().setAllCorners(ROUNDED, 0F.dp).build()
     ).apply {
         tintList = createShapeColorStateList()
     }
@@ -65,7 +62,7 @@ class DrawerItemView(
         }
 
     private val isEmptyIcon: Boolean
-        get() = icon?.let { it == EmptyDrawable } ?: true
+        get() = icon == null
 
     var title: CharSequence?
         get() = titleView.text
@@ -74,6 +71,7 @@ class DrawerItemView(
         }
 
     init {
+        id = ItemViewIds.DrawerItem
         isClickable = true
         isFocusable = true
 
@@ -99,22 +97,13 @@ class DrawerItemView(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec) // requires full width-size
-        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
-        val width = when (widthMode) {
-            MeasureSpec.EXACTLY -> widthSize
-            MeasureSpec.AT_MOST -> min(desireWidth, widthSize)
-            else -> widthSize
-        } + paddingRight + paddingLeft
-
-        val height = when (heightMode) {
-            MeasureSpec.EXACTLY -> heightSize
-            MeasureSpec.AT_MOST -> min(desireHeight, heightSize)
-            else -> desireHeight
-        } + paddingTop + paddingBottom
+        val (width, height) = themeMeasure(
+            widthMeasureSpec,
+            heightMeasureSpec,
+            drawerItemWidthKey,
+            drawerItemHeightKey
+        )
 
         setMeasuredDimension(width, height)
         val availableWidth = width - iconHorizontalPadding

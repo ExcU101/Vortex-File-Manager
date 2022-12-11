@@ -13,9 +13,9 @@ import io.github.excu101.vortex.ui.component.item.icon.ActionItem
 import io.github.excu101.vortex.ui.component.item.text.TextItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
-import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.theme.key.storageListBackgroundColorKey
-import io.github.excu101.vortex.utils.storageItem
+import io.github.excu101.vortex.utils.StorageItem
 
 class StorageListView(context: Context) : RecyclerView(context),
     CoordinatorLayout.AttachedBehavior, ThemeColorChangeListener {
@@ -23,9 +23,9 @@ class StorageListView(context: Context) : RecyclerView(context),
     private val behavior: StorageListViewBehavior = StorageListViewBehavior()
 
     private val adapter = ItemAdapter(
-        ItemViewTypes.textItem to (TextItem as ViewHolderFactory<Item<*>>),
-        ItemViewTypes.iconTextItem to (ActionItem as ViewHolderFactory<Item<*>>),
-        ItemViewTypes.storageItem to (PathItem as ViewHolderFactory<Item<*>>)
+        ItemViewTypes.TextItem to (TextItem as ViewHolderFactory<Item<*>>),
+        ItemViewTypes.IconTextItem to (ActionItem as ViewHolderFactory<Item<*>>),
+        ItemViewTypes.StorageItem to (PathItem as ViewHolderFactory<Item<*>>)
     )
 
     override fun setAdapter(adapter: Adapter<*>?) {

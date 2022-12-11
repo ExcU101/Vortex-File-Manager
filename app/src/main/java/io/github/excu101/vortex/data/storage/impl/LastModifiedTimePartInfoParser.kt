@@ -8,7 +8,7 @@ class LastModifiedTimePartInfoParser : PathItemPartInfoParser {
     override fun getPartInfo(item: PathItem): String? = if (item.isDirectory) {
         null
     } else {
-        item.lastModifiedTime.toNanos().toString()
+        item.lastModifiedTime.toString()
     }
 
 }

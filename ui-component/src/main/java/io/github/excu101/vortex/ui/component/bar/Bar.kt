@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.coordinatorlayout.widget.CoordinatorLayout.AttachedBehavior
 import androidx.core.view.children
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator

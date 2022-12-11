@@ -7,6 +7,21 @@ operator fun String.getValue(source: Any?, property: KProperty<*>): MimeType {
     return MimeType.from(extension = this)
 }
 
+inline val MimeType.isApplicationType
+    get() = type == "application"
+
+inline val MimeType.isTextType
+    get() = type == "text"
+
+inline val MimeType.isVideoType
+    get() = type == "video"
+
+inline val MimeType.isAudioType
+    get() = type == "audio"
+
+inline val MimeType.isImageType
+    get() = type == "image"
+
 val EmptyMimeType = object : MimeType {
     override val extension: String
         get() = ""

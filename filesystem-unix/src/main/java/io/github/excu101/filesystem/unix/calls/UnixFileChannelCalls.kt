@@ -3,7 +3,7 @@ package io.github.excu101.filesystem.unix.calls
 internal object UnixFileChannelCalls {
 
     init {
-        System.loadLibrary("unix-calls")
+        System.loadLibrary("unix-file-channel")
     }
 
     internal fun read(descriptor: Int, address: Long, count: Int) =

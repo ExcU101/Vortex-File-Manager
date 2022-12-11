@@ -167,7 +167,7 @@ class StandardStorageGridCell(
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onBind(item: PathItem) {
-        image = context.getDrawable(item.icon)
+        image = item.icon
         name = FormatterThemeText(
             key = fileListItemNameKey,
             item.name

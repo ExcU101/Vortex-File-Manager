@@ -3,9 +3,14 @@ package io.github.excu101.vortex.ui.component.bar
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.view.ViewPropertyAnimator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.item.ItemRecyclerView
 
 private const val STATE_SCROLLED_DOWN = 1

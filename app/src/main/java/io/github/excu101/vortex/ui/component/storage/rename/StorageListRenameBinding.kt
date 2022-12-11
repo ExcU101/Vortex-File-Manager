@@ -17,7 +17,7 @@ import io.github.excu101.vortex.ui.component.theme.key.accentColorKey
 
 class StorageListRenameBinding(
     context: Context,
-) : ViewBinding {
+) : ViewBinding<LinearLayout> {
 
     override val root = LinearLayout(context).apply {
         orientation = VERTICAL

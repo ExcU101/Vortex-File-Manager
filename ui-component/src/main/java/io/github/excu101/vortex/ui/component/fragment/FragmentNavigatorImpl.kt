@@ -39,14 +39,14 @@ class FragmentNavigatorImpl(
         args: Bundle,
         options: NavigationOptions?,
     ) {
-        navigate(factory = FragmentFactory.Default(fragmentClass), args = args, options = options)
+//        navigate(factory = FragmentFactory.Default(fragmentClass), args = args, options = options)
     }
 
-    override fun <T : Fragment> navigate(
-        factory: FragmentFactory<T>,
-        args: Bundle,
-        options: NavigationOptions?,
-    ) = navigate(factory.create(args), options)
+//    override fun <T : Fragment> navigate(
+//        factory: FragmentFactory<T>,
+//        args: Bundle,
+//        options: NavigationOptions?,
+//    ) = navigate(factory.create(args), options)
 
     override fun <T : Fragment> navigate(
         fragment: T,

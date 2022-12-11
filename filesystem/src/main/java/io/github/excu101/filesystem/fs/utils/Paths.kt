@@ -1,9 +1,15 @@
 package io.github.excu101.filesystem.fs.utils
 
+import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.fs.DirectoryStream
+import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.DirectoryProperties
 import io.github.excu101.filesystem.fs.attr.DirectoryPropertiesImpl
 import io.github.excu101.filesystem.fs.attr.size.Size
+import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
+import io.github.excu101.filesystem.fs.observer.PathObservableEventType
+import io.github.excu101.filesystem.fs.observer.PathObservableKey
+import io.github.excu101.filesystem.fs.observer.PathObserverService
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
@@ -20,6 +26,14 @@ fun Path.startsWith(prefix: String) = startsWith(system.getPath(first = prefix))
 
 fun Path.properties(): DirectoryProperties = DirectoryPropertiesImpl(directory = this)
 
+suspend fun Path.service(
+    vararg types: PathObservableEventType,
+): PathObserverService {
+    val service = FileProvider.newPathObserverService(scheme)
+    service.register(this, *types)
+    return service
+}
+
 @Suppress(names = ["UNCHECKED_CAST"])
 fun <P : Path> DirectoryStream<P>.toList(): List<P> {
     return use { stream ->
@@ -29,6 +43,10 @@ fun <P : Path> DirectoryStream<P>.toList(): List<P> {
         }
         return@use list
     }
+}
+
+inline fun <reified T : BasicAttrs> Path.attrs(): T {
+    return system.provider.readAttrs(this, T::class)
 }
 
 inline val Path.store
@@ -54,8 +72,8 @@ fun Path.channel(
         Options.Open.CreateNew
     ),
     mode: Int = defaultMode,
-) {
-    system.provider.newReactiveFileChannel(
+): AsyncFileChannel {
+    return system.provider.newReactiveFileChannel(
         path = this,
         flags = flags,
         mode = mode

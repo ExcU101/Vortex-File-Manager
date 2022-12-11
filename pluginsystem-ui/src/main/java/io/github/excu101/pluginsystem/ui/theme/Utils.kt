@@ -8,7 +8,7 @@ fun ThemeColor(key: String): Int {
 }
 
 fun ThemeColor(key: String, default: Color): Int {
-    return Theme.getOrReplace(key, default).value
+    return Theme.getOrInsert(key, default).value
 }
 
 fun ThemeDimen(key: String): Int {
@@ -16,7 +16,7 @@ fun ThemeDimen(key: String): Int {
 }
 
 fun ThemeDimen(key: String, default: Dimen): Int {
-    return Theme.getOrReplace(key, default).value
+    return Theme.getOrInsert(key, default).value
 }
 
 fun ThemeIcon(key: String): Drawable {
@@ -24,7 +24,7 @@ fun ThemeIcon(key: String): Drawable {
 }
 
 fun ThemeIcon(key: String, default: Icon): Drawable {
-    return Theme.getOrReplace(key, default).value
+    return Theme.getOrInsert(key, default).value
 }
 
 fun ThemeText(key: String): String {
@@ -36,7 +36,7 @@ fun FormatterThemeText(key: String, vararg values: Any?): String {
 }
 
 fun ThemeText(key: String, default: Text): String {
-    return Theme.getOrReplace(key, default).value
+    return Theme.getOrInsert(key, default).value
 }
 
 inline fun <H, reified T : DataHolder<H>> Theme(key: String) = Theme.get<H, T>(key)

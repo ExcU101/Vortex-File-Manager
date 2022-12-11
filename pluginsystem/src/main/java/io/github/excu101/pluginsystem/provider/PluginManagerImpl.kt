@@ -1,61 +1,27 @@
 package io.github.excu101.pluginsystem.provider
 
-import io.github.excu101.pluginsystem.PluginSystemConfigurationRegister
-import io.github.excu101.pluginsystem.model.GroupAction
-import io.github.excu101.pluginsystem.model.Plugin
-import io.github.excu101.pluginsystem.provider.impl.GroupManagerImpl
-import io.github.excu101.pluginsystem.utils.asPluginsUrl
-import java.io.File
+import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.pluginsystem.model.plugin.Plugin
 
-object PluginManagerImpl {
+internal object PluginManagerImpl {
 
-    const val pluginClassName = "io.github.excu101.pluginsystem.model.Plugin"
+    const val pluginClassName = "io.github.excu101.pluginsystem.model.plugin.Plugin"
     const val pluginExtensionName = "jar"
 
     private val _plugins: MutableSet<Plugin> = mutableSetOf()
-    val plugins: Set<Plugin>
-        get() = _plugins
+    val plugins: List<Plugin>
+        get() = _plugins.toList()
 
-    fun load(path: String) = load(File(path))
+    val loadedPlugins: List<Plugin>
+        get() = listOf()
 
-    fun getPlugin(group: GroupAction) {
-        (Managers.Group as GroupManagerImpl).getPlugin(group)
+    fun loadPlugin(path: Path): String {
+        return ""
     }
 
-    fun checkPluginDirectory(): Boolean =
-        File(PluginSystemConfigurationRegister.configuration.pluginDirectory).exists()
+    fun loadPlugins() {
 
-    fun createPluginDirectory(): Boolean =
-        File(PluginSystemConfigurationRegister.configuration.pluginDirectory).mkdirs()
-
-    fun readPlugins() {
-        load(File(PluginSystemConfigurationRegister.configuration.pluginDirectory))
     }
 
-    fun readOrCreatePluginDirectory() {
-        if (!checkPluginDirectory()) {
-            createPluginDirectory()
-        } else {
-            readPlugins()
-        }
-    }
 
-    fun load(path: File) {
-        javaClass.classLoader?.let { loader ->
-            PluginLoader(
-                urls = path.asPluginsUrl().toTypedArray(),
-                loader
-            ).getPlugins().forEach { it?.let { plugin -> activate(plugin) } }
-        }
-    }
-
-    fun activate(plugin: Plugin) {
-        _plugins.add(plugin)
-        plugin.activate()
-    }
-
-    fun disable(plugin: Plugin) {
-        _plugins.remove(plugin)
-        plugin.disable()
-    }
 }

@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
-import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.utils.trailItem
+import io.github.excu101.vortex.utils.TrailItem
 
 class TrailAdapter : ItemAdapter<PathItem>(
-    ItemViewTypes.trailItem to Factory
+    ItemViewTypes.TrailItem to Factory
 ) {
 
     private var selected: Int = -1
@@ -22,12 +22,12 @@ class TrailAdapter : ItemAdapter<PathItem>(
         notifyItemChanged(old)
     }
 
-    override fun getItemViewType(position: Int): Int = ItemViewTypes.trailItem
+    override fun getItemViewType(position: Int): Int = ItemViewTypes.TrailItem
 
     override fun onBindViewHolder(holder: ViewHolder<PathItem>, position: Int) {
-        super.onBindViewHolder(holder, position)
         holder as TrailViewHolder
-        holder.isArrowVisible = position != itemCount - 1
+        super.onBindViewHolder(holder, position)
+        holder.isArrowVisible = holder.bindingAdapterPosition != list.lastIndex
     }
 
     override fun isSelected(position: Int) = selected == position

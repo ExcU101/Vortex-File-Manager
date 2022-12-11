@@ -1,28 +1,20 @@
 package io.github.excu101.vortex.ui.component.list.adapter
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.Callback
+import androidx.recyclerview.widget.DiffUtil.calculateDiff
 import io.github.excu101.vortex.ui.component.list.adapter.diff.ItemDiffer
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ClickListenerRegister
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListener
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewLongListener
-import io.github.excu101.vortex.ui.component.list.adapter.selection.Selection
 import io.github.excu101.vortex.ui.component.list.adapter.selection.SelectionAdapter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
-
-interface ViewHolderFactory<T> {
-    fun produceView(parent: ViewGroup): View
-
-    // Default impl
-    fun produceViewHolder(child: View): ViewHolder<T> {
-        return ViewHolder(child)
-    }
-}
+import kotlinx.coroutines.channels.consumeEach
 
 class UnsupportedViewTypeException(
     viewType: Int,
@@ -39,9 +31,9 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         setHasStableIds(true)
     }
 
-    protected val _selection = Selection<T>()
-    val selection: Iterable<T>
-        get() = _selection
+    protected val selection = mutableSetOf<T>()
+//    val selection: Iterable<T>
+//        get() = _selection
 
     // key: viewType, value: viewHolder factory
     private val factories = mutableMapOf<Int, ViewHolderFactory<T>>()
@@ -63,17 +55,16 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
     }
 
     @OptIn(ObsoleteCoroutinesApi::class)
-    private val refresher =
-        scope.actor<Pair<DiffUtil.Callback, List<T>>>(capacity = Channel.CONFLATED) {
-            for ((differ, items) in channel) {
-                val result = DiffUtil.calculateDiff(differ)
-                withContext(SupervisorJob() + Dispatchers.Main) {
-                    adapterList.clear()
-                    adapterList.addAll(items)
-                    result.dispatchUpdatesTo(this@ItemAdapter)
-                }
+    private val refresher = scope.actor<Pair<Callback, List<T>>>(capacity = Channel.CONFLATED) {
+        consumeEach { (differ, items) ->
+            val result = calculateDiff(differ)
+            withContext(SupervisorJob() + Dispatchers.Main) {
+                adapterList.clear()
+                adapterList.addAll(items)
+                result.dispatchUpdatesTo(this@ItemAdapter)
             }
         }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         return factories[viewType]?.let { factory ->
@@ -87,10 +78,10 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         holder.bind(item)
         holder.bindSelection(isSelected)
         holder.bindListener { view ->
-            notify(view, item, holder.bindingAdapterPosition)
+            notify(view, item, holder.absoluteAdapterPosition)
         }
         holder.bindLongListener { view ->
-            notifyLong(view, item, holder.bindingAdapterPosition)
+            notifyLong(view, item, holder.absoluteAdapterPosition)
         }
     }
 
@@ -113,26 +104,27 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
 
     override fun select(item: T) {
         if (isSelected(item)) {
-            _selection.remove(item)
+            selection.remove(item)
         } else {
-            _selection.add(item)
+            selection.add(item)
         }
 
         changed(item, selectionPayload)
     }
 
     override fun replaceSelected(selected: List<T>) {
-        if (selected == _selection) return
+
+        if (selected == selection) return
         if (selected.isEmpty()) {
-            _selection.removeAll { item ->
+            selection.removeAll { item ->
                 changed(item, selectionPayload)
                 true
             }
         }
 
-        _selection.removeAll {
-            if (it !in selected) {
-                changed(it, selectionPayload)
+        selection.removeAll { item ->
+            if (item !in selected) {
+                changed(item, selectionPayload)
                 true
             } else {
                 false
@@ -140,10 +132,9 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         }
 
         for (newItem in selected) {
-            if (newItem !in _selection) {
-                if (_selection.add(newItem)) {
-                    changed(newItem, selectionPayload)
-                }
+            if (!selection.contains(newItem)) {
+                selection.add(newItem)
+                changed(newItem, selectionPayload)
             }
         }
     }
@@ -153,7 +144,7 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
     }
 
     open fun isSelected(item: T): Boolean {
-        return _selection.contains(item)
+        return selection.contains(item)
     }
 
     override fun contains(item: T): Boolean {
@@ -163,6 +154,8 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
     override fun getItemId(position: Int): Long = item(position).id
 
     fun getItem(id: Long) = list.find { item -> item.id == id }
+
+    fun getSelectedCount(): Int = selection.size
 
     override fun getItemCount(): Int = adapterList.size
 
@@ -218,7 +211,7 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         differ = ItemDiffer(list, items)
     )
 
-    override fun replace(items: List<T>, differ: DiffUtil.Callback?) {
+    override fun replace(items: List<T>, differ: Callback?) {
         if (adapterList == items) return
 
         if (differ == null) {
@@ -260,4 +253,16 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         return clicked
     }
 
+}
+
+fun <T : Item<*>> ItemAdapter<T>.register(listener: ItemViewListener<Item<*>>) {
+    register(listener as ItemViewListener<T>)
+}
+
+fun <T : Item<*>> ItemAdapter<T>.registerLong(listener: ItemViewLongListener<Item<*>>) {
+    registerLong(listener as ItemViewLongListener<T>)
+}
+
+infix fun <T> Int.with(factory: ViewHolderFactory<*>): Pair<Int, ViewHolderFactory<T>> {
+    return Pair(this, factory as ViewHolderFactory<T>)
 }

@@ -13,7 +13,7 @@ import io.github.excu101.vortex.ui.component.item.icon.ActionItem
 import io.github.excu101.vortex.ui.component.item.text.TextItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
-import io.github.excu101.vortex.ui.component.list.adapter.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 
 class BottomNavigationDrawerLayout(
     context: Context,
@@ -23,10 +23,10 @@ class BottomNavigationDrawerLayout(
 
     private val navigation = ItemRecyclerView(
         context,
-        ItemViewTypes.textItem to (TextItem as ViewHolderFactory<Item<*>>),
-        ItemViewTypes.iconTextItem to (ActionItem as ViewHolderFactory<Item<*>>),
-        ItemViewTypes.drawerItem to (DrawerItem as ViewHolderFactory<Item<*>>),
-        ItemViewTypes.dividerItem to (DividerHeaderItem as ViewHolderFactory<Item<*>>),
+        ItemViewTypes.TextItem to (TextItem as ViewHolderFactory<Item<*>>),
+        ItemViewTypes.IconTextItem to (ActionItem as ViewHolderFactory<Item<*>>),
+        ItemViewTypes.DrawerItem to (DrawerItem as ViewHolderFactory<Item<*>>),
+        ItemViewTypes.DividerItem to (DividerHeaderItem as ViewHolderFactory<Item<*>>),
     ).apply {
         layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
     }

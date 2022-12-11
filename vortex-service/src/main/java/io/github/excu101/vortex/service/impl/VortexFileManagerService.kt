@@ -3,7 +3,7 @@ package io.github.excu101.vortex.service.impl
 import android.content.Context
 import android.system.Os
 import io.github.excu101.filesystem.unix.UnixFileSystem
-import io.github.excu101.filesystem.unix.UnixFileSystemProvider
+import io.github.excu101.filesystem.unix.provider.UnixFileSystemProvider
 import io.github.excu101.vortex.VortexFileManagerService
 import io.github.excu101.vortex.service.VortexServiceDelegate
 import io.github.excu101.vortex.service.VortexServiceDelegateImpl

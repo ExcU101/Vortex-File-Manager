@@ -15,11 +15,11 @@ interface FragmentNavigator {
         options: NavigationOptions? = null,
     )
 
-    fun <T : Fragment> navigate(
-        factory: FragmentFactory<T>,
-        args: Bundle,
-        options: NavigationOptions? = null,
-    )
+//    fun <T : Fragment> navigate(
+//        factory: FragmentFactory<T>,
+//        args: Bundle,
+//        options: NavigationOptions? = null,
+//    )
 
     fun <T : Fragment> navigate(
         fragment: T,

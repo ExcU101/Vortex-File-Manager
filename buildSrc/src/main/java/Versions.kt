@@ -5,21 +5,22 @@ object Versions {
 
     // AndroidX
     const val coreVer = "1.9.0"
-    const val fragmentVer = "1.6.0-alpha02"
-    const val appcompatVer = "1.6.0-beta01"
+    const val fragmentVer = "1.6.0-alpha03"
+    const val appcompatVer = "1.7.0-alpha01"
     const val multidexVer = "2.0.1"
     const val collectionVer = "1.3.0-alpha02"
-    const val lifecycleVer = "2.6.0-alpha02"
+    const val lifecycleVer = "2.6.0-alpha03"
     const val navigationVer = "2.5.3"
 
     //UI
-    const val materialVer = "1.8.0-alpha01"
+    const val materialVer = "1.8.0-alpha02"
 
     // DI
-    const val hiltVer = "2.43.2"
+    const val hiltVer = "2.44.1"
 
-    const val kotlinVer = "1.7.20"
+    const val kotlinVer = "1.7.21"
     const val coroutinesVer = "1.6.4"
+    const val coilVer = "2.2.2"
 
     // Unit test
     const val junitVer = "4.13.2"
