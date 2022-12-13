@@ -1,10 +1,13 @@
 package io.github.excu101.vortex.service.utils
 
 import android.util.Log
-import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.unix.utils.*
+import io.github.excu101.filesystem.unix.utils.unixCreateDirectory
+import io.github.excu101.filesystem.unix.utils.unixCreateFile
+import io.github.excu101.filesystem.unix.utils.unixCreateSymbolicLink
+import io.github.excu101.filesystem.unix.utils.unixDelete
+import io.github.excu101.filesystem.unix.utils.unixRename
 import io.github.excu101.vortex.service.data.ParcelableFileOperation
 import io.github.excu101.vortex.service.data.ParcelablePath
 
@@ -40,12 +43,9 @@ fun parcelableUnixCreateDirectory(
 
 fun parcelableUnixCreateFile(
     source: Path,
-    flags: Set<FileOperation.Option> = setOf(
-        Options.Open.Write,
-        Options.Open.Read,
-        Options.Open.CreateNew,
-        Options.Open.Append
-    ),
+    flags: Int = Options.Open.CreateNew and Options.Open.Read and
+            Options.Open.Write and
+            Options.Open.Append,
     mode: Int = 777,
 ): ParcelableFileOperation {
     return object : ParcelableFileOperation() {

@@ -5,13 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.github.excu101.vortex.ui.component.item.drawer.DrawerItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
-import io.github.excu101.vortex.ui.component.list.adapter.listener.ClickListenerRegister
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListener
-import io.github.excu101.vortex.ui.component.list.adapter.register
 
 class ItemBottomDrawerFragment(
     vararg types: Pair<Int, ViewHolderFactory<Item<*>>>,

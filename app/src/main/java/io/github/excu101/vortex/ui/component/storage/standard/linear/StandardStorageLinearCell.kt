@@ -85,10 +85,10 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     private val iconView = object : AppCompatImageView(context) {
-//        override fun onDraw(canvas: Canvas) {
-//            super.onDraw(canvas)
-//            iconBadge.draw(canvas)
-//        }
+        override fun onDraw(canvas: Canvas) {
+            super.onDraw(canvas)
+            iconBadge.draw(canvas)
+        }
 
     }.apply {
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)

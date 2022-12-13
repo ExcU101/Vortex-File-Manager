@@ -3,7 +3,9 @@ package io.github.excu101.vortex
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.res.Configuration.*
+import android.content.res.Configuration.UI_MODE_NIGHT_MASK
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Build
 import androidx.multidex.MultiDexApplication
 import dagger.hilt.android.HiltAndroidApp

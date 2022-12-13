@@ -8,10 +8,11 @@ import io.github.excu101.filesystem.fs.attr.DirectoryPropertiesImpl
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
 import io.github.excu101.filesystem.fs.observer.PathObservableEventType
-import io.github.excu101.filesystem.fs.observer.PathObservableKey
 import io.github.excu101.filesystem.fs.observer.PathObserverService
-import io.github.excu101.filesystem.fs.operation.FileOperation
-import io.github.excu101.filesystem.fs.operation.option.Options
+import io.github.excu101.filesystem.fs.operation.option.Options.Open.Append
+import io.github.excu101.filesystem.fs.operation.option.Options.Open.CreateNew
+import io.github.excu101.filesystem.fs.operation.option.Options.Open.Read
+import io.github.excu101.filesystem.fs.operation.option.Options.Open.Write
 import io.github.excu101.filesystem.fs.path.Path
 import java.nio.charset.Charset
 import kotlin.text.Charsets.UTF_8
@@ -65,12 +66,7 @@ inline val Path.stream
     get() = system.provider.newDirectorySteam(path = this)
 
 fun Path.channel(
-    flags: Set<FileOperation.Option> = setOf(
-        Options.Open.Read,
-        Options.Open.Write,
-        Options.Open.Append,
-        Options.Open.CreateNew
-    ),
+    flags: Int = CreateNew and Read and Write and Append,
     mode: Int = defaultMode,
 ): AsyncFileChannel {
     return system.provider.newReactiveFileChannel(

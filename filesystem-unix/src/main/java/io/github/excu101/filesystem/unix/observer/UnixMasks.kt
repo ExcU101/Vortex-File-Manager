@@ -1,7 +1,5 @@
 package io.github.excu101.filesystem.unix.observer
 
-import io.github.excu101.filesystem.unix.observer.UnixMasks.maskWith
-
 object UnixMasks {
     const val POLL_IN = 0x0001
 //    const val POLL_IN = 0x0001

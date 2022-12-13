@@ -5,16 +5,15 @@ import android.system.OsConstants.O_EXCL
 import io.github.excu101.filesystem.fs.DirectoryStream
 import io.github.excu101.filesystem.fs.DirectoryStream.Filter
 import io.github.excu101.filesystem.fs.FileStore
-import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.EmptyAttrs
+import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
 import io.github.excu101.filesystem.fs.channel.Channel
 import io.github.excu101.filesystem.fs.channel.FileChannel
-import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
 import io.github.excu101.filesystem.fs.error.SystemCallException
-import io.github.excu101.filesystem.fs.operation.FileOperation.Option
 import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import io.github.excu101.filesystem.fs.utils.resolve
 import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.UnixDirectoryStream
@@ -23,6 +22,7 @@ import io.github.excu101.filesystem.unix.attr.UnixAttributes
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
 import io.github.excu101.filesystem.unix.channel.AsyncUnixFileChannel
 import io.github.excu101.filesystem.unix.channel.UnixFileChannel
+import io.github.excu101.filesystem.unix.observer.UnixMasks.maskWith
 import io.github.excu101.filesystem.unix.path.UnixPath
 import io.github.excu101.filesystem.unix.structure.UnixDirectoryEntryStructure
 import kotlinx.coroutines.flow.Flow
@@ -47,13 +47,13 @@ class UnixFileSystemProvider : FileSystemProvider() {
 
     override fun newReactiveFileChannel(
         path: Path,
-        flags: Set<Option>,
+        flags: Int,
         mode: Int,
     ): AsyncFileChannel {
-        val readable = flags.contains(Options.Open.Read)
-        val writable = flags.contains(Options.Open.Write)
-        val appendable = flags.contains(Options.Open.Append)
-        val createNew = flags.contains(Options.Open.CreateNew)
+        val readable = flags maskWith Options.Open.Read
+        val writable = flags maskWith Options.Open.Write
+        val appendable = flags maskWith Options.Open.Append
+        val createNew = flags maskWith Options.Open.CreateNew
 
         var cFlags = if (readable && writable) 2 else if (readable) 0 else 1
         if (appendable) {
@@ -75,11 +75,11 @@ class UnixFileSystemProvider : FileSystemProvider() {
         )
     }
 
-    override fun newFileChannel(path: Path, flags: Set<Option>, mode: Int): FileChannel {
-        val readable = flags.contains(Options.Open.Read)
-        val writable = flags.contains(Options.Open.Write)
-        val appendable = flags.contains(Options.Open.Append)
-        val createNew = flags.contains(Options.Open.CreateNew)
+    override fun newFileChannel(path: Path, flags: Int, mode: Int): FileChannel {
+        val readable = flags maskWith Options.Open.Read
+        val writable = flags maskWith Options.Open.Write
+        val appendable = flags maskWith Options.Open.Append
+        val createNew = flags maskWith Options.Open.CreateNew
 
         var cFlags = if (readable && writable) 2 else if (readable) 0 else 1
         if (appendable) {
@@ -103,7 +103,7 @@ class UnixFileSystemProvider : FileSystemProvider() {
         )
     }
 
-    override fun newByteChannel(path: Path, flags: Set<Option>, mode: Int): Channel {
+    override fun newByteChannel(path: Path, flags: Int, mode: Int): Channel {
         return newFileChannel(path, flags, mode = 777)
     }
 

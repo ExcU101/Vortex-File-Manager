@@ -1,9 +1,13 @@
 package io.github.excu101.filesystem.unix.utils
 
 import io.github.excu101.filesystem.fs.operation.FileOperation
-import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.unix.operation.*
+import io.github.excu101.filesystem.unix.operation.UnixCopyOperation
+import io.github.excu101.filesystem.unix.operation.UnixCreateDirectoryOperation
+import io.github.excu101.filesystem.unix.operation.UnixCreateFileOperation
+import io.github.excu101.filesystem.unix.operation.UnixCreateLinkOperation
+import io.github.excu101.filesystem.unix.operation.UnixDeleteOperation
+import io.github.excu101.filesystem.unix.operation.UnixRenameOperation
 
 fun unixDelete(
     data: Collection<Path>,
@@ -14,7 +18,7 @@ fun unixDelete(
 fun unixCopy(
     sources: Set<Path>,
     dest: Path,
-    vararg options: FileOperation.Option,
+    options: Int,
 ): FileOperation = UnixCopyOperation(
     sources = sources,
     dest = dest,
@@ -47,12 +51,7 @@ fun unixCreateDirectory(
 
 fun unixCreateFile(
     source: Path,
-    flags: Set<FileOperation.Option> = setOf(
-        Options.Open.CreateNew,
-        Options.Open.Read,
-        Options.Open.Write,
-        Options.Open.Append
-    ),
+    flags: Int,
     mode: Int = 777,
 ): FileOperation = UnixCreateFileOperation(
     source,

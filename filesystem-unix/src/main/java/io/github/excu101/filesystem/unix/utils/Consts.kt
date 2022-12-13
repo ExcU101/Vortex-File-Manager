@@ -25,7 +25,7 @@ internal const val S_IRGRP: Int = 32
 internal const val S_IWGRP: Int = 16
 internal const val S_IXGRP: Int = 8
 
-// Group
+// Other
 internal const val S_IROTH: Int = 4
 internal const val S_IWOTH: Int = 2
 internal const val S_IXOTH: Int = 1

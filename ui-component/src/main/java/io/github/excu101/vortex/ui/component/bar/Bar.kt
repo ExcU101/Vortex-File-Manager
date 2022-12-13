@@ -47,6 +47,8 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         type = CLOSE
     }
 
+    var isActionModeEnabled: Boolean = false
+
     private val horizontalPadding = 16.dp
     private val verticalPadding = 16.dp
     private val titleHorizontalPadding = 32.dp

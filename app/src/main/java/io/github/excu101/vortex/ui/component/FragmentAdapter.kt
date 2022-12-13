@@ -17,6 +17,8 @@ class FragmentAdapter : FragmentStateAdapter {
 
     private val stack = mutableListOf<Fragment>()
 
+    operator fun get(index: Int) = stack[index]
+
     override fun getItemCount(): Int = stack.size
 
     fun addFragment(fragment: Fragment) {

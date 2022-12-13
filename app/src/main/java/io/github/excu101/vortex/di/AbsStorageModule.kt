@@ -21,6 +21,6 @@ abstract class AbsStorageModule {
     @Binds
     abstract fun bindFileOperationActionHandler(
         impl: StorageOperationActionHandler,
-    ): FileOperationActionHandler
+    ): FileOperationActionHandler<String?>
 
 }

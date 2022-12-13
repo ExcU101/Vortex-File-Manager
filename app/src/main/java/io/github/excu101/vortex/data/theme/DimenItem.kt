@@ -9,15 +9,15 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class DimenItem(
     override val key: String,
-    override val value: io.github.excu101.pluginsystem.model.Dimen,
-) : ThemeItem<io.github.excu101.pluginsystem.model.Dimen>() {
+    override val value: Dimen,
+) : ThemeItem<Dimen>() {
 
-    companion object : Parceler<io.github.excu101.pluginsystem.model.Dimen> {
-        override fun create(parcel: Parcel): io.github.excu101.pluginsystem.model.Dimen {
-            return io.github.excu101.pluginsystem.model.Dimen(value = parcel.readInt())
+    companion object : Parceler<Dimen> {
+        override fun create(parcel: Parcel): Dimen {
+            return Dimen(value = parcel.readInt())
         }
 
-        override fun io.github.excu101.pluginsystem.model.Dimen.write(parcel: Parcel, flags: Int) {
+        override fun Dimen.write(parcel: Parcel, flags: Int) {
             parcel.writeInt(this.value)
         }
     }

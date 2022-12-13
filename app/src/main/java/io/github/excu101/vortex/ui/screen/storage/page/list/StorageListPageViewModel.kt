@@ -11,10 +11,17 @@ import io.github.excu101.filesystem.fs.observer.type.CreateEventType
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.observer
 import io.github.excu101.filesystem.fs.operation.option.Options
+import io.github.excu101.filesystem.fs.operation.option.Options.Copy.NoFollowLinks
+import io.github.excu101.filesystem.fs.operation.option.Options.Copy.ReplaceExists
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.asPath
 import io.github.excu101.filesystem.unix.observer.type.OpenedEventType
-import io.github.excu101.filesystem.unix.utils.*
+import io.github.excu101.filesystem.unix.utils.unixCopy
+import io.github.excu101.filesystem.unix.utils.unixCreateDirectory
+import io.github.excu101.filesystem.unix.utils.unixCreateFile
+import io.github.excu101.filesystem.unix.utils.unixCreateSymbolicLink
+import io.github.excu101.filesystem.unix.utils.unixDelete
+import io.github.excu101.filesystem.unix.utils.unixRename
 import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.pluginsystem.model.action
 import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
@@ -23,7 +30,12 @@ import io.github.excu101.pluginsystem.utils.action
 import io.github.excu101.vortex.base.impl.Filter
 import io.github.excu101.vortex.base.impl.Order
 import io.github.excu101.vortex.base.impl.Sorter
-import io.github.excu101.vortex.base.utils.*
+import io.github.excu101.vortex.base.utils.ViewModelContainerHandler
+import io.github.excu101.vortex.base.utils.intent
+import io.github.excu101.vortex.base.utils.logIt
+import io.github.excu101.vortex.base.utils.new
+import io.github.excu101.vortex.base.utils.side
+import io.github.excu101.vortex.base.utils.state
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.trail.TrailNavigator
 import io.github.excu101.vortex.provider.FileOperationActionHandler
@@ -35,9 +47,15 @@ import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl
 import io.github.excu101.vortex.ui.component.dsl.scope
 import io.github.excu101.vortex.ui.component.item.info.info
 import io.github.excu101.vortex.ui.component.item.text.text
-
 import io.github.excu101.vortex.ui.component.list.adapter.Item
-import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.theme.key.fileListLoadingInitiatingTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListWarningEmptyTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListWarningNotificationAccessActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListWarningNotificationAccessTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessTitleKey
 import io.github.excu101.vortex.ui.icon.Icons
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.DataResolver
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.Dialog.StorageAction
@@ -47,14 +65,19 @@ import io.github.excu101.vortex.utils.isAndroidR
 import io.github.excu101.vortex.utils.isAndroidTiramisu
 import io.github.excu101.vortex.utils.onTrue
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 
 @HiltViewModel
 class StorageListPageViewModel @Inject constructor(
     private val provider: StorageProvider,
     private val handle: SavedStateHandle,
-    private val handler: FileOperationActionHandler,
+    private val handler: FileOperationActionHandler<String?>,
 ) : ViewModelContainerHandler<State, SideEffect>(
     State(
         isLoading = true,
@@ -458,11 +481,15 @@ class StorageListPageViewModel @Inject constructor(
         )
     }
 
-    fun delete(
+    fun deleteItems(
         items: Set<PathItem> = selected.value.toSet(),
+    ) = delete(items.map(PathItem::value).toSet())
+
+    fun delete(
+        items: Set<Path>,
     ) = intent {
         FileProvider.runOperation(
-            operation = unixDelete(items.map(PathItem::value)),
+            operation = unixDelete(items),
             observer = observer(
                 onAction = { action ->
                     handler.resolveMessage(action)?.let { title ->
@@ -474,7 +501,7 @@ class StorageListPageViewModel @Inject constructor(
                 },
                 onComplete = {
                     current?.let { parseState(it) }
-                    deselect(items)
+                    deselect(items.map(::PathItem).toSet())
                 }
             )
         )
@@ -483,33 +510,29 @@ class StorageListPageViewModel @Inject constructor(
     fun rename(
         src: PathItem,
         dest: Path,
+    ) = rename(src = src.value, dest = dest)
+
+    fun rename(
+        src: Path,
+        dest: Path,
     ) {
-        FileProvider.runOperation(
-            operation = unixRename(src.value, dest),
-            observer = observer(
-                onAction = { action ->
-                    handler.resolveMessage(action)?.let { title ->
-                        message(title)
-                    }
-                },
-                onError = { error ->
-                    resolveErrorActions(error)
-                },
-                onComplete = {
-                    message("${src.name} successfully renamed to ${dest.getName()}")
-                    current?.let { navigateTo(it) }
-                }
-            )
+        operation(
+            operation = unixRename(src, dest),
+            onComplete = {
+                message("${src.getName()} successfully renamed to ${dest.getName()}")
+                current?.let { navigateTo(it) }
+            }
         )
     }
 
     fun createFile(
         path: Path,
         mode: Int,
-        flags: Set<FileOperation.Option> = setOf(
-            Options.Open.CreateNew
-        ),
+        flags: Int = Options.Open.CreateNew and Options.Open.Read and
+                Options.Open.Write and
+                Options.Open.Append,
     ) = intent {
+
         FileProvider.runOperation(
             operation = unixCreateFile(
                 source = path,
@@ -641,15 +664,41 @@ class StorageListPageViewModel @Inject constructor(
         }
     }
 
+    fun copy(
+        sources: Set<Path>,
+        dest: Path,
+        options: Int = NoFollowLinks and ReplaceExists
+    ) = intent {
+        operation(
+            operation = unixCopy(sources, dest, options),
+            onComplete = {
+                message("Elements copied to ${dest.getName()}")
+            }
+        )
+    }
+
+    fun cut(
+        sources: Set<Path>,
+        dest: Path,
+        options: Int = NoFollowLinks and ReplaceExists
+    ) = intent {
+        operation(
+            operation = unixCopy(sources, dest, options),
+            onComplete = {
+                message("Elements cut to ${dest.getName()}")
+            }
+        )
+    }
+
     fun performTask(position: Int) {
         when (val task = provider.tasks.getOrNull(position)) {
             is CopyTask -> {
-                val dest = current!!
-                operation(
-                    operation = unixCopy(task.sources, dest.value),
-                    onComplete = {
-                        message("Elements copied to ${dest.name}")
-                    }
+                val dest = current!!.value
+                val sources = task.sources
+
+                copy(
+                    sources = sources,
+                    dest = dest
                 )
             }
         }

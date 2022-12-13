@@ -4,9 +4,9 @@ import io.github.excu101.filesystem.fs.DirectoryStream
 import io.github.excu101.filesystem.fs.DirectoryStream.Filter
 import io.github.excu101.filesystem.fs.FileStore
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
+import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
 import io.github.excu101.filesystem.fs.channel.Channel
 import io.github.excu101.filesystem.fs.channel.FileChannel
-import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.FileOperationObserver
 import io.github.excu101.filesystem.fs.path.Path
@@ -31,13 +31,13 @@ abstract class FileSystemProvider {
 
     abstract fun newFileChannel(
         path: Path,
-        flags: Set<FileOperation.Option>,
+        flags: Int,
         mode: Int,
     ): FileChannel
 
     abstract fun newByteChannel(
         path: Path,
-        flags: Set<FileOperation.Option>,
+        flags: Int,
         mode: Int,
     ): Channel
 
@@ -54,7 +54,7 @@ abstract class FileSystemProvider {
 
     abstract fun newReactiveFileChannel(
         path: Path,
-        flags: Set<FileOperation.Option> = setOf(),
+        flags: Int,
         mode: Int,
     ): AsyncFileChannel
 

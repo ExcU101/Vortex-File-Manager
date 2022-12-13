@@ -5,9 +5,6 @@ abstract class FileOperation {
     // Interface marker
     interface Action
 
-    // Interface marker
-    interface Option
-
     private val _observers: MutableList<FileOperationObserver> = mutableListOf()
     protected val observes: List<FileOperationObserver>
         get() = _observers
@@ -35,9 +32,7 @@ abstract class FileOperation {
     }
 
     protected fun completion() {
-        observes.forEach { observer ->
-            observer.onComplete()
-        }
+        observes.forEach(FileOperationObserver::onComplete)
     }
 
 }

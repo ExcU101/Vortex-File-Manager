@@ -1,13 +1,12 @@
 package io.github.excu101.filesystem.unix.operation
 
-import android.system.OsConstants.*
+import android.system.OsConstants
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.CopyAction
 import io.github.excu101.filesystem.fs.utils.flow
 import io.github.excu101.filesystem.unix.UnixCalls
-import io.github.excu101.filesystem.unix.UnixCalls.stat
 import io.github.excu101.filesystem.unix.observer.UnixMasks.maskWith
 import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
 import io.github.excu101.filesystem.unix.utils.S_IFDIR
@@ -17,8 +16,7 @@ import io.github.excu101.filesystem.unix.utils.S_IFREG
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 
-// TODO: Add more optimizations
-internal class UnixCopyOperation(
+internal class UnixCutOperation(
     private var sources: Set<Path>,
     private val dest: Path,
     options: Int,
@@ -32,10 +30,16 @@ internal class UnixCopyOperation(
             action(CopyAction(source, dest))
             resolveOp(source)
         }
+        UnixDeleteOperation(sources).perform()
         completion()
     }
 
-    private suspend inline fun resolveOp(source: Path) = with(stat(source.bytes, noFollowLinks)) {
+    private suspend inline fun resolveOp(source: Path) = with(
+        UnixCalls.stat(
+            source.bytes,
+            noFollowLinks
+        )
+    ) {
         when (mode and S_IFMT) {
             S_IFDIR -> copyDir(
                 source = source,
@@ -54,6 +58,7 @@ internal class UnixCopyOperation(
 
             else -> {}
         }
+
     }
 
     @Suppress("NOTHING_TO_INLINE")
@@ -62,7 +67,7 @@ internal class UnixCopyOperation(
 
         val sourceFileDescriptor = UnixCalls.open(
             path = source.bytes,
-            flags = O_RDONLY,
+            flags = OsConstants.O_RDONLY,
             mode = 0
         )
 
@@ -71,9 +76,9 @@ internal class UnixCopyOperation(
             return
         }
 
-        var destFlags = O_WRONLY or O_CREAT or O_TRUNC
+        var destFlags = OsConstants.O_WRONLY or OsConstants.O_CREAT or OsConstants.O_TRUNC
         if (replaceExists) {
-            destFlags = destFlags or O_EXCL
+            destFlags = destFlags or OsConstants.O_EXCL
         }
         val destFileDescriptor = UnixCalls.open(
             path = dest.bytes,

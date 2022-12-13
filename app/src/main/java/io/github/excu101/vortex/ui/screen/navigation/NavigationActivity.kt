@@ -25,6 +25,7 @@ import io.github.excu101.vortex.service.VortexService
 import io.github.excu101.vortex.ui.component.BarOwner
 import io.github.excu101.vortex.ui.component.FragmentAdapter
 import io.github.excu101.vortex.ui.component.bar.Bar
+import io.github.excu101.vortex.ui.component.callSelection
 import io.github.excu101.vortex.ui.component.item.drawer.DrawerItem
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListener
 import io.github.excu101.vortex.ui.component.theme.key.vortexServiceConnectedKey
@@ -78,16 +79,19 @@ class NavigationActivity : AppCompatActivity(),
         startVortexService()
         adapter = FragmentAdapter(fragment = this)
         binding = NavigationPageBinding(context = this, adapter = adapter!!)
+        binding?.onCreate()
         adapter?.addFragment(StorageListPageFragment())
         binding?.pager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-
+            override fun onPageSelected(position: Int) {
+                adapter?.get(position).callSelection()
+            }
         })
         Theme.attachCallback(callback = this)
         Theme.registerColorChangeListener(listener = this)
 
         isDarkTheme = resources.configuration.uiMode and UI_MODE_NIGHT_MASK == UI_MODE_NIGHT_YES
 
-        setContentView(binding?.onCreate())
+        setContentView(binding?.root)
     }
 
     override fun onStart() {

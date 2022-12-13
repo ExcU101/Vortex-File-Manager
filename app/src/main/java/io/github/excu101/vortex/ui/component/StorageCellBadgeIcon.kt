@@ -2,11 +2,16 @@ package io.github.excu101.vortex.ui.component
 
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.ColorFilter
+import android.graphics.Paint
 import android.graphics.Paint.*
+import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import androidx.annotation.FloatRange
 import androidx.core.graphics.drawable.toBitmap
+import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconSelectedTintColorKey
 import io.github.excu101.vortex.ui.icon.Icons
 
 class StorageCellBadgeIcon(
@@ -16,7 +21,7 @@ class StorageCellBadgeIcon(
 
     private val backgroundPaint = Paint().apply {
         isAntiAlias = true
-        color = Color.BLUE
+        color = ThemeColor(storageListItemIconSelectedTintColorKey)
     }
 
     private val paint = Paint(ANTI_ALIAS_FLAG or DITHER_FLAG or FILTER_BITMAP_FLAG)
@@ -61,27 +66,33 @@ class StorageCellBadgeIcon(
         if (isBookmarked) {
             val x = iconWidth / 2
             val y = iconHeight / 2
+
             Icons.Rounded.Bookmark?.toBitmap(
                 x,
                 y,
             )?.let { icon ->
-                canvas.drawBitmap(icon,
+                canvas.drawBitmap(
+                    icon,
                     0F,
                     0F,
-                    paint
+                    null
                 )
             }
         }
         if (isSelected) {
             val x = iconWidth / 2
             val y = iconHeight / 2
+            canvas.drawCircle(
+                x.toFloat() + y / 4, y.toFloat() + y / 4, 8F.dp, backgroundPaint
+            )
             Icons.Rounded.Check?.toBitmap(
-                x,
-                y,
+                x / 2,
+                y / 2,
             )?.let { icon ->
-                canvas.drawBitmap(icon,
-                    0F,
-                    0F,
+                canvas.drawBitmap(
+                    icon,
+                    x.toFloat() / 2 + x / 2,
+                    y.toFloat() / 2 + y / 2,
                     paint
                 )
             }

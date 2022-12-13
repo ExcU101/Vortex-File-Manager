@@ -3,7 +3,6 @@ package io.github.excu101.vortex.service.remote
 import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import io.github.excu101.vortex.service.data.ParcelableFileOperation
 import io.github.excu101.vortex.service.data.ParcelableFileOperationObserver
-import io.github.excu101.vortex.service.data.ParcelableOption
 import io.github.excu101.vortex.service.data.ParcelablePath
 
 class VortexFileSystemProvider(
@@ -32,13 +31,13 @@ class VortexFileSystemProvider(
 
     override fun newReactiveFileChannel(
         path: ParcelablePath,
-        flags: List<ParcelableOption>,
+        flags: Int,
         mode: Int,
     ): RemoteReactiveFileChannel {
         return VortexReactiveFileChannel(
             local = local.newReactiveFileChannel(
                 path = path.src,
-                flags = flags.toSet(),
+                flags = flags,
                 mode = mode
             )
         )

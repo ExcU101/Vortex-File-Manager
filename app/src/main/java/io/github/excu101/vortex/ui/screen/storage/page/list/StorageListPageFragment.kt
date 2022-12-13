@@ -49,6 +49,14 @@ import io.github.excu101.vortex.navigation.dsl.Arguments
 import io.github.excu101.vortex.navigation.dsl.FragmentFactory
 import io.github.excu101.vortex.navigation.navigator.FragmentNavigator
 import io.github.excu101.vortex.navigation.utils.NavigationController
+import io.github.excu101.vortex.provider.command.Command
+import io.github.excu101.vortex.provider.command.CommandConsumer
+import io.github.excu101.vortex.provider.command.CopyFilesCommand
+import io.github.excu101.vortex.provider.command.CreateDirectoryCommand
+import io.github.excu101.vortex.provider.command.CreateFileCommand
+import io.github.excu101.vortex.provider.command.CutFilesCommand
+import io.github.excu101.vortex.provider.command.DeleteFilesCommand
+import io.github.excu101.vortex.provider.command.RenameFileCommand
 import io.github.excu101.vortex.provider.contract.Contracts
 import io.github.excu101.vortex.provider.contract.Contracts.Permission
 import io.github.excu101.vortex.provider.contract.Contracts.RestrictedDirectoriesAccess
@@ -79,7 +87,9 @@ import io.github.excu101.vortex.utils.*
 class StorageListPageFragment : Fragment(),
     MenuActionListener,
     DrawerActionListener,
-    ThemeColorChangeListener, ItemViewListener<Item<*>>, ItemViewLongListener<Item<*>> {
+    ThemeColorChangeListener, ItemViewListener<Item<*>>, ItemViewLongListener<Item<*>>,
+    CommandConsumer,
+    FragmentSelection {
 
     companion object : FragmentFactory<StorageListPageFragment> {
         override fun createFragment(): StorageListPageFragment = StorageListPageFragment()
@@ -310,6 +320,7 @@ class StorageListPageFragment : Fragment(),
                             Arguments(CreatePage.ParentDirectoryKey to dialog.parent)
                         )
                     }
+
                     is StorageAction -> {
                         if (lastDialog != null) {
                             lastDialog?.dismiss()
@@ -457,9 +468,7 @@ class StorageListPageFragment : Fragment(),
         view: View,
     ) {
         when (action.title) {
-            ThemeText(storageListOperationOpenTitleKey) -> {
-                viewModel.navigateTo(item)
-            }
+            ThemeText(storageListOperationOpenTitleKey) -> viewModel.navigateTo(item)
 
             ThemeText(storageListOperationAddActionNewTitleKey) -> {
                 if (lastDialog != null) {
@@ -468,9 +477,8 @@ class StorageListPageFragment : Fragment(),
                 viewModel.dialog(StorageItemCreate(item))
             }
 
-            ThemeText(storageListOperationCopyPathTitleKey) -> {
-                viewModel.copyPath(item)
-            }
+            ThemeText(storageListOperationCopyPathTitleKey) -> viewModel.copyPath(item)
+
 
             ThemeText(storageListOperationRenameActionTitleKey) -> {
                 StorageListRenameDialog(
@@ -496,13 +504,9 @@ class StorageListPageFragment : Fragment(),
                 }
             }
 
-            ThemeText(storageListOperationCopyActionTitleKey) -> {
-                viewModel.task(CopyTask(setOf(item.value)))
-            }
+            ThemeText(storageListOperationCopyActionTitleKey) -> viewModel.task(CopyTask(setOf(item.value)))
 
-            ThemeText(storageListOperationDeleteActionTitleKey) -> {
-                viewModel.delete(setOf(item))
-            }
+            ThemeText(storageListOperationDeleteActionTitleKey) -> viewModel.deleteItems(setOf(item))
 
             "Add watcher" -> {
                 viewModel.watcher(item)
@@ -522,18 +526,14 @@ class StorageListPageFragment : Fragment(),
         view: View,
     ) {
         when (action.title) {
-            ThemeText(storageListOperationDeleteActionTitleKey) -> {
-                viewModel.delete()
-            }
+            ThemeText(storageListOperationDeleteActionTitleKey) -> viewModel.deleteItems()
 
             ThemeText(storageListOperationCopyActionTitleKey) -> {
                 viewModel.task(CopyTask(viewModel.selected.value.map { it.value }.toSet()))
                 viewModel.deselectAll()
             }
 
-            "Deselect" -> {
-                viewModel.deselect(viewModel.selected.value.toSet())
-            }
+            "Deselect" -> viewModel.deselect(viewModel.selected.value.toSet())
         }
     }
 
@@ -551,78 +551,42 @@ class StorageListPageFragment : Fragment(),
                 }
             }
 
-            ThemeText(fileListMoreSelectAllActionTitleKey) -> {
-                viewModel.selectAll()
-            }
+            ThemeText(fileListMoreSelectAllActionTitleKey) -> viewModel.selectAll()
 
-            ThemeText(fileListMoreDeselectAllActionTitleKey) -> {
-                viewModel.deselectAll()
-            }
+            ThemeText(fileListMoreDeselectAllActionTitleKey) -> viewModel.deselectAll()
 
-            ThemeText(fileListMoreNavigateLeftActionTitleKey) -> {
-                viewModel.navigateLeft()
-            }
+            ThemeText(fileListMoreNavigateLeftActionTitleKey) -> viewModel.navigateLeft()
 
-            ThemeText(fileListMoreNavigateRightActionTitleKey) -> {
-                viewModel.navigateRight()
-            }
+            ThemeText(fileListMoreNavigateRightActionTitleKey) -> viewModel.navigateRight()
 
-            ThemeText(fileListOrderAscendingActionTitleKey) -> {
-                viewModel.order(Order.ASCENDING)
-            }
+            ThemeText(fileListOrderAscendingActionTitleKey) -> viewModel.order(Order.ASCENDING)
 
-            ThemeText(fileListOrderDescendingActionTitleKey) -> {
-                viewModel.order(Order.DESCENDING)
-            }
+            ThemeText(fileListOrderDescendingActionTitleKey) -> viewModel.order(Order.DESCENDING)
 
-            ThemeText(fileListSortNameActionTitleKey) -> {
-                viewModel.sort(PathItemSorters.Name)
-            }
+            ThemeText(fileListSortNameActionTitleKey) -> viewModel.sort(PathItemSorters.Name)
 
-            ThemeText(fileListSortPathActionTitleKey) -> {
-                viewModel.sort(PathItemSorters.Path)
-            }
+            ThemeText(fileListSortPathActionTitleKey) -> viewModel.sort(PathItemSorters.Path)
 
-            ThemeText(fileListSortSizeActionTitleKey) -> {
-                viewModel.sort(PathItemSorters.Size)
-            }
+            ThemeText(fileListSortSizeActionTitleKey) -> viewModel.sort(PathItemSorters.Size)
 
-            ThemeText(fileListSortLastModifiedTimeActionTitleKey) -> {
-                viewModel.sort(PathItemSorters.LastModifiedTime)
-            }
+            ThemeText(fileListSortLastModifiedTimeActionTitleKey) -> viewModel.sort(PathItemSorters.LastModifiedTime)
 
-            ThemeText(fileListSortLastAccessTimeActionTitleKey) -> {
-                viewModel.sort(PathItemSorters.LastAccessTime)
-            }
+            ThemeText(fileListSortLastAccessTimeActionTitleKey) -> viewModel.sort(PathItemSorters.LastAccessTime)
 
-            ThemeText(fileListSortCreationTimeActionTitleKey) -> {
-                viewModel.sort(PathItemSorters.CreationTime)
-            }
+            ThemeText(fileListSortCreationTimeActionTitleKey) -> viewModel.sort(PathItemSorters.CreationTime)
 
             // Filter
-            ThemeText(fileListFilterOnlyFilesActionTitleKey) -> {
-                viewModel.filter(PathItemFilters.OnlyFile)
-            }
+            ThemeText(fileListFilterOnlyFilesActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyFile)
 
-            ThemeText(fileListFilterOnlyFoldersActionTitleKey) -> {
-                viewModel.filter(PathItemFilters.OnlyFolder)
-            }
+            ThemeText(fileListFilterOnlyFoldersActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyFolder)
 
-            ThemeText(fileListFilterOnlyVideoFileActionTitleKey) -> {
-                viewModel.filter(PathItemFilters.OnlyVideoFile)
-            }
+            ThemeText(fileListFilterOnlyVideoFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyVideoFile)
 
-            ThemeText(fileListFilterOnlyVideoFileActionTitleKey) -> {
-                viewModel.filter(PathItemFilters.OnlyApplicationFile)
-            }
+            ThemeText(fileListFilterOnlyVideoFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyApplicationFile)
 
-            ThemeText(fileListFilterOnlyImageFileActionTitleKey) -> {
-                viewModel.filter(PathItemFilters.OnlyImageFile)
-            }
+            ThemeText(fileListFilterOnlyImageFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyImageFile)
 
-            ThemeText(fileListFilterOnlyImageFileActionTitleKey) -> {
-                viewModel.filter(PathItemFilters.OnlyImageFile)
-            }
+            ThemeText(fileListFilterOnlyImageFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyImageFile)
 
             ThemeText(fileListMoreInfoActionTitleKey) -> {
                 viewModel.current?.let { current ->
@@ -635,17 +599,13 @@ class StorageListPageFragment : Fragment(),
                 }
             }
 
-            "Open tasks" -> {
-                viewModel.showTasks()
-            }
+            "Open tasks" -> viewModel.showTasks()
 
             "Create symbolic link" -> {
 
             }
 
-            "Shuffle list" -> {
-                viewModel.shuffle()
-            }
+            "Shuffle list" -> viewModel.shuffle()
 
             "Add random-name link" -> {
                 var item: Item<*>? = null
@@ -720,6 +680,42 @@ class StorageListPageFragment : Fragment(),
         }
     }
 
+    // Using as EventBus pattern
+    override fun consume(command: Command) {
+        when (command) {
+            is CreateFileCommand -> viewModel.createFile(
+                path = command.dest,
+                mode = command.mode
+            )
+
+            is CreateDirectoryCommand -> viewModel.createDirectory(
+                path = command.dest,
+                mode = command.mode
+            )
+
+            is DeleteFilesCommand -> viewModel.delete(
+                items = command.sources
+            )
+
+            is RenameFileCommand -> viewModel.rename(
+                src = command.source,
+                dest = command.dest
+            )
+
+            is CopyFilesCommand -> viewModel.copy(
+                sources = command.sources,
+                dest = command.dest,
+                options = command.options
+            )
+
+            is CutFilesCommand -> viewModel.cut(
+                sources = command.sources,
+                dest = command.dest,
+                options = command.options
+            )
+        }
+    }
+
     override fun onMenuActionCall(action: Action) {
         when (action.title) {
             ThemeText(fileListSearchActionTitleKey) -> {
@@ -744,13 +740,17 @@ class StorageListPageFragment : Fragment(),
         binding = null
         backPressed.isEnabled = false
         lastDialog = null
-        requireBar().setNavigationClickListener(null)
     }
 
     override fun onChanged() {
         val isLight = ThemeColor(trailSurfaceColorKey).luminance > 0.5F
         controller?.isAppearanceLightStatusBars = isLight
         controller?.isAppearanceLightNavigationBars = isLight
+    }
+
+    override fun onSelected() {
+        viewModel.current?.let { wrapBarTitle(it) }
+        viewModel.current?.let { wrapBarSubtitle(it) }
     }
 
 }

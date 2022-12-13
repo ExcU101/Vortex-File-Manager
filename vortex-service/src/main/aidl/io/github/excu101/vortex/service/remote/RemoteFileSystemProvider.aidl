@@ -4,7 +4,6 @@ import io.github.excu101.vortex.service.data.ParcelablePath;
 import io.github.excu101.vortex.service.remote.RemoteFileStore;
 import io.github.excu101.vortex.service.data.ParcelableFileOperation;
 import io.github.excu101.vortex.service.data.ParcelableFileOperationObserver;
-import io.github.excu101.vortex.service.data.ParcelableOption;
 import io.github.excu101.vortex.service.remote.RemoteReactiveFileChannel;
 
 interface RemoteFileSystemProvider {
@@ -19,7 +18,7 @@ interface RemoteFileSystemProvider {
 
     RemoteReactiveFileChannel newReactiveFileChannel(
         in ParcelablePath path,
-        in List<ParcelableOption> flags,
+        in int flags,
         int mode
     );
 
