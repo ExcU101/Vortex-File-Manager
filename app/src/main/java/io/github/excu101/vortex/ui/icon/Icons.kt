@@ -4,6 +4,11 @@ import io.github.excu101.vortex.R
 
 object Icons {
     object Rounded {
+        val Palette = IconInitializer[R.drawable.ic_palette_24]
+        val Build = IconInitializer[R.drawable.ic_build_24]
+        val Notifications = IconInitializer[R.drawable.ic_notifications_24]
+        val Tasks = IconInitializer[R.drawable.ic_tasks_24]
+        val AddBox = IconInitializer[R.drawable.ic_add_box_24]
         val CheckCircle = IconInitializer[R.drawable.ic_check_circle_24]
         val Check = IconInitializer[R.drawable.ic_check_24]
         val ViewColumn = IconInitializer[R.drawable.ic_view_column_24]

@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include "sys/uio.h"
 #include <jni.h>
-#include <cerrno>
+#include "errno.h"
 
 static void clearErrno() {
     errno = 0;

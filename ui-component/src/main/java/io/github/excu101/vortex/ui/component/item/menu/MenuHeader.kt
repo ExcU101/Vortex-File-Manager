@@ -50,7 +50,7 @@ class MenuHeader(context: Context) : ThemeFrameLayout(context) {
 
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
 
     }
 

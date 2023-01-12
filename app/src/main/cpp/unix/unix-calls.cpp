@@ -4,12 +4,14 @@
 #include <cerrno>
 #include "mntent.h" // Mount entry
 #include "../log.h"
-#include "../jni-classes.cpp"
+#include "../jni/jni_classes.cpp"
 #include "sys/sendfile.h"
 #include "fcntl.h"
-#include "attrs.cpp"
 #include "sys/socket.h"
-#include "operations.cpp"
+#include "operations.сpp"
+#include "sys/syscall.h"
+#include "status/status.h"
+#include <jni.h>
 
 static void clearErrno() {
     errno = 0;
@@ -67,7 +69,7 @@ static jobject doStat(
         bool isLinkStatus
 ) {
     struct stat64 status = {};
-    isLinkStatus ? isLinkExists(path, &status) : isExists(path, &status);
+    isLinkStatus ? lstat64(path, &status) : isExists(path, &status);
     free(path);
 
     return getUnixStatusStructure(env, status);
@@ -83,8 +85,7 @@ static jobject doStat(
     return getUnixStatusStructure(env, status);
 }
 
-extern "C"
-JNIEXPORT jlong JNICALL
+extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_allocateImpl(
         JNIEnv *env,
         jobject thiz,
@@ -96,8 +97,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_allocateImpl(
     return result;
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_lstatImpl(
         JNIEnv *env,
         jobject thiz,
@@ -107,8 +108,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_lstatImpl(
     return doStat(env, cPath, true);
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl__Ljava_io_FileDescriptor_2(
         JNIEnv *env,
         jobject thiz,
@@ -117,8 +118,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl__Ljava_io_FileDescrip
     return doStat(env, getIndexFromFileDescriptor(env, descriptor));
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl__I(
         JNIEnv *env,
         jobject thiz,
@@ -127,8 +128,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_fstatImpl__I(
     return doStat(env, descriptor);
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_statImpl(
         JNIEnv *env,
         jobject thiz,
@@ -138,8 +139,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_statImpl(
     return doStat(env, cPath, false);
 }
 
-extern "C"
-JNIEXPORT jint JNICALL
+
+extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl__IJ(
         JNIEnv *env,
         jobject thiz,
@@ -153,8 +154,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl__IJ(
     return result;
 }
 
-extern "C"
-JNIEXPORT jint JNICALL
+
+extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl___3BJ(
         JNIEnv *env,
         jobject thiz,
@@ -176,8 +177,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl___3BJ(
     return result;
 }
 
-extern "C"
-JNIEXPORT jlong JNICALL
+
+extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_lseekImpl(
         JNIEnv *env,
         jobject thiz,
@@ -199,8 +200,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_lseekImpl(
     return result;
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_removeDirectory(
         JNIEnv *env,
         jobject thiz,
@@ -217,8 +218,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_removeDirectory(
     }
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_unlink(
         JNIEnv *env,
         jobject thiz,
@@ -234,8 +235,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_unlink(
     free(cPath);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_closeDir(
         JNIEnv *env,
         jobject thiz,
@@ -257,8 +258,8 @@ jlong openDirectory(
     return (jlong) pointer;
 }
 
-extern "C"
-JNIEXPORT jlong JNICALL
+
+extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_openDir(
         JNIEnv *env,
         jobject thiz,
@@ -298,8 +299,8 @@ static jobject newLinuxDirectoryEntryStruct(
     );
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_linux_LinuxCalls_rename(
         JNIEnv *env,
         jobject thiz,
@@ -313,8 +314,8 @@ Java_io_github_excu101_filesystem_linux_LinuxCalls_rename(
     free(destPath);
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_readDirImpl(
         JNIEnv *env,
         jobject thiz,
@@ -327,6 +328,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_readDirImpl(
     }
 
     DIR *dir = (DIR *) pointer;
+
+//    getdents()
 
     struct dirent64 *directory = readdir64(dir);
 
@@ -359,8 +362,8 @@ static jobject openFileDescriptor(JNIEnv *env, int descriptor) {
     return fileDescriptor;
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_openImpl(
         JNIEnv *env,
         jobject thiz,
@@ -377,8 +380,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_openImpl(
     return openFileDescriptor(env, descriptor);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_mkdirImpl(
         JNIEnv *env,
         jobject thiz,
@@ -432,8 +435,8 @@ static jobject doStatVfs(JNIEnv *env, const struct statvfs64 *statvfs) {
     );
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getFileSystemStatusImpl(
         JNIEnv *env,
         jobject thiz,
@@ -442,14 +445,14 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getFileSystemStatusImpl(
     clearErrno();
     struct statvfs64 statvfs = {};
     char *cPath = fromByteArrayToPath(env, path);
-    statusFileSystem(cPath, &statvfs);
+    FILESYSTEM_STATUS64(cPath, &statvfs);
 
     free(cPath);
 
     return doStatVfs(env, &statvfs);
 }
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_rename(
         JNIEnv *env,
         jobject thiz,
@@ -467,8 +470,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_rename(
     free(cDest);
 }
 
-extern "C"
-JNIEXPORT jboolean JNICALL
+
+extern "C" JNIEXPORT jboolean JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_closeImpl(
         JNIEnv *env,
         jobject thiz,
@@ -477,13 +480,7 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_closeImpl(
     return closeFileDescriptor(descriptor);
 }
 
-struct count {
-    int files;
-    int folders;
-};
-
-extern "C"
-JNIEXPORT jint JNICALL
+extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectoryCountImpl(
         JNIEnv *env,
         jobject thiz,
@@ -520,8 +517,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectoryCountImpl(
     return count;
 }
 
-extern "C"
-JNIEXPORT jint JNICALL
+
+extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getFileCountImpl(
         JNIEnv *env,
         jobject thiz,
@@ -558,8 +555,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getFileCountImpl(
     return count;
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_symlinkImpl(
         JNIEnv *env,
         jobject thiz,
@@ -578,8 +575,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_symlinkImpl(
     free(cLink);
 }
 
-extern "C"
-JNIEXPORT jint JNICALL
+
+extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getCountImpl(
         JNIEnv *env,
         jobject thiz,
@@ -616,11 +613,8 @@ long getDirectorySize(char *path) {
 
     while ((ent = readdir64(dir))) {
         char *name = ent->d_name;
-        if (STATUS64(name, buf) == 0) {
-            result += (long) buf->st_size;
-            if (isDirectory(buf->st_mode)) {
-                result += getDirectorySize(name);
-            }
+        if (isDirectory(name, buf)) {
+            result += getDirectorySize(name);
         }
     }
 
@@ -628,8 +622,8 @@ long getDirectorySize(char *path) {
     return result;
 }
 
-extern "C"
-JNIEXPORT jlong JNICALL
+
+extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectorySizeImpl(
         JNIEnv *env,
         jobject thiz,
@@ -642,8 +636,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectorySizeImpl(
     return result;
 }
 
-extern "C"
-JNIEXPORT jint JNICALL
+
+extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getDescriptorImpl(
         JNIEnv *env,
         jobject thiz,
@@ -653,8 +647,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getDescriptorImpl(
 }
 
 // Mount
-extern "C"
-JNIEXPORT jlong JNICALL
+
+extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_openMountEntryPointerImpl(
         JNIEnv *env,
         jobject thiz,
@@ -743,8 +737,8 @@ static jobject createUnixMountEntryStructure(JNIEnv *env, const struct mntent *e
     );
 }
 
-extern "C"
-JNIEXPORT jobject JNICALL
+
+extern "C" JNIEXPORT jobject JNICALL
 Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_getMountEntryImpl(
         JNIEnv *env,
         jobject thiz,
@@ -769,8 +763,8 @@ Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_getMountEntryImpl(
     return createUnixMountEntryStructure(env, entry);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_closeMountEntryPointerImpl(
         JNIEnv *env,
         jobject thiz,
@@ -785,8 +779,8 @@ Java_io_github_excu101_filesystem_unix_calls_UnixMountCalls_closeMountEntryPoint
     }
 }
 
-extern "C"
-JNIEXPORT jlong JNICALL
+
+extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_moveBytesImpl(
         JNIEnv *env, jobject thiz,
         jobject from_descriptor,
@@ -824,8 +818,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_moveBytesImpl(
 
     return size;
 }
-extern "C"
-JNIEXPORT void JNICALL
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_createSocketPairImpl(
         JNIEnv *env,
         jobject thiz,
@@ -856,8 +850,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_createSocketPairImpl(
     );
 }
 
-extern "C"
-JNIEXPORT jint JNICALL
+
+extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_manipulateDescriptorImpl(
         JNIEnv *env, jobject thiz,
         jint descriptor,

@@ -1,18 +1,21 @@
 package io.github.excu101.vortex.ui.component.drawer
 
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.ItemAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListener
 
 class ItemBottomDrawerFragment(
+    context: Context,
     vararg types: Pair<Int, ViewHolderFactory<Item<*>>>,
-) : BottomSheetDialogFragment() {
+) : BottomSheetDialog(context) {
+
+    interface ItemsProvider {
+        val items: List<Item<*>>
+    }
 
     companion object {
         const val Tag = "BottomActionDrawer"
@@ -22,31 +25,18 @@ class ItemBottomDrawerFragment(
         *types
     )
 
-    private var binding: BottomSheetDrawerBinding? = null
+    private var binding: BottomSheetDrawerBinding = BottomSheetDrawerBinding(context)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        binding = BottomSheetDrawerBinding(requireContext())
-        return binding?.root
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding?.apply {
+        binding.apply {
             root.adapter = adapter
             adapter.register { _, item, _ ->
 
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
-
     }
 
     fun register(listener: ItemViewListener<Item<*>>): ItemBottomDrawerFragment {
@@ -56,6 +46,11 @@ class ItemBottomDrawerFragment(
 
     fun withItems(items: List<Item<*>>): ItemBottomDrawerFragment {
         adapter.replace(items = items)
+        return this
+    }
+
+    fun withItems(provider: ItemsProvider): ItemBottomDrawerFragment {
+        adapter.replace(provider.items)
         return this
     }
 

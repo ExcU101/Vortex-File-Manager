@@ -103,12 +103,11 @@ class InfoItemView(
         setOnClickListener(null)
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         titleView.setTextColor(ThemeColor(mainBarTitleTextColorKey))
         descriptionView.setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
         shape.setTint(ThemeColor(mainDrawerBackgroundColorKey))
     }
-
 
 
 }

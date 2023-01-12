@@ -1,16 +1,19 @@
 package io.github.excu101.vortex.ui.component.menu
 
 import android.content.Context
-import android.view.View.MeasureSpec.*
+import android.view.View.MeasureSpec.AT_MOST
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.getMode
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.FrameLayout
-import io.github.excu101.pluginsystem.model.Action
 import io.github.excu101.vortex.ui.component.dp
 import java.lang.Integer.max
 import kotlin.math.min
 
 class MenuLayout(context: Context) : FrameLayout(context) {
 
-    private val items = mutableListOf<Action>()
+    private val items = mutableListOf<MenuAction>()
     private val views = mutableListOf<MenuItem>()
 
     private val listeners = mutableListOf<MenuActionListener>()
@@ -18,17 +21,17 @@ class MenuLayout(context: Context) : FrameLayout(context) {
     val isVertical: Boolean
         get() = false
 
-    fun addItem(action: Action) {
+    fun addItem(action: MenuAction) {
         items += action
         initViews()
     }
 
-    fun removeItem(action: Action) {
+    fun removeItem(action: MenuAction) {
         items -= action
         initViews()
     }
 
-    fun replaceItems(actions: Collection<Action>) {
+    fun replaceItems(actions: Collection<MenuAction>) {
         items.clear()
         items.addAll(actions)
         initViews()
@@ -57,14 +60,18 @@ class MenuLayout(context: Context) : FrameLayout(context) {
         }
     }
 
-    private fun getItem(item: Action): MenuItem {
+    private fun getItem(item: MenuAction): MenuItem {
         return MenuItem(context).apply {
             action = item
             setOnClickListener { view ->
-                listeners.forEach { listener ->
-                    listener.onMenuActionCall(item)
-                }
+                notify(item)
             }
+        }
+    }
+
+    private fun notify(item: MenuAction) {
+        listeners.forEach { listener ->
+            listener.onMenuActionCall(item)
         }
     }
 

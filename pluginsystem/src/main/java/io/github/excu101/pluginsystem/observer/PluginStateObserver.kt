@@ -1,9 +1,13 @@
 package io.github.excu101.pluginsystem.observer
 
-import io.github.excu101.pluginsystem.model.plugin.PluginState
-
 interface PluginStateObserver {
 
-    fun onChange(state: PluginState)
+    object States {
+        const val Started = 1
+        const val Created = 2
+        const val Stopped = 3
+    }
+
+    fun onChange(state: Int)
 
 }

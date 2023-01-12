@@ -18,9 +18,11 @@ object Versions {
     // DI
     const val hiltVer = "2.44.1"
 
-    const val kotlinVer = "1.7.21"
+    const val kotlinVer = "1.8.0"
     const val coroutinesVer = "1.6.4"
     const val coilVer = "2.2.2"
+
+    const val roomVer = "2.4.3"
 
     // Unit test
     const val junitVer = "4.13.2"

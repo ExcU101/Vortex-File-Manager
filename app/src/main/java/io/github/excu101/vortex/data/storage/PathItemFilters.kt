@@ -1,7 +1,7 @@
 package io.github.excu101.vortex.data.storage
 
 import io.github.excu101.filesystem.fs.utils.*
-import io.github.excu101.vortex.base.impl.Filter
+import io.github.excu101.vortex.provider.storage.Filter
 import io.github.excu101.vortex.data.PathItem
 
 object PathItemFilters {

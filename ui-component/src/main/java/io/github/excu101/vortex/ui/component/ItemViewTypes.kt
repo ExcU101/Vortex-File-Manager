@@ -4,10 +4,9 @@ object ItemViewTypes {
 
     // Header
     const val TextItem = 0
-    const val IconTextItem = 1
-    const val DividerItem = 2
-    const val InfoItem = 3
-    const val DrawerItem = 4
+    const val DividerItem = 1
+    const val InfoItem = 2
+    const val DrawerItem = 3
 
     // Theme
     const val DIMEN = 10

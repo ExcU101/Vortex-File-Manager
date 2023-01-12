@@ -5,16 +5,17 @@ import io.github.excu101.filesystem.fs.observer.PathObservableEventType
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.vortex.data.PathItem
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface StorageProvider {
 
     suspend fun getItems(item: PathItem): Flow<PathItem>
 
-    val tasks: List<Task>
+    val tasks: StateFlow<List<Task>>
 
-    fun registerTask(task: Task): Boolean
+    suspend fun registerTask(task: Task)
 
-    fun unregisterTask(task: Task): Boolean
+    suspend fun unregisterTask(task: Task)
 
     fun registerObserver(
         directory: Path,

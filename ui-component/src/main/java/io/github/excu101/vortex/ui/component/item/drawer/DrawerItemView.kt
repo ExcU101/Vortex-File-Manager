@@ -17,7 +17,15 @@ import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.ItemViewIds
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
-import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.theme.key.drawerItemHeightKey
+import io.github.excu101.vortex.ui.component.theme.key.drawerItemWidthKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconSelectedTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemSelectedBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemTitleSelectedTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailItemRippleTintColorKey
 import io.github.excu101.vortex.ui.component.themeMeasure
 
 class DrawerItemView(
@@ -143,14 +151,20 @@ class DrawerItemView(
         )
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         iconView.imageTintList = createIconColorStateList()
         surface.tintList = createShapeColorStateList()
         titleView.setTextColor(createTitleColorStateList())
     }
 
     override fun onBind(item: DrawerItem) {
-        onChanged()
+        id = item.value.id
+        if (item.attrs.iconColor != null && item.attrs.textColor != null) {
+            iconView.setColorFilter(item.attrs.iconColor)
+            titleView.setTextColor(item.attrs.textColor)
+        } else {
+            onColorChanged()
+        }
         icon = item.value.icon
         title = item.value.title
     }
@@ -166,7 +180,7 @@ class DrawerItemView(
 
     override fun onBindSelection(isSelected: Boolean) {
         setSelected(isSelected)
-        onChanged()
+        onColorChanged()
     }
 
     override fun onUnbindListeners() {

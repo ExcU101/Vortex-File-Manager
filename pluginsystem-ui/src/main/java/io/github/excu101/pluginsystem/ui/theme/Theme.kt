@@ -140,7 +140,7 @@ object Theme {
     }
 
     fun notifyColorsChanged() {
-        colorChangeListeners.forEach(ThemeColorChangeListener::onChanged)
+        colorChangeListeners.forEach(ThemeColorChangeListener::onColorChanged)
     }
 }
 

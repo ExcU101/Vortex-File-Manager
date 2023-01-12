@@ -18,12 +18,16 @@ import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.asPath
 import io.github.excu101.filesystem.fs.utils.flow
 import io.github.excu101.filesystem.fs.utils.resolve
+import io.github.excu101.vortex.base.utils.new
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.provider.storage.StorageDirectoryObserver
 import io.github.excu101.vortex.provider.storage.StorageProvider
 import io.github.excu101.vortex.provider.storage.Task
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -51,9 +55,9 @@ class StorageProviderImpl @Inject constructor(
 
     private val observers = mutableMapOf<Path, StorageDirectoryObserver>()
 
-    private val _tasks = mutableListOf<Task>()
-    override val tasks: List<Task>
-        get() = _tasks
+    private val _tasks = MutableStateFlow<List<Task>>(listOf())
+    override val tasks: StateFlow<List<Task>>
+        get() = _tasks.asStateFlow()
 
     fun resolveSafUri(
         path: Path,
@@ -72,12 +76,12 @@ class StorageProviderImpl @Inject constructor(
         }
     }
 
-    override fun registerTask(task: Task): Boolean {
-        return _tasks.add(task)
+    override suspend fun registerTask(task: Task) {
+        _tasks.new { this + task }
     }
 
-    override fun unregisterTask(task: Task): Boolean {
-        return _tasks.remove(task)
+    override suspend fun unregisterTask(task: Task) {
+        _tasks.new { this - task }
     }
 
     override fun registerObserver(

@@ -7,11 +7,9 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.core.view.children
 import com.google.android.material.progressindicator.CircularProgressIndicator
-import com.google.android.material.shape.MaterialShapeDrawable
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarTintColorKey
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressTitleTextColorKey
 
@@ -60,7 +58,7 @@ class LoadingView(context: Context) : ThemeLinearLayout(context) {
         }
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
 //        background.setTint(ThemeColor(layoutProgressBarBackgroundColorKey))
         progressView.setIndicatorColor(ThemeColor(layoutProgressBarTintColorKey))
         titleView.setTextColor(ThemeColor(layoutProgressTitleTextColorKey))

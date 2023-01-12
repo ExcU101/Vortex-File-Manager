@@ -6,9 +6,12 @@ import io.github.excu101.vortex.base.Logger
 import io.github.excu101.vortex.base.utils.ContainerScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Unconfined
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
 class ContainerImpl<S, E>(
@@ -25,7 +28,7 @@ class ContainerImpl<S, E>(
         get() = _collector
 
     override val effect: Flow<E>
-        get() = _effect.receiveAsFlow()
+        get() = _effect.consumeAsFlow()
 
     override val state: StateFlow<S>
         get() = _state.asStateFlow()

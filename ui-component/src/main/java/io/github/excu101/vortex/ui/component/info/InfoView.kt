@@ -46,7 +46,7 @@ class InfoView(context: Context) : ThemeLinearLayout(context) {
         addView(messageView, LayoutParams(MATCH_PARENT, WRAP_CONTENT))
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         iconView.setColorFilter(ThemeColor(storageListWarningIconTintColorKey))
         messageView.setTextColor(ThemeColor(storageListWarningTitleTextColorKey))
     }

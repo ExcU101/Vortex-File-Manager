@@ -1,38 +1,25 @@
 cmake_minimum_required(VERSION 3.18.1)
 
-project("vortex-calls")
+project(vortex-calls)
 
 add_library(
         classes
         SHARED
-        jni-classes.h
-        jni-classes.cpp
+        jni/jni_class_names.h
+        jni/jni_classes.h
+        jni/jni_classes.cpp
 )
 
 add_library(
         unix-calls
         SHARED
         unix/unix-calls.cpp
-        unix/attrs.cpp
-        unix/operations.cpp
-)
-
-add_library(
-        unix-observer-service
-        SHARED
-        unix/observer/unix-observer.cpp
-)
-
-add_library(
-        unix-file-channel
-        SHARED
-        unix/channel/unix-file-channel.cpp
-)
-
-add_library(
-        unix-buffer
-        SHARED
         unix/buffer/unix-buffer.cpp
+        unix/operations.сpp
+        unix/observer/unix-observer.cpp
+        unix/channel/unix-file-channel.cpp
+        unix/status/status.h
+        unix/status/status.cpp
 )
 
 find_library(
@@ -43,8 +30,5 @@ find_library(
 target_link_libraries(
         classes
         unix-calls
-        unix-observer-service
-        unix-file-channel
-        unix-buffer
         ${log-lib}
 )

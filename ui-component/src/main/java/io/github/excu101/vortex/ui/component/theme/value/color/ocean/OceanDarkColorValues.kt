@@ -2,7 +2,58 @@ package io.github.excu101.vortex.ui.component.theme.value.color.ocean
 
 import io.github.excu101.pluginsystem.model.Color
 import io.github.excu101.pluginsystem.ui.theme.Theme
-import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.theme.key.accentColorKey
+import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.layoutProgressActionTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.layoutProgressTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarActionIconContextualTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarActionIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarNavigationIconContextualTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarNavigationIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarSurfaceContextualColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarTitleContextualTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconSelectedTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemSelectedBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemTitleSelectedTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerTitleColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListAdditionalActionIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListAdditionalSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListAdditionalTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundSelectedColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconSelectedTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIndexTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSecondarySelectedTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSecondaryTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceRippleColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceRippleSelectedColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceSelectedColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemTitleSelectedTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningActionContentColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListWarningTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.surfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailItemArrowSelectedTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailItemArrowTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailItemRippleSelectedTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailItemTitleSelectedTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailItemTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailSurfaceColorKey
 
 fun initOceanDarkColorValues(): Theme {
     Theme[backgroundColorKey] = Color(value = 0xFF212121)
@@ -20,7 +71,7 @@ fun initOceanDarkColorValues(): Theme {
     Theme[mainBarNavigationIconContextualTintColorKey] = Color.White
     Theme[mainBarTitleContextualTextColorKey] = Color.White
 
-    Theme[mainDrawerTitleColorKey] = Color.LightGray
+    Theme[mainDrawerTitleColorKey] = Color.White
     Theme[mainDrawerBackgroundColorKey] = Color(value = 0xFF212121)
     Theme[mainDrawerSurfaceColorKey] = Color(value = 0xFF212121)
 

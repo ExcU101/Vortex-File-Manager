@@ -10,9 +10,11 @@ abstract class ThemeLinearLayout : LinearLayout, ThemeColorChangeListener {
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context,
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
         attrs,
-        defStyleAttr)
+        defStyleAttr
+    )
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -24,6 +26,6 @@ abstract class ThemeLinearLayout : LinearLayout, ThemeColorChangeListener {
         Theme.unregisterColorChangeListener(this)
     }
 
-    abstract override fun onChanged()
+    abstract override fun onColorChanged()
 
 }

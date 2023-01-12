@@ -28,7 +28,7 @@ abstract class ThemeView : View, ThemeColorChangeListener {
         defStyleAttr
     )
 
-    abstract override fun onChanged()
+    abstract override fun onColorChanged()
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()

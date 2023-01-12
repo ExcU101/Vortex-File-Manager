@@ -3,11 +3,13 @@ package io.github.excu101.vortex.ui.component.menu
 import android.content.Context
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.RippleDrawable
-import android.view.View.MeasureSpec.*
+import android.view.View.MeasureSpec.AT_MOST
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.getMode
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.ImageView
 import android.widget.TextView
-import io.github.excu101.pluginsystem.model.Action
-import io.github.excu101.pluginsystem.model.action
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
@@ -29,11 +31,11 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
             invalidate()
         }
 
-    var action: Action = action(title = "", icon = null)
+    var action: MenuAction? = null
         set(value) {
             field = value
-            titleView.text = value.title
-            iconView.setImageDrawable(value.icon)
+            titleView.text = value?.title
+            iconView.setImageDrawable(value?.icon)
         }
 
     private val titleView = TextView(context).apply {
@@ -48,8 +50,8 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
         isClickable = true
         isFocusable = true
         background = this@MenuItem.background
-        minimumWidth = 24.dp
-        minimumHeight = 24.dp
+        minimumWidth = iconSize
+        minimumHeight = iconSize
         setColorFilter(ThemeColor(mainBarActionIconTintColorKey))
     }
 
@@ -83,7 +85,7 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
         }
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         iconView.setColorFilter(ThemeColor(mainBarActionIconTintColorKey))
         background.setColor(valueOf(ThemeColor(mainBarActionIconTintColorKey)))
     }
@@ -109,26 +111,41 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
 
         setMeasuredDimension(width, height)
 
+        when (mode) {
+            Mode.ICON -> {
+                iconView.measure(
+                    makeMeasureSpec(24.dp, EXACTLY),
+                    makeMeasureSpec(24.dp, EXACTLY)
+                )
+            }
+
+            Mode.TITLE -> {
+                titleView.measure(widthMeasureSpec, heightMeasureSpec)
+            }
+        }
+
 //        if (mode == Mode.ICON) {
 
-        iconView.measure(
-            makeMeasureSpec(24.dp, EXACTLY),
-            makeMeasureSpec(24.dp, EXACTLY)
-        )
+
 //        } else {
-//            titleView.measure(widthMeasureSpec, heightMeasureSpec)
-//            setMeasuredDimension(titleView.measuredWidth, 56.dp)
+//
 //        }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        if (mode == Mode.ICON) {
-            iconView.layout(
-                0,
-                measuredHeight / 2,
-                measuredWidth,
-                measuredHeight / 2 + iconView.measuredHeight
-            )
+        when (mode) {
+            Mode.ICON -> {
+                iconView.layout(
+                    0,
+                    measuredHeight / 2,
+                    measuredWidth,
+                    measuredHeight / 2 + iconView.measuredHeight
+                )
+            }
+
+            Mode.TITLE -> {
+
+            }
         }
     }
 

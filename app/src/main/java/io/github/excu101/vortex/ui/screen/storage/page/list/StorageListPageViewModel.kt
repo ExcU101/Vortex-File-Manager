@@ -7,7 +7,7 @@ import android.view.View
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.excu101.filesystem.FileProvider
-import io.github.excu101.filesystem.fs.observer.type.CreateEventType
+import io.github.excu101.filesystem.fs.observer.PathObservableEventType
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.operation.observer
 import io.github.excu101.filesystem.fs.operation.option.Options
@@ -15,21 +15,15 @@ import io.github.excu101.filesystem.fs.operation.option.Options.Copy.NoFollowLin
 import io.github.excu101.filesystem.fs.operation.option.Options.Copy.ReplaceExists
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.asPath
-import io.github.excu101.filesystem.unix.observer.type.OpenedEventType
 import io.github.excu101.filesystem.unix.utils.unixCopy
 import io.github.excu101.filesystem.unix.utils.unixCreateDirectory
 import io.github.excu101.filesystem.unix.utils.unixCreateFile
 import io.github.excu101.filesystem.unix.utils.unixCreateSymbolicLink
+import io.github.excu101.filesystem.unix.utils.unixCut
 import io.github.excu101.filesystem.unix.utils.unixDelete
 import io.github.excu101.filesystem.unix.utils.unixRename
-import io.github.excu101.pluginsystem.model.Action
-import io.github.excu101.pluginsystem.model.action
 import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
-import io.github.excu101.pluginsystem.utils.action
-import io.github.excu101.vortex.base.impl.Filter
-import io.github.excu101.vortex.base.impl.Order
-import io.github.excu101.vortex.base.impl.Sorter
 import io.github.excu101.vortex.base.utils.ViewModelContainerHandler
 import io.github.excu101.vortex.base.utils.intent
 import io.github.excu101.vortex.base.utils.logIt
@@ -41,35 +35,39 @@ import io.github.excu101.vortex.data.trail.TrailNavigator
 import io.github.excu101.vortex.provider.FileOperationActionHandler
 import io.github.excu101.vortex.provider.StorageActionContentProvider
 import io.github.excu101.vortex.provider.storage.CopyTask
+import io.github.excu101.vortex.provider.storage.Filter
+import io.github.excu101.vortex.provider.storage.MoveTask
+import io.github.excu101.vortex.provider.storage.Order
+import io.github.excu101.vortex.provider.storage.Sorter
 import io.github.excu101.vortex.provider.storage.StorageProvider
 import io.github.excu101.vortex.provider.storage.Task
+import io.github.excu101.vortex.provider.storage.View.COLUMN
 import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl
 import io.github.excu101.vortex.ui.component.dsl.scope
 import io.github.excu101.vortex.ui.component.item.info.info
 import io.github.excu101.vortex.ui.component.item.text.text
 import io.github.excu101.vortex.ui.component.list.adapter.Item
+import io.github.excu101.vortex.ui.component.menu.MenuAction
 import io.github.excu101.vortex.ui.component.theme.key.fileListLoadingInitiatingTitleKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListWarningEmptyTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessActionTitleKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningNotificationAccessActionTitleKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListWarningNotificationAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessActionTitleKey
 import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessTitleKey
 import io.github.excu101.vortex.ui.icon.Icons
+import io.github.excu101.vortex.ui.screen.storage.Actions
+import io.github.excu101.vortex.ui.screen.storage.Actions.BarActions
+import io.github.excu101.vortex.ui.screen.storage.Actions.Tasks
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.DataResolver
-import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.Dialog.StorageAction
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect
+import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.Snackbar
+import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.StorageAction
+import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.StorageFilter
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.State
 import io.github.excu101.vortex.utils.isAndroidR
 import io.github.excu101.vortex.utils.isAndroidTiramisu
-import io.github.excu101.vortex.utils.onTrue
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 
@@ -88,15 +86,7 @@ class StorageListPageViewModel @Inject constructor(
         private const val PathItemKey = "PathItem"
     }
 
-    private val _dialog = Channel<StorageListPageScreen.Dialog>()
-    val dialog: Flow<StorageListPageScreen.Dialog>
-        get() = _dialog.receiveAsFlow()
-
-    private val _tasks = MutableStateFlow(listOf<Task>())
-    val tasks: StateFlow<List<Task>>
-        get() = _tasks.asStateFlow()
-
-    private var onDispose: ((Action) -> Unit)? = null
+    private var onDispose: ((MenuAction) -> Unit)? = null
 
     private val _selected = MutableStateFlow(listOf<PathItem>())
     val selected: StateFlow<List<PathItem>>
@@ -109,13 +99,19 @@ class StorageListPageViewModel @Inject constructor(
     val resolver: StateFlow<DataResolver>
         get() = _resolver.asStateFlow()
 
+    private val _view = MutableStateFlow(COLUMN)
+    val view: StateFlow<io.github.excu101.vortex.provider.storage.View>
+        get() = _view.asStateFlow()
+
     val content: List<Item<*>>
         get() = container.state.value.data
 
-    val navigator = TrailNavigator()
-
+    private val navigator = TrailNavigator()
     val current: PathItem?
-        get() = navigator.selection.value.item
+        get() = navigator.selected
+
+    val trail: StateFlow<TrailNavigator.Trail>
+        get() = navigator.trail
 
     private val _restrictedDirectories = MutableStateFlow<Uri?>(null)
     val restrictedDirectories: StateFlow<Uri?>
@@ -124,8 +120,16 @@ class StorageListPageViewModel @Inject constructor(
     private val path =
         handle[PathItemKey] ?: PathItem(Environment.getExternalStorageDirectory().asPath())
 
+
     init {
         checkPermission()
+        navigateTo(path)
+    }
+
+    fun view(
+        view: io.github.excu101.vortex.provider.storage.View
+    ) = intent {
+        _view.emit(view)
     }
 
     fun order(order: Order) = intent {
@@ -210,12 +214,6 @@ class StorageListPageViewModel @Inject constructor(
                         isWarning = true,
                         warningMessage = ThemeText(fileListWarningNotificationAccessTitleKey),
                         warningIcon = Icons.Rounded.Info,
-                        warningActions = listOf(
-                            action(
-                                title = ThemeText(fileListWarningNotificationAccessActionTitleKey),
-                                icon = Icons.Rounded.Add
-                            )
-                        )
                     )
                 }
                 return@intent
@@ -229,16 +227,12 @@ class StorageListPageViewModel @Inject constructor(
                         isWarning = true,
                         warningMessage = ThemeText(fileListWarningFullStorageAccessTitleKey),
                         warningIcon = Icons.Rounded.Info,
-                        warningActions = listOf(
-                            action(
-                                title = ThemeText(fileListWarningFullStorageAccessActionTitleKey),
-                                icon = Icons.Rounded.Add
-                            )
+                        actions = listOf(
+                            Actions.ProvideFullStorageAccess
                         )
                     )
                 }
-            } else {
-                navigateTo(path)
+                return@intent
             }
         } else {
             if (provider.requiresPermissions()) {
@@ -247,35 +241,47 @@ class StorageListPageViewModel @Inject constructor(
                         isWarning = true,
                         warningMessage = ThemeText(fileListWarningStorageAccessTitleKey),
                         warningIcon = Icons.Rounded.Info,
-                        warningActions = listOf(
-                            action(
-                                title = ThemeText(fileListWarningStorageAccessActionTitleKey),
-                                icon = Icons.Rounded.Add
-                            )
+                        actions = listOf(
+                            Actions.ProvideStorageAccess
                         )
                     )
                 }
+                return@intent
+            }
+        }
+
+        startCheckingPathTrail()
+        startCheckingTasks()
+    }
+
+    private fun startCheckingPathTrail() = intent {
+        navigator.trail.collect { (items, selectedIndex, selected) ->
+            selected?.let { parseState(item = it) }
+        }
+    }
+
+    private fun startCheckingTasks() = intent {
+        provider.tasks.collect { tasks ->
+            if (tasks.isNotEmpty()) {
+                state {
+                    copy(
+                        actions = actions + Tasks
+                    )
+                }
+                message("Choose destination and select option in `tasks`")
             }
         }
     }
 
     fun navigateLeft() = intent {
         navigator.navigateLeft()
-
-        current?.let {
-            parseState(it)
-        }
     }
 
     fun navigateRight() = intent {
         navigator.navigateRight()
-
-        current?.let {
-            parseState(it)
-        }
     }
 
-    fun disposeAction(action: Action): Boolean {
+    fun disposeAction(action: MenuAction): Boolean {
         if (onDispose == null) return false
         onDispose?.invoke(action)
         onDispose = null
@@ -284,26 +290,35 @@ class StorageListPageViewModel @Inject constructor(
 
     fun openSingleItemDrawerActions(
         item: PathItem,
-        dispose: (Action) -> Unit,
+        dispose: (MenuAction) -> Unit,
     ) = intent {
-        dialog(StorageAction(StorageActionContentProvider().onSingleItem(item)))
+        side(StorageAction(StorageActionContentProvider().onSingleItem(item)))
         this@StorageListPageViewModel.onDispose = dispose
     }
 
     fun openSelectedItemsDrawerActions(
         items: List<PathItem> = selected.value,
-        onDispose: (Action) -> Unit,
+        onDispose: (MenuAction) -> Unit,
     ) = intent {
-        dialog(StorageAction(StorageActionContentProvider().onSelectedItems(items)))
+        side(StorageAction(StorageActionContentProvider().onSelectedItems(items)))
         this@StorageListPageViewModel.onDispose = onDispose
     }
 
     fun openDrawerSortActions() = intent {
-        dialog(StorageAction(StorageActionContentProvider().onSortActions()))
+        side(
+            StorageFilter(
+                currentSorter = resolver.value.sorter,
+                currentFilter = resolver.value.filter
+            )
+        )
     }
 
     fun openDrawerMoreActions() = intent {
-        dialog(StorageAction(StorageActionContentProvider().onMoreActions()))
+        side(StorageAction(StorageActionContentProvider().onMoreActions()))
+    }
+
+    fun createNew() = intent {
+        side(SideEffect.StorageItemCreate(parent = current))
     }
 
     fun navigateTo(
@@ -331,12 +346,6 @@ class StorageListPageViewModel @Inject constructor(
                             isWarning = true,
                             warningIcon = Icons.Rounded.Info,
                             warningMessage = "You're trying to enter restricted directory (${item.name})",
-                            warningActions = buildList {
-                                action {
-                                    title = "Grant"
-                                    icon = Icons.Rounded.Add
-                                }
-                            }
                         )
                     }
                     return@intent
@@ -388,18 +397,7 @@ class StorageListPageViewModel @Inject constructor(
                 State(
                     isWarning = true,
                     warningMessage = "Error: " + error.message,
-                    warningActions = buildList {
-                        action {
-                            title = "Reload"
-                            icon = Icons.Rounded.Refresh
-                        }
-                        if (item.containsParent) {
-                            action {
-                                title = "Back to parent"
-                                icon = Icons.Rounded.Back
-                            }
-                        }
-                    }
+                    actions = if (provider.tasks.value.isNotEmpty()) BarActions + Tasks else BarActions
                 )
             }
             return@intent
@@ -414,26 +412,14 @@ class StorageListPageViewModel @Inject constructor(
                         key = fileListWarningEmptyTitleKey,
                         item.name
                     ),
-                    warningActions = buildList {
-                        action {
-                            title = "Add new"
-                            icon = Icons.Rounded.Add
-                        }
-                        action {
-                            title = "Back to parent"
-                            icon = Icons.Rounded.Back
-                        }
-                        action {
-                            title = "Reload"
-                            icon = Icons.Rounded.Refresh
-                        }
-                    }
+                    actions = if (provider.tasks.value.isNotEmpty()) BarActions + Tasks else BarActions
                 )
             }
         } else {
             state {
                 State(
-                    data = parseContent(data)
+                    data = parseContent(data),
+                    actions = if (provider.tasks.value.isNotEmpty()) BarActions + Tasks else BarActions
                 )
             }
         }
@@ -451,7 +437,7 @@ class StorageListPageViewModel @Inject constructor(
         action: View.OnClickListener? = null,
     ) = intent {
         side(
-            SideEffect(
+            Snackbar(
                 message = text,
                 messageActionTitle = title,
                 messageAction = action
@@ -460,19 +446,28 @@ class StorageListPageViewModel @Inject constructor(
     }
 
     fun showTasks() = intent {
-        dialog(
+        side(
             StorageAction(
                 content = scope {
-                    text(value = "Tasks (${provider.tasks.size})")
-                    provider.tasks.forEachIndexed { index, task ->
+                    text(value = "Tasks (${provider.tasks.value.size})")
+                    provider.tasks.value.forEachIndexed { index, task ->
                         when (task) {
                             is CopyTask -> {
                                 var names = ""
                                 task.sources.forEach { path ->
                                     names += path.getName()
-                                        .toString() + if (task.sources.last() != path) " | " else ""
+                                        .toString() + if (task.sources.lastOrNull() != path) " | " else ""
                                 }
                                 info(value = names, description = "Copy task $index")
+                            }
+
+                            is MoveTask -> {
+                                var names = ""
+                                task.sources.forEach { path ->
+                                    names += path.getName()
+                                        .toString() + if (task.sources.lastOrNull() != path) " | " else ""
+                                }
+                                info(value = names, description = "Cut task $index")
                             }
                         }
                     }
@@ -488,22 +483,12 @@ class StorageListPageViewModel @Inject constructor(
     fun delete(
         items: Set<Path>,
     ) = intent {
-        FileProvider.runOperation(
+        operation(
             operation = unixDelete(items),
-            observer = observer(
-                onAction = { action ->
-                    handler.resolveMessage(action)?.let { title ->
-                        message(text = title)
-                    }
-                },
-                onError = { error ->
-                    resolveErrorActions(error)
-                },
-                onComplete = {
-                    current?.let { parseState(it) }
-                    deselect(items.map(::PathItem).toSet())
-                }
-            )
+            onComplete = {
+                current?.let { parseState(it) }
+                deselect(items.map(::PathItem).toSet())
+            }
         )
     }
 
@@ -528,50 +513,39 @@ class StorageListPageViewModel @Inject constructor(
     fun createFile(
         path: Path,
         mode: Int,
-        flags: Int = Options.Open.CreateNew and Options.Open.Read and
-                Options.Open.Write and
+        flags: Int = Options.Open.CreateNew or Options.Open.Read or
+                Options.Open.Write or
                 Options.Open.Append,
-    ) = intent {
-
-        FileProvider.runOperation(
+    ) {
+        operation(
             operation = unixCreateFile(
                 source = path,
                 mode = mode,
                 flags = flags
             ),
-            observer = observer(
-                onAction = { action ->
-                    handler.resolveMessage(action)?.let { title ->
-                        message(title)
-                    }
-                },
-                onError = { error ->
-                    resolveErrorActions(error)
-                },
-                onComplete = {
-                    val item = PathItem(path)
-                    val parent = item.parent
+            onComplete = {
+                val item = PathItem(path)
+                val parent = item.parent
 
-                    if (parent == null) {
-                        message(text = "File ${item.name} successfully created")
-                        return@observer
-                    }
-
-                    if (parent == current) {
-                        addContent(setOf(parent))
-                    } else {
-                        current?.let { navigateTo(it) }
-                    }
-
-                    message(
-                        text = "File ${item.name} successfully created",
-                        title = "Show it",
-                        action = {
-                            navigateTo(parent)
-                        }
-                    )
+                if (parent == null) {
+                    message(text = "File ${item.name} successfully created")
+                    return@operation
                 }
-            )
+
+                if (parent == current) {
+                    addContent(setOf(parent))
+                } else {
+                    current?.let { navigateTo(it) }
+                }
+
+                message(
+                    text = "File ${item.name} successfully created",
+                    title = "Show it",
+                    action = {
+                        navigateTo(parent)
+                    }
+                )
+            }
         )
     }
 
@@ -643,22 +617,22 @@ class StorageListPageViewModel @Inject constructor(
         )
     }
 
-    fun dialog(dialog: StorageListPageScreen.Dialog) = intent {
-        _dialog.send(dialog)
-    }
-
     fun task(task: Task) = intent {
-        provider.registerTask(task).onTrue {
-            _tasks.emit(provider.tasks)
-            message("Choose destination and select option in `tasks`")
-        }
+        provider.registerTask(task)
     }
 
-    fun watcher(item: PathItem) = intent {
+    fun watcher(
+        item: PathItem,
+        vararg types: PathObservableEventType,
+    ) = watcher(item.value, *types)
+
+    fun watcher(
+        path: Path,
+        vararg types: PathObservableEventType,
+    ) = intent {
         provider.registerObserver(
-            item.value,
-            CreateEventType(),
-            OpenedEventType()
+            path,
+            *types
         ).events.collect { event ->
             event.logIt()
         }
@@ -683,15 +657,15 @@ class StorageListPageViewModel @Inject constructor(
         options: Int = NoFollowLinks and ReplaceExists
     ) = intent {
         operation(
-            operation = unixCopy(sources, dest, options),
+            operation = unixCut(sources, dest, options),
             onComplete = {
                 message("Elements cut to ${dest.getName()}")
             }
         )
     }
 
-    fun performTask(position: Int) {
-        when (val task = provider.tasks.getOrNull(position)) {
+    fun performTask(position: Int) = intent {
+        when (val task = provider.tasks.value.getOrNull(position)) {
             is CopyTask -> {
                 val dest = current!!.value
                 val sources = task.sources
@@ -700,6 +674,8 @@ class StorageListPageViewModel @Inject constructor(
                     sources = sources,
                     dest = dest
                 )
+
+                provider.unregisterTask(task)
             }
         }
     }

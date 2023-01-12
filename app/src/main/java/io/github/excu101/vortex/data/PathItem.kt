@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
+import androidx.room.PrimaryKey
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.EmptyAttrs
@@ -37,7 +38,8 @@ import java.io.File
 @Parcelize
 class PathItem(
     override val value: @WriteWith<PathParceler> Path,
-) : Item<Path>, Comparable<PathItem>, Parcelable, BookmarkState {
+    override val tags: List<Tag> = emptyList()
+) : Item<Path>, Comparable<PathItem>, Parcelable, BookmarkState, TagOwner {
 
     constructor(path: String) : this(value = parsePath(path))
 
@@ -52,8 +54,9 @@ class PathItem(
     val uri: Uri
         get() = Uri.fromFile(File(path))
 
-    override val id: Long
-        get() = hashCode().toLong()
+    @IgnoredOnParcel
+    @PrimaryKey
+    override val id: Long = hashCode().toLong()
 
     override val type: Int
         get() = ItemViewTypes.StorageItem

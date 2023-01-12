@@ -1,18 +1,18 @@
 package io.github.excu101.vortex.ui.screen.storage.page.list
 
 import android.graphics.drawable.Drawable
-import android.view.View
-import com.google.android.material.snackbar.Snackbar
-import io.github.excu101.pluginsystem.model.Action
-import io.github.excu101.vortex.base.impl.Filter
-import io.github.excu101.vortex.base.impl.Order
-import io.github.excu101.vortex.base.impl.ResultParser
-import io.github.excu101.vortex.base.impl.Sorter
+import android.view.View.OnClickListener
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.storage.PathItemFilters
 import io.github.excu101.vortex.data.storage.PathItemParsers
 import io.github.excu101.vortex.data.storage.PathItemSorters
+import io.github.excu101.vortex.provider.storage.Filter
+import io.github.excu101.vortex.provider.storage.Order
+import io.github.excu101.vortex.provider.storage.ResultParser
+import io.github.excu101.vortex.provider.storage.Sorter
 import io.github.excu101.vortex.ui.component.list.adapter.Item
+import io.github.excu101.vortex.ui.component.menu.MenuAction
+import io.github.excu101.vortex.ui.screen.storage.Actions
 
 object StorageListPageScreen {
 
@@ -23,24 +23,29 @@ object StorageListPageScreen {
         val isWarning: Boolean = false,
         val warningIcon: Drawable? = null,
         val warningMessage: String? = null,
-        val warningActions: List<Action> = listOf(),
+        val actions: List<MenuAction> = Actions.BarActions
     )
 
-    data class SideEffect(
-        val message: String? = null,
-        val messageDuration: Int = Snackbar.LENGTH_SHORT,
-        val messageActionTitle: String? = null,
-        val messageAction: (View.OnClickListener)? = null,
-    )
+    sealed class SideEffect {
+        data class Snackbar(
+            val message: String,
+            val messageDuration: Int = com.google.android.material.snackbar.Snackbar.LENGTH_SHORT,
+            val messageActionTitle: String? = null,
+            val messageAction: (OnClickListener)? = null,
+        ) : SideEffect()
 
-    sealed class Dialog {
         class StorageItemCreate(
             val parent: PathItem? = null,
-        ) : Dialog()
+        ) : SideEffect()
 
         class StorageAction(
             val content: List<Item<*>>,
-        ) : Dialog()
+        ) : SideEffect()
+
+        data class StorageFilter(
+            val currentSorter: Sorter<PathItem>,
+            val currentFilter: Filter<PathItem>
+        ) : SideEffect()
     }
 
     data class DataResolver(
@@ -56,6 +61,7 @@ object StorageListPageScreen {
                 Order.ASCENDING -> {
                     data.sortedWith(sorter)
                 }
+
                 Order.DESCENDING -> {
                     data.sortedWith(sorter).reversed()
                 }

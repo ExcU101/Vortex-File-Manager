@@ -35,16 +35,21 @@ internal class UnixCopyOperation(
         completion()
     }
 
-    private suspend inline fun resolveOp(source: Path) = with(stat(source.bytes, noFollowLinks)) {
+    private suspend inline fun resolveOp(
+        source: Path,
+        parent: Path? = null
+    ) = with(stat(source.bytes, noFollowLinks)) {
         when (mode and S_IFMT) {
             S_IFDIR -> copyDir(
                 source = source,
                 status = this,
+                parent = parent,
             )
 
             S_IFREG -> copyFile(
                 source = source,
                 status = this,
+                parent = parent,
             )
 
             S_IFLNK -> copyLink(
@@ -57,8 +62,12 @@ internal class UnixCopyOperation(
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private suspend inline fun copyFile(source: Path, status: UnixStatusStructure) {
-        val dest = resolveSourceWithDest(source)
+    private suspend inline fun copyFile(
+        source: Path,
+        parent: Path? = null,
+        status: UnixStatusStructure
+    ) {
+        val dest = parent ?: resolveSourceWithDest(source)
 
         val sourceFileDescriptor = UnixCalls.open(
             path = source.bytes,
@@ -101,7 +110,11 @@ internal class UnixCopyOperation(
         UnixCalls.close(UnixCalls.getIndexDescriptor(sourceFileDescriptor))
     }
 
-    private suspend fun copyDir(source: Path, status: UnixStatusStructure) {
+    private suspend fun copyDir(
+        source: Path,
+        parent: Path? = null,
+        status: UnixStatusStructure
+    ) {
         val content = source.flow.map { resolveSourceWithDest(source, it) }.toList()
         val dir = dest.resolve(source.getName())
 

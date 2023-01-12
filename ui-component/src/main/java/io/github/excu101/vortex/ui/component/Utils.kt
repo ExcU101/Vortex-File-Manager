@@ -7,6 +7,8 @@ import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import kotlin.math.ceil
@@ -68,6 +70,19 @@ fun ThemeColorChangeListener.themeMeasure(
 
     return width to height
 }
+
+var ViewPager2.sensitivityFactor: Int
+    get() = 0
+    set(value) {
+        val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+        recyclerViewField.isAccessible = true
+        val recyclerView = recyclerViewField.get(this) as RecyclerView
+
+        val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+        touchSlopField.isAccessible = true
+        val touchSlop = touchSlopField.get(recyclerView) as Int
+        touchSlopField.set(recyclerView, touchSlop * value)
+    }
 
 context(View)
 fun ThemeDp(key: String): Int {

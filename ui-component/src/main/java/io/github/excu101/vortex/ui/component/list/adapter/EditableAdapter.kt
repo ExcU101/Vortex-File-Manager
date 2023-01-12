@@ -52,3 +52,7 @@ interface EditableAdapter<T> : CheckAdapter<T> {
 fun <T> EditableAdapter<T>.replace(items: List<T>) {
     replace(items = items, differ = null)
 }
+
+inline fun <reified I> EditableAdapter<*>.instanceOf(index: Int): Boolean {
+    return get(index) is I
+}

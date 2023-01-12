@@ -20,6 +20,10 @@ android {
         }
     }
 
+    buildFeatures {
+        aidl = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true

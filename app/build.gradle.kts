@@ -22,6 +22,14 @@ android {
         versionCode = AndroidConfigure.versionCode
         versionName = AndroidConfigure.versionName
         multiDexEnabled = AndroidConfigure.multiDexEnabled
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+//                    "room.incremental" to "true"
+                )
+            }
+        }
     }
 
     signingConfigs {
@@ -71,6 +79,9 @@ dependencies {
     implementation(Deps.AndroidX.Appcompat)
     implementation(Deps.AndroidX.Collection)
 
+    implementation(Deps.Room.Runtime)
+    kapt(Deps.Room.Compiler)
+
     implementation(Deps.Hilt.Android)
     kapt(Deps.Hilt.Compiler)
 
@@ -86,7 +97,6 @@ dependencies {
     implementation(project(Deps.Application.FileSystemUnix))
     implementation(project(Deps.Application.PluginSystem))
     implementation(project(Deps.Application.PluginSystemUi))
-    implementation(project(Deps.Application.PluginSystemCommon))
     implementation(project(Deps.Application.UiComponent))
     implementation(project(Deps.Application.VortexService))
     implementation(project(Deps.Application.Navigation))

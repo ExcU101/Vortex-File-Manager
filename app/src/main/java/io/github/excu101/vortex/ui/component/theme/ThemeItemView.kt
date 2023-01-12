@@ -14,7 +14,7 @@ open class ThemeItemView(context: Context) : ThemeFrameLayout(context = context)
 
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
 
     }
 

@@ -15,9 +15,19 @@ class ViewPagerNavigator(
     private val pager: ViewPager2
 ) : Navigator<Destination<Fragment>> {
 
+    private var fragment: Fragment? = null
+
     private var _stack = mutableMapOf<String, Fragment>()
     val stack: Set<String>
         get() = _stack.keys
+
+    fun wrapCurrentSelection(fragment: Fragment) {
+        (this.fragment as? PageFragment)?.onPageUnselected()
+        if (fragment is PageFragment) {
+            fragment.onPageSelected()
+            this.fragment = fragment
+        }
+    }
 
     override fun navigate(destination: Destination<Fragment>, vararg options: Navigator.Option) {
         if (destination !is FragmentDestination) return
@@ -42,6 +52,8 @@ class ViewPagerNavigator(
         adapter.addFragment(fragment)
         _stack[route] = fragment
         pager.currentItem = adapter.itemCount
+
+        wrapCurrentSelection(fragment)
     }
 
     override fun popBackStack(route: String, requiresSavingState: Boolean) {

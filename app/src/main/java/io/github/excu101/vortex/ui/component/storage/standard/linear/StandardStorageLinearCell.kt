@@ -11,16 +11,15 @@ import android.text.TextUtils
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+import android.widget.ImageView
 import android.widget.ImageView.ScaleType
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.contains
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ViewIds
@@ -28,15 +27,22 @@ import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.StorageCellBadgeIcon
 import io.github.excu101.vortex.ui.component.ThemeDp
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
-import io.github.excu101.vortex.ui.component.storage.StorageCell
-import io.github.excu101.vortex.ui.component.theme.key.*
-import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemNameKey
+import io.github.excu101.vortex.ui.component.storage.RecyclableStorageCell
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemHorizontalInfoPaddingKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemHorizontalTitlePaddingKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemLinearHeightDimenKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemLinearWidthDimenKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSecondaryTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceRippleColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemTitleTextColorKey
 import io.github.excu101.vortex.ui.component.themeMeasure
 
 
 class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
-    RecyclableView<PathItem>, StorageCell {
+    RecyclableStorageCell {
 
     private val largeInnerPadding = 16.dp
     private val middleInnerPadding = 8.dp
@@ -72,6 +78,7 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     ).apply {
 //        shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
         initializeElevationOverlay(context)
+        tintList = createSurfaceStateList()
     }
 
     private val foreground = RippleDrawable(
@@ -84,25 +91,23 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         duration = 500L
     }
 
-    private val iconView = object : AppCompatImageView(context) {
-        override fun onDraw(canvas: Canvas) {
-            super.onDraw(canvas)
+    private val iconView = object : ImageView(context) {
+        override fun draw(canvas: Canvas) {
+            super.draw(canvas)
             iconBadge.draw(canvas)
         }
-
     }.apply {
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         scaleType = ScaleType.CENTER_INSIDE
-        id = ViewIds.Storage.Item.iconId
+        id = ViewIds.Storage.Item.IconId
         minimumWidth = iconSize
         minimumHeight = iconSize
-        isClickable = true
-        isFocusable = true
-        setBackground(iconSurface)
+        background = iconSurface
         // TODO: Replace with FrameLayout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setForeground(iconForeground)
+            foreground = iconForeground
         }
+        imageTintList = createIconStateList()
     }
 
     private val titleView = TextView(context).apply {
@@ -180,7 +185,7 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         iconView.setImageResource(id)
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         updateStateLists()
     }
 
@@ -191,7 +196,7 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     init {
-        id = ViewIds.Storage.Item.rootId
+        id = ViewIds.Storage.Item.RootId
         isClickable = true
         isFocusable = true
         clipToOutline = true
@@ -229,12 +234,16 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
             iconView.measure(makeMeasureSpec(iconSize, AT_MOST), makeMeasureSpec(iconSize, AT_MOST))
         }
         if (containsTitle) {
-            titleView.measure(makeMeasureSpec(availableWidth, AT_MOST),
-                makeMeasureSpec(24.dp, AT_MOST))
+            titleView.measure(
+                makeMeasureSpec(availableWidth, AT_MOST),
+                makeMeasureSpec(24.dp, AT_MOST)
+            )
         }
         if (containsInfo) {
-            infoView.measure(makeMeasureSpec(availableWidth, AT_MOST),
-                makeMeasureSpec(20.dp, AT_MOST))
+            infoView.measure(
+                makeMeasureSpec(availableWidth, AT_MOST),
+                makeMeasureSpec(20.dp, AT_MOST)
+            )
         }
     }
 
@@ -268,10 +277,8 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     override fun onBind(item: PathItem) = with(item) {
-        onChanged()
-        title = FormatterThemeText(key = fileListItemNameKey, name)
-        this@StandardStorageLinearCell.icon = icon
-        this@StandardStorageLinearCell.info = info
+        onColorChanged()
+        super.onBind(item)
         isBookmarked = bookmarkExists
     }
 
@@ -333,7 +340,8 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
             intArrayOf(
 //                ThemeColor(storageListItemSurfaceRippleSelectedColorKey),
                 ThemeColor(storageListItemSurfaceRippleColorKey) // default
-            ))
+            )
+        )
     }
 
     private fun createTitleStateList(): ColorStateList {
@@ -350,14 +358,16 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     private fun createInfoStateList(): ColorStateList {
-        return ColorStateList(arrayOf(
+        return ColorStateList(
+            arrayOf(
 //            intArrayOf(android.R.attr.state_selected),
-            intArrayOf(),
-        ),
+                intArrayOf(),
+            ),
             intArrayOf(
 //                ThemeColor(storageListItemSecondarySelectedTextColorKey),
                 ThemeColor(storageListItemSecondaryTextColorKey)
-            ))
+            )
+        )
     }
 
     private fun createIconStateList(): ColorStateList {
@@ -374,13 +384,15 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     private fun createIconSurfaceStateList(): ColorStateList {
-        return ColorStateList(arrayOf(
+        return ColorStateList(
+            arrayOf(
 //            intArrayOf(android.R.attr.state_selected),
-            intArrayOf(),
-        ),
+                intArrayOf(),
+            ),
             intArrayOf(
 //                ThemeColor(storageListItemIconBackgroundSelectedColorKey),
-                ThemeColor(storageListItemIconBackgroundColorKey))
+                ThemeColor(storageListItemIconBackgroundColorKey)
+            )
         )
     }
 

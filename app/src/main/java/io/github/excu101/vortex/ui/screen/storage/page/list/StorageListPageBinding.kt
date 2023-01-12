@@ -3,72 +3,43 @@ package io.github.excu101.vortex.ui.screen.storage.page.list
 import android.content.Context
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout.Behavior
+import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
-import androidx.core.view.updateLayoutParams
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import io.github.excu101.vortex.ui.component.ViewBinding
-import io.github.excu101.vortex.ui.component.bar.Bar
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.info.InfoView
 import io.github.excu101.vortex.ui.component.list.scroll.FastScroller
 import io.github.excu101.vortex.ui.component.loading.LoadingView
-import io.github.excu101.vortex.ui.component.storage.StorageListView
 import io.github.excu101.vortex.ui.component.trail.TrailListView
-import io.github.excu101.vortex.ui.icon.Icons
 
 class StorageListPageBinding(
     context: Context,
-) : ViewBinding<CoordinatorLayout> {
+) : ViewBinding<FrameLayout> {
 
-    override var root: CoordinatorLayout = CoordinatorLayout(context).apply {
+    override var root: FrameLayout = FrameLayout(context).apply {
         layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
     }
 
-    private class FabBehavior : Behavior<ExtendedFloatingActionButton>() {
-        override fun layoutDependsOn(
-            parent: CoordinatorLayout,
-            child: ExtendedFloatingActionButton,
-            dependency: View,
-        ): Boolean {
-            return dependency is Bar
-        }
-
-        override fun onDependentViewChanged(
-            parent: CoordinatorLayout,
-            child: ExtendedFloatingActionButton,
-            dependency: View,
-        ): Boolean {
-            return when (dependency) {
-                is Bar -> {
-                    child.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                        rightMargin = with(child) { 16.dp }
-                        bottomMargin =
-                            dependency.height - dependency.translationY.toInt() + with(child) { 16.dp }
-                    }
-                    true
-                }
-                else -> super.onDependentViewChanged(parent, child, dependency)
-            }
-        }
-    }
-
-    var fab = ExtendedFloatingActionButton(context).apply {
-        icon = Icons.Rounded.ContentPaste
-        text = "Tasks"
-        layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-            gravity = Gravity.END or Gravity.BOTTOM
-            behavior = FabBehavior()
-        }
-    }
-
-    var list: StorageListView = StorageListView(context).apply {
+    var list: RecyclerView = RecyclerView(
+        context,
+    ).apply {
         visibility = View.GONE
         layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+
+        updatePadding(
+            top = 40.dp
+        )
+
+        setHasFixedSize(true)
+        isNestedScrollingEnabled = true
+//        clipToPadding = false
+
+        layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
     }
 
     val trail: TrailListView = TrailListView(context).apply {

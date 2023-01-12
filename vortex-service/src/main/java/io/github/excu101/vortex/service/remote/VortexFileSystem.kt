@@ -3,9 +3,10 @@ package io.github.excu101.vortex.service.remote
 import io.github.excu101.filesystem.fs.FileSystem
 import io.github.excu101.vortex.service.data.ParcelablePath
 
-class VortexFileSystem(
+
+class VortexFileSystem @JvmOverloads constructor(
     private val local: FileSystem,
-    val provider: VortexFileSystemProvider,
+    private val provider: VortexFileSystemProvider = VortexFileSystemProvider(local.provider),
 ) : RemoteFileSystem.Stub() {
 
     override fun getProvider(): RemoteFileSystemProvider = provider

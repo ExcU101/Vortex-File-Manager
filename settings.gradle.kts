@@ -19,7 +19,6 @@ include(
     ":filesystem",
     ":filesystem-unix",
     ":pluginsystem",
-    ":pluginsystem-common",
     ":ui-component",
     ":vortex-service",
     ":manifest-dsl",

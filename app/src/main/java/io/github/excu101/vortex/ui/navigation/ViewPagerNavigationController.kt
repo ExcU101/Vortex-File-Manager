@@ -20,6 +20,8 @@ class ViewPagerNavigationController(
         pager = pager
     )
 
+    fun wrapCurrentSelection(fragment: Fragment) = navigator.wrapCurrentSelection(fragment)
+
     override fun addDestination(dest: Destination<*>) {
         graph.addDestination(dest as Destination<Fragment>)
     }

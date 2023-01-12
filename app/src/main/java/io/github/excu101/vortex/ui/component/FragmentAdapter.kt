@@ -5,6 +5,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import io.github.excu101.vortex.provider.command.Command
+import io.github.excu101.vortex.provider.command.CommandConsumer
+import kotlinx.coroutines.channels.Channel
 
 class FragmentAdapter : FragmentStateAdapter {
 
@@ -16,6 +19,7 @@ class FragmentAdapter : FragmentStateAdapter {
     )
 
     private val stack = mutableListOf<Fragment>()
+    private val commands = Channel<Command>()
 
     operator fun get(index: Int) = stack[index]
 
@@ -35,6 +39,14 @@ class FragmentAdapter : FragmentStateAdapter {
             }
         }
     }
+
+    suspend fun sendCommand(
+        index: Int,
+        command: Command,
+    ) {
+        (stack[index] as? CommandConsumer)?.consume(command)
+    }
+
 
     override fun createFragment(position: Int): Fragment = stack[position]
 

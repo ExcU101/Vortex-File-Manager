@@ -8,29 +8,37 @@ import android.content.res.ColorStateList.valueOf
 import android.graphics.Paint
 import android.graphics.drawable.RippleDrawable
 import android.view.View
-import android.view.View.MeasureSpec.*
+import android.view.View.MeasureSpec.AT_MOST
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.getMode
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout.AttachedBehavior
 import androidx.core.view.children
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 import com.google.android.material.shape.MaterialShapeUtils
-import io.github.excu101.pluginsystem.model.Action
+import com.google.android.material.textfield.TextInputEditText
 import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.bar.NavigationIcon.Type.CLOSE
 import io.github.excu101.vortex.ui.component.dp
+import io.github.excu101.vortex.ui.component.menu.MenuAction
 import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.menu.MenuLayout
-import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.theme.key.mainBarHeightKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarNavigationIconTintColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarSurfaceColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainBarTitleTextColorKey
 import kotlin.math.min
 
-class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
+class Bar(context: Context) : ThemeFrameLayout(context) {
 
     enum class Type {
         TOP,
@@ -55,8 +63,6 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
     private val behavior = BarBehavior()
 
     private val desireHeight = ThemeDimen(mainBarHeightKey).dp
-
-    var hideOnScroll: Boolean = true
 
     private val shape = MaterialShapeDrawable().apply {
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_ALWAYS
@@ -88,6 +94,10 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
     private val menuView = MenuLayout(context).apply {
 
+    }
+
+    private val searchField = TextInputEditText(context).apply {
+        hint = "Enter what you want to search"
     }
 
     val navigationIcon: NavigationIcon
@@ -141,7 +151,7 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         }
 
     val containsTitle: Boolean
-        get() = if (titleView == null) false else titleView in children
+        get() = titleView in children
 
     val containsSubtitle: Boolean
         get() = subtitleView in children
@@ -208,8 +218,6 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         }
     }
 
-    override fun getBehavior() = behavior
-
     fun show() {
         behavior.slideUp(child = this)
     }
@@ -218,17 +226,17 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
         behavior.slideDown(child = this)
     }
 
-    fun addItem(action: Action) {
+    fun addItem(action: MenuAction) {
         ensureContainingMenu()
         menuView.addItem(action)
     }
 
-    fun replaceItems(actions: List<Action>) {
+    fun replaceItems(actions: List<MenuAction>) {
         ensureContainingMenu()
         menuView.replaceItems(actions)
     }
 
-    fun removeItem(action: Action) {
+    fun removeItem(action: MenuAction) {
         ensureContainingMenu()
         menuView.removeItem(action)
     }
@@ -282,19 +290,14 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
             )
         }
         if (containsMenu) {
-            textWidth = if (titleView.measuredWidth > subtitleView.measuredWidth) {
-                titleView.measuredWidth
-            } else {
-                subtitleView.measuredWidth
-            }
-            val paddings = if (containsTitle && containsNavigationIcon) {
-                titleHorizontalPadding
-            } else {
-                0
-            }
-            val menuWidth = availableWidth - navigationIconView.measuredWidth - textWidth - paddings
+//            textWidth = if (titleView.measuredWidth > subtitleView.measuredWidth) {
+//                titleView.measuredWidth
+//            } else {
+//                subtitleView.measuredWidth
+//            }
+//            val menuWidth = availableWidth - navigationIconView.measuredWidth - textWidth - paddings
             menuView.measure(
-                makeMeasureSpec(menuWidth, AT_MOST),
+                makeMeasureSpec(width, AT_MOST),
                 56.dp
             )
         }
@@ -346,15 +349,15 @@ class Bar(context: Context) : ThemeFrameLayout(context), AttachedBehavior {
 
         if (containsMenu) {
             menuView.layout(
-                widthPosition,
                 0,
-                widthPosition + menuView.measuredWidth,
+                0,
+                menuView.measuredWidth,
                 measuredHeight - paddingBottom
             )
         }
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         shape.setTint(ThemeColor(mainBarSurfaceColorKey))
         titleView.setTextColor(ThemeColor(mainBarTitleTextColorKey))
         subtitleView.setTextColor(ThemeColor(mainBarSubtitleTextColorKey))

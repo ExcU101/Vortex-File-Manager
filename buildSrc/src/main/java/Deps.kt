@@ -47,10 +47,14 @@ object Deps {
         val FileSystemUnix = mapOf("path" to ":filesystem-unix")
         val PluginSystem = mapOf("path" to ":pluginsystem")
         val PluginSystemUi = mapOf("path" to ":pluginsystem-ui")
-        val PluginSystemCommon = mapOf("path" to ":pluginsystem-common")
         val UiComponent = mapOf("path" to ":ui-component")
         val VortexService = mapOf("path" to ":vortex-service")
         val Navigation = mapOf("path" to ":navigation")
+    }
+
+    object Room {
+        val Runtime = "androidx.room:room-runtime:${Versions.roomVer}"
+        val Compiler = "androidx.room:room-compiler:${Versions.roomVer}"
     }
 
     object UnitTest {

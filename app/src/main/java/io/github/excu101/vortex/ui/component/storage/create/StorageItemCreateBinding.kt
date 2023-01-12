@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
 import androidx.core.view.updatePadding
 import com.google.android.material.R.layout.support_simple_spinner_dropdown_item
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -184,20 +183,6 @@ class StorageItemCreateBinding(
         setText("777")
     }
 
-    val confirm = MaterialButton(context).apply {
-
-        text = "Confirm"
-        layoutParams = LinearLayout.LayoutParams(
-            MATCH_PARENT,
-            WRAP_CONTENT
-        ).apply {
-            leftMargin = 16
-            rightMargin = 16
-        }
-        setBackgroundColor(ThemeColor(accentColorKey))
-        cornerRadius = 16.dp
-    }
-
     init {
         onCreate()
     }
@@ -212,7 +197,6 @@ class StorageItemCreateBinding(
         root.addView(pathLayout)
         root.addView(typeLayout)
         root.addView(modeLayout)
-        root.addView(confirm)
     }
 
     override fun onDestroy() {

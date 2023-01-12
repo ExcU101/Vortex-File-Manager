@@ -2,7 +2,11 @@ package io.github.excu101.vortex.ui.component.item.text
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.view.View.MeasureSpec.*
+import android.view.View.MeasureSpec.AT_MOST
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.getMode
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.TextView
 import androidx.core.view.contains
@@ -12,7 +16,6 @@ import io.github.excu101.pluginsystem.ui.theme.ThemeColor
 import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerTitleColorKey
 import kotlin.math.min
@@ -27,7 +30,7 @@ class TextItemView(
     private val desireHeight = 48.dp
 
     private val title = TextView(context).apply {
-        setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
+        setTextColor(ThemeColor(mainDrawerTitleColorKey))
         textSize = 14F
     }
 
@@ -123,7 +126,7 @@ class TextItemView(
         MaterialShapeUtils.setElevation(this, elevation)
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         title.setTextColor(ThemeColor(mainDrawerTitleColorKey))
         setBackgroundColor(ThemeColor(mainDrawerBackgroundColorKey))
     }

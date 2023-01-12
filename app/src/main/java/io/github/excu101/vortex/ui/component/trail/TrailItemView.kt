@@ -65,7 +65,7 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
     override val innerSmallPadding = 4.dp
 
     init {
-        id = ViewIds.Storage.Trail.rootId
+        id = ViewIds.Storage.Trail.RootId
         gravity = CENTER
         minimumHeight = desireHeight
         isClickable = true
@@ -148,7 +148,7 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
         surface.setTint(ThemeColor(trailSurfaceColorKey))
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         updateStateLists()
     }
 

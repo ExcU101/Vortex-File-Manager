@@ -16,11 +16,9 @@ import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.navigation.dsl.FragmentFactory
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.ItemViewTypes.DividerItem
-import io.github.excu101.vortex.ui.component.ItemViewTypes.IconTextItem
 import io.github.excu101.vortex.ui.component.animation.fade
 import io.github.excu101.vortex.ui.component.item.ItemRecyclerView
 import io.github.excu101.vortex.ui.component.item.divider.DividerHeaderItem
-import io.github.excu101.vortex.ui.component.item.icon.ActionItem
 import io.github.excu101.vortex.ui.component.item.info.InfoItem
 import io.github.excu101.vortex.ui.component.item.text.TextItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
@@ -63,7 +61,6 @@ class StorageItemInfoPageFragment : Fragment() {
 
         list = ItemRecyclerView(requireContext()).apply {
             adapter.add(ItemViewTypes.TextItem, TextItem as ViewHolderFactory<Item<*>>)
-            adapter.add(IconTextItem, ActionItem as ViewHolderFactory<Item<*>>)
             adapter.add(DividerItem, DividerHeaderItem as ViewHolderFactory<Item<*>>)
             adapter.add(ItemViewTypes.InfoItem, InfoItem as ViewHolderFactory<Item<*>>)
         }
@@ -82,7 +79,6 @@ class StorageItemInfoPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val itemAdapter = list!!.adapter
         requireBar().navigationIcon.progress = 1F
-        requireBar().hideOnScroll = true
 
         requireBar().subtitle = null
         requireBar().replaceItems(listOf())

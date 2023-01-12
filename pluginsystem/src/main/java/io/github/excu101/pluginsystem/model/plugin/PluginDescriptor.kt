@@ -10,9 +10,13 @@ interface PluginDescriptor {
 
     val dependencies: List<PluginDependency>
 
+    val optional: List<PluginDependency>
+
+    val sources: List<String>
+
     val version: String
 
-    val license: String?
+    val license: String
 
     interface Owner {
         val descriptor: PluginDescriptor

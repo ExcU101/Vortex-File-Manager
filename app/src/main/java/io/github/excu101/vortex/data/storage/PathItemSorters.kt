@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.data.storage
 
-import io.github.excu101.vortex.base.impl.Sorter
+import io.github.excu101.vortex.provider.storage.Sorter
 import io.github.excu101.vortex.data.PathItem
 
 object PathItemSorters {

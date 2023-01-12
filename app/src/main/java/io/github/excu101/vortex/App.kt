@@ -31,6 +31,7 @@ class App : MultiDexApplication() {
             UI_MODE_NIGHT_YES -> {
                 initOceanDarkColorValues()
             }
+
             UI_MODE_NIGHT_NO -> {
                 initOceanLightColorValues()
             }
@@ -55,7 +56,6 @@ class App : MultiDexApplication() {
 //        }
         initVortexTextValuesEN()
         IconInitializer.context = this
-
         FileProvider.installDefault(system)
     }
 

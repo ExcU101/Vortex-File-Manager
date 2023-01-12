@@ -9,6 +9,8 @@ interface VortexFileManagerService {
 
     void install(RemoteFileSystem system);
 
+    void installDefault(RemoteFileSystem system);
+
     RemoteFileSystem getSystem(in String scheme);
 
     RemoteFileSystemProvider getProvider(in String scheme);

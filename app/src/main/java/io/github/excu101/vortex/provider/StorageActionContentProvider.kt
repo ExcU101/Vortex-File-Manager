@@ -1,14 +1,48 @@
 package io.github.excu101.vortex.provider
 
+import android.graphics.Color
 import io.github.excu101.pluginsystem.ui.theme.ThemeText
+import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.provider.storage.StorageBookmarkProvider
 import io.github.excu101.vortex.ui.component.dsl.scope
 import io.github.excu101.vortex.ui.component.dsl.withGroup
 import io.github.excu101.vortex.ui.component.item.divider.divider
+import io.github.excu101.vortex.ui.component.item.drawer.attrs
 import io.github.excu101.vortex.ui.component.item.drawer.drawerItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
-import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.theme.key.fileListFilterOnlyAudioFileActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListFilterOnlyFilesActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListFilterOnlyFoldersActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListFilterOnlyImageFileActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListFilterOnlyTextFileActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListFilterOnlyVideoFileActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListGroupFilterActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListGroupOperationDefaultActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListGroupOrderActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListGroupSortActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListGroupViewActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListMoreInfoActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListOrderAscendingActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListOrderDescendingActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListSortCreationTimeActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListSortLastAccessTimeActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListSortLastModifiedTimeActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListSortNameActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListSortPathActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListSortSizeActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListViewGridActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.fileListViewListActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationAddActionNewTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationAddBookmarkTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationCopyActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationCopyPathTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationCutActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationDeleteActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationOpenTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationRemoveBookmarkTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationRenameActionTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListOperationSwapNamesActionTitleKey
 import io.github.excu101.vortex.ui.icon.Icons
 import io.github.excu101.vortex.utils.Config
 
@@ -34,27 +68,38 @@ fun StorageActionContentProvider(): StorageActionContentProvider {
             withGroup(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
                 if (item.isDirectory) {
                     drawerItem {
+                        id = ViewIds.Storage.Menu.OpenId
                         title = ThemeText(storageListOperationOpenTitleKey)
                         icon = Icons.Rounded.FolderOpen
                     }
                     drawerItem {
+                        id = ViewIds.Storage.Menu.AddNewId
                         title = ThemeText(storageListOperationAddActionNewTitleKey)
                         icon = Icons.Rounded.Add
                     }
                 }
                 drawerItem {
+                    id = ViewIds.Storage.Menu.RenameId
                     title = ThemeText(storageListOperationRenameActionTitleKey)
                     icon = Icons.Rounded.Edit
                 }
                 drawerItem {
+                    id = ViewIds.Storage.Menu.DeleteId
                     title = ThemeText(storageListOperationDeleteActionTitleKey)
                     icon = Icons.Rounded.Delete
+
+                    attrs {
+                        textColor = Color.RED
+                        iconColor = Color.RED
+                    }
                 }
                 drawerItem {
+                    id = ViewIds.Storage.Menu.CopyId
                     title = ThemeText(storageListOperationCopyActionTitleKey)
                     icon = Icons.Rounded.Copy
                 }
                 drawerItem {
+                    id = ViewIds.Storage.Menu.MoveId
                     title = ThemeText(storageListOperationCutActionTitleKey)
                     icon = Icons.Rounded.Cut
                 }
@@ -70,9 +115,11 @@ fun StorageActionContentProvider(): StorageActionContentProvider {
 
                 drawerItem {
                     if (item in StorageBookmarkProvider.items) {
+                        id = ViewIds.Storage.Menu.RemoveBookmarkId
                         title = ThemeText(storageListOperationRemoveBookmarkTitleKey)
                         icon = Icons.Rounded.BookmarkRemove
                     } else {
+                        id = ViewIds.Storage.Menu.AddBookmarkId
                         title = ThemeText(storageListOperationAddBookmarkTitleKey)
                         icon = Icons.Rounded.BookmarkAdd
                     }
@@ -83,18 +130,21 @@ fun StorageActionContentProvider(): StorageActionContentProvider {
 
             withGroup(title = "Additional") {
                 drawerItem {
+                    id = ViewIds.Storage.Menu.CopyPathId
                     title = ThemeText(storageListOperationCopyPathTitleKey)
                     icon = Icons.Rounded.Copy
                 }
 
                 if (item.isDirectory) {
                     drawerItem {
+                        id = ViewIds.Storage.Menu.AddWatcherId
                         title = "Add watcher"
                         icon = Icons.Rounded.Watch
                     }
                 }
 
                 drawerItem {
+                    id = ViewIds.Storage.Menu.InfoId
                     title = ThemeText(fileListMoreInfoActionTitleKey)
                     icon = Icons.Rounded.Info
                 }

@@ -154,7 +154,7 @@ class TrailListView : RecyclerView,
 
     fun slideDown() = behavior.slideDown(view = this)
 
-    override fun onChanged() {
+    override fun onColorChanged() {
         shape.setTint(ThemeColor(trailSurfaceColorKey))
     }
 

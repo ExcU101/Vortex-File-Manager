@@ -6,6 +6,7 @@ import io.github.excu101.filesystem.unix.operation.UnixCopyOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateDirectoryOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateFileOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateLinkOperation
+import io.github.excu101.filesystem.unix.operation.UnixCutOperation
 import io.github.excu101.filesystem.unix.operation.UnixDeleteOperation
 import io.github.excu101.filesystem.unix.operation.UnixRenameOperation
 
@@ -57,4 +58,14 @@ fun unixCreateFile(
     source,
     flags,
     mode
+)
+
+fun unixCut(
+    sources: Set<Path>,
+    dest: Path,
+    options: Int,
+): FileOperation = UnixCutOperation(
+    sources,
+    dest,
+    options
 )

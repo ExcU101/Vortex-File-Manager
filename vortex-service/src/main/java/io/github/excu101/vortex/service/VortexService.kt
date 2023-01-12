@@ -8,7 +8,9 @@ import io.github.excu101.vortex.service.utils.VORTEX_SERVICE_ACTION_NAME
 
 class VortexService : LifecycleService() {
 
-    private val binder = VortexFileManagerService(context = this)
+    private val binder = VortexFileManagerService(
+//        NotificationCenterImpl(this)
+    )
 
     override fun onBind(intent: Intent): IBinder? {
         super.onBind(intent)

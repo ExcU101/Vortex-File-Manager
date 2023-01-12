@@ -9,7 +9,7 @@ import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.dsl.ItemScope
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
-import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.mainDrawerTitleColorKey
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -27,7 +27,7 @@ data class TextItem(
     ) : Parcelable {
         class Builder {
             var alignment: Int = TEXT_ALIGNMENT_TEXT_START
-            var color = ThemeColor(mainBarSubtitleTextColorKey)
+            var color = ThemeColor(mainDrawerTitleColorKey)
             var size = 14F
 
             fun build() = Attrs(

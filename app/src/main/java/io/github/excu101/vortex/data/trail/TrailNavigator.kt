@@ -9,24 +9,32 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class TrailNavigator : Iterable<PathItem> {
 
+    data class Trail(
+        val items: List<PathItem> = listOf(),
+        val selectedIndex: Int = -1
+    ) {
+        operator fun component3() = selected
+        val selected: PathItem?
+            get() = items.getOrNull(selectedIndex)
+    }
+
     data class SelectedItem(
         val index: Int,
         val item: PathItem?,
     )
 
-    val size: Int
-        get() = _items.value.size
+    private val _trail = MutableStateFlow(Trail())
+    val trail: StateFlow<Trail>
+        get() = _trail.asStateFlow()
 
-    private val _items = MutableStateFlow(mutableListOf<PathItem>())
-    val items: StateFlow<List<PathItem>>
-        get() = _items.asStateFlow()
+    val items: List<PathItem>
+        get() = trail.value.items
 
-    private val _selection = MutableStateFlow(SelectedItem(
-        index = -1,
-        item = null
-    ))
-    val selection: StateFlow<SelectedItem>
-        get() = _selection.asStateFlow()
+    val selectedIndex: Int
+        get() = trail.value.selectedIndex
+
+    val selected: PathItem?
+        get() = trail.value.selected
 
     companion object {
         private var isSlicePathEnabled = true
@@ -61,7 +69,7 @@ class TrailNavigator : Iterable<PathItem> {
         selectedIndex: Int = segments.lastIndex,
         withPrefixChecking: Boolean = true,
     ) {
-        val items = _items.value
+        val items = items
         if (withPrefixChecking) {
             var hasPrefix = true
             for (index in segments.indices) {
@@ -75,20 +83,19 @@ class TrailNavigator : Iterable<PathItem> {
                 }
             }
         }
-        _items.emit(segments)
-        _selection.emit(SelectedItem(selectedIndex, segments[selectedIndex]))
+        _trail.emit(Trail(segments, selectedIndex))
     }
 
     suspend fun navigateLeft() {
-        navigateTo(segments = take(selection.value.index).toMutableList())
+        navigateTo(segments = take(selectedIndex).toMutableList())
     }
 
     suspend fun navigateRight() {
-        navigateTo(segments = take(selection.value.index + 2).toMutableList())
+        navigateTo(segments = take(selectedIndex + 2).toMutableList())
     }
 
     override fun iterator(): Iterator<PathItem> {
-        return items.value.iterator()
+        return items.iterator()
     }
 
 }

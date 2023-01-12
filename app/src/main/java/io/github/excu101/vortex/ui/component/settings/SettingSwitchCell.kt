@@ -19,15 +19,23 @@ class SettingSwitchCell(context: Context) : ThemeLinearLayout(context),
             switchView.isChecked = value
         }
 
+    init {
+        orientation = HORIZONTAL
+        addView(titleView)
+        addView(switchView)
+    }
+
     override fun onBind(item: SwitchItem) {
-        titleView.text = item.value
+        titleView.text = item.title
+        switchView.isChecked = item.value
     }
 
     override fun onUnbind() {
         titleView.text = null
+        switchView.isChecked = false
     }
 
-    override fun onChanged() {
+    override fun onColorChanged() {
 
     }
 

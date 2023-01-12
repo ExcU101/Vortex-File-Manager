@@ -1,4 +1,4 @@
-#include "../../jni-classes.cpp"
+#include "../../jni/jni_classes.cpp"
 #include "sys/inotify.h"
 #include <cerrno>
 #include <cstdlib>

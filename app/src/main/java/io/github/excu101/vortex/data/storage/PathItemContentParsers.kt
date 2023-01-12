@@ -18,6 +18,11 @@ object PathItemContentParsers : Iterable<PathItemPartInfoParser> {
         parsers.add(parser)
     }
 
+    fun register(at: Int, parser: PathItemPartInfoParser) {
+        if (at <= -1) return
+        parsers.add(at, parser)
+    }
+
     private val parsers = mutableListOf(
         ItemCount,
         LastModifiedTime,
