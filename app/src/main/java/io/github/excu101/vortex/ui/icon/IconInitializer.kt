@@ -1,6 +1,7 @@
 package io.github.excu101.vortex.ui.icon
 
 import android.content.Context
+import androidx.appcompat.content.res.AppCompatResources
 
 object IconInitializer {
 
@@ -10,6 +11,6 @@ object IconInitializer {
             field = value?.applicationContext
         }
 
-    operator fun get(id: Int) = context!!.getDrawable(id)
+    operator fun get(id: Int) = AppCompatResources.getDrawable(context!!, id)
 
 }

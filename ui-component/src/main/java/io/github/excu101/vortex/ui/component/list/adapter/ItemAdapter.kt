@@ -10,6 +10,7 @@ import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFacto
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ClickListenerRegister
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListener
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewLongListener
+import io.github.excu101.vortex.ui.component.list.adapter.selection.SelectableAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.selection.SelectionAdapter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +21,8 @@ class UnsupportedViewTypeException(
     viewType: Int,
 ) : Throwable("Unsupported view type (viewType: $viewType)")
 
-open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, EditableAdapter<T>,
+open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, EditableAdapter<T>,
+    SelectableAdapter<T>,
     ClickListenerRegister<T> {
 
     companion object {
@@ -31,9 +33,8 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         setHasStableIds(true)
     }
 
+    protected var isPayload = true
     protected val selection = mutableSetOf<T>()
-//    val selection: Iterable<T>
-//        get() = _selection
 
     // key: viewType, value: viewHolder factory
     private val factories = mutableMapOf<Int, ViewHolderFactory<T>>()
@@ -97,6 +98,8 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
                 if (payload == selectionPayload) {
                     val isSelected = isSelected(position)
                     holder.bindSelection(isSelected)
+                } else {
+                    holder.bindPayload(payload)
                 }
             }
         }
@@ -109,7 +112,8 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
             selection.add(item)
         }
 
-        changed(item, selectionPayload)
+        if (isPayload) changed(item, selectionPayload)
+        else changed(item)
     }
 
     override fun replaceSelected(selected: List<T>) {
@@ -117,24 +121,25 @@ open class ItemAdapter<T : Item<*>> : SelectionAdapter<T, ViewHolder<T>>, Editab
         if (selected == selection) return
         if (selected.isEmpty()) {
             selection.removeAll { item ->
-                changed(item, selectionPayload)
+                if (isPayload) changed(item, selectionPayload)
+                else changed(item)
                 true
             }
         }
 
         selection.removeAll { item ->
             if (item !in selected) {
-                changed(item, selectionPayload)
+                if (isPayload) changed(item, selectionPayload)
+                else changed(item)
                 true
-            } else {
-                false
-            }
+            } else false
         }
 
         for (newItem in selected) {
-            if (!selection.contains(newItem)) {
+            if (!selected.contains(newItem)) {
                 selection.add(newItem)
-                changed(newItem, selectionPayload)
+                if (isPayload) changed(newItem, selectionPayload)
+                else changed(newItem)
             }
         }
     }

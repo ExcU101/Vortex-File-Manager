@@ -1,9 +1,18 @@
 package io.github.excu101.filesystem.fs.operation
 
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.random.Random
+
 abstract class FileOperation {
+
+    companion object {
+        private val _id = AtomicInteger()
+    }
 
     // Interface marker
     interface Action
+
+    val id: Int = _id.incrementAndGet()
 
     private val _observers: MutableList<FileOperationObserver> = mutableListOf()
     protected val observes: List<FileOperationObserver>

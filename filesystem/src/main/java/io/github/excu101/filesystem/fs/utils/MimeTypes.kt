@@ -8,19 +8,19 @@ operator fun String.getValue(source: Any?, property: KProperty<*>): MimeType {
 }
 
 inline val MimeType.isApplicationType
-    get() = type == "application"
+    get() = type == MimeType.TYPE_APP
 
 inline val MimeType.isTextType
-    get() = type == "text"
+    get() = type == MimeType.TYPE_TEXT
 
 inline val MimeType.isVideoType
-    get() = type == "video"
+    get() = type == MimeType.TYPE_VIDEO
 
 inline val MimeType.isAudioType
-    get() = type == "audio"
+    get() = type == MimeType.TYPE_AUDIO
 
 inline val MimeType.isImageType
-    get() = type == "image"
+    get() = type == MimeType.TYPE_IMAGE
 
 val EmptyMimeType = object : MimeType {
     override val extension: String
@@ -31,8 +31,8 @@ val EmptyMimeType = object : MimeType {
         get() = false
     override val isVendor: Boolean
         get() = false
-    override val type: String
-        get() = ""
+    override val type: Int
+        get() = MimeType.TYPE_EMPTY
 
     override fun toString(): String = ""
 }

@@ -7,8 +7,8 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.core.view.children
 import com.google.android.material.progressindicator.CircularProgressIndicator
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarTintColorKey
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressTitleTextColorKey

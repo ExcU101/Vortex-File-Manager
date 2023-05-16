@@ -3,41 +3,41 @@ package io.github.excu101.vortex
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.res.Configuration.UI_MODE_NIGHT_MASK
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Build
 import androidx.multidex.MultiDexApplication
-import dagger.hilt.android.HiltAndroidApp
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.unix.UnixFileSystem
 import io.github.excu101.filesystem.unix.provider.UnixFileSystemProvider
+import io.github.excu101.vortex.di.StorageComponent
 import io.github.excu101.vortex.service.VortexService
+import io.github.excu101.vortex.service.utils.VORTEX_SERVICE_ACTION_NAME
 import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanDarkColorValues
-import io.github.excu101.vortex.ui.component.theme.value.color.ocean.initOceanLightColorValues
 import io.github.excu101.vortex.ui.component.theme.value.initVortexDimenValues
 import io.github.excu101.vortex.ui.component.theme.value.text.en.initVortexTextValuesEN
 import io.github.excu101.vortex.ui.icon.IconInitializer
+import io.github.excu101.vortex.di.DaggerStorageComponent.builder as StorageComponentBuilder
 
-@HiltAndroidApp
 class App : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
         val provider = UnixFileSystemProvider()
         val system = UnixFileSystem(provider)
 
-        when (val mode = resources.configuration.uiMode and UI_MODE_NIGHT_MASK) {
-            UI_MODE_NIGHT_YES -> {
-                initOceanDarkColorValues()
-            }
 
-            UI_MODE_NIGHT_NO -> {
-                initOceanLightColorValues()
-            }
-
-            else -> initOceanDarkColorValues()
-        }
+//        when (val mode = resources.configuration.uiMode and UI_MODE_NIGHT_MASK) {
+//            UI_MODE_NIGHT_YES -> {
+//                initOceanDarkColorValues()
+//            }
+//
+//            UI_MODE_NIGHT_NO -> {
+//                initOceanLightColorValues()
+//            }
+//
+//            else ->
+        initOceanDarkColorValues()
+//        }
 
         initVortexDimenValues()
 
@@ -61,6 +61,9 @@ class App : MultiDexApplication() {
 
 }
 
+val Context.component: StorageComponent
+    get() = StorageComponentBuilder().bindContext(this).build()
+
 fun Context.startVortexService() {
     Intent(this, VortexService::class.java).also {
         startService(it)
@@ -78,6 +81,7 @@ fun Context.bindVortexService(
     flags: Int,
 ) {
     Intent(this, VortexService::class.java).also {
+        it.action = VORTEX_SERVICE_ACTION_NAME
         bindService(it, connection, flags)
     }
 }

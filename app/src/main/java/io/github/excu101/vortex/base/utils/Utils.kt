@@ -28,10 +28,13 @@ fun <T : Any> T.snackIt(
     duration: Int = Snackbar.LENGTH_SHORT,
     anchorView: View? = null,
     animationMode: Int = BaseTransientBottomBar.ANIMATION_MODE_SLIDE,
+    actionTitle: String? = null,
+    listener: View.OnClickListener? = null
 ): T {
     Snackbar.make(view, message + this.toString(), duration)
         .setAnimationMode(animationMode)
         .setAnchorView(anchorView)
+        .setAction(actionTitle, listener)
         .show()
     return this
 }

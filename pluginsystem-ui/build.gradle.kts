@@ -24,15 +24,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = BuildConfig.JDK.VerEnum
+        targetCompatibility = BuildConfig.JDK.VerEnum
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = BuildConfig.JDK.Ver
     }
 }
 
 dependencies {
     implementation(Deps.AndroidX.Appcompat)
-    implementation(project(Deps.Application.PluginSystem))
+    implementation(project(Deps.Application.PackageManager))
 }

@@ -32,11 +32,8 @@ class UnixPath internal constructor(
     }
 
     override val root: Path?
-        get() = if (isAbsolute) {
-            _system.rootDirectory
-        } else {
-            null
-        }
+        get() = if (isAbsolute) _system.rootDirectory else null
+
 
     override val parent: Path?
         get() = when (nameCount) {
@@ -44,6 +41,17 @@ class UnixPath internal constructor(
             1 -> root
             else -> root!!.resolve(sub(0, points[nameCount - 1]))
         }
+
+    override fun getParentAt(index: Int): Path? {
+        if (nameCount == 0) return null
+        if (nameCount == 1) return root
+
+        if (points.isEmpty()) return null
+        if (index < 0) return null
+        if (index >= points.size) return null
+
+        return root!!.resolve(sub(0, points[index]))
+    }
 
     override val length: Int
         get() = path.size
@@ -205,8 +213,6 @@ class UnixPath internal constructor(
 
 
     override fun compareTo(other: Path): Int {
-        val fLen = length
-        val sLen = other.length
 
         return other.length - length
     }

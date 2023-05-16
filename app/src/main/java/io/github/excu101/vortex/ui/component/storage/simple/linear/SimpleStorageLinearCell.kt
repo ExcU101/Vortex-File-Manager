@@ -13,12 +13,13 @@ import androidx.annotation.DrawableRes
 import androidx.core.view.contains
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.ThemeDimen
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
 import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.utils.icon
 import kotlin.math.min
 
 class SimpleStorageLinearCell(context: Context) : FrameLayout(context), RecyclableView<PathItem> {

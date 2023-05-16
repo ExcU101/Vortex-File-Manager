@@ -7,6 +7,7 @@ import io.github.excu101.filesystem.fs.observer.PathObservableKey.*
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.service
 import io.github.excu101.vortex.data.PathItem
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,6 +34,10 @@ class StorageDirectoryObserver constructor(
         capacity = capacity,
         types = types
     )
+
+    override fun cancel(cause: CancellationException?) {
+        _events.cancel(cause)
+    }
 
     private val scope = CoroutineScope(context)
 

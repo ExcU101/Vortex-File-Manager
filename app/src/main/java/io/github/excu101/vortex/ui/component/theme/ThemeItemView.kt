@@ -2,7 +2,7 @@ package io.github.excu101.vortex.ui.component.theme
 
 import android.content.Context
 import android.widget.TextView
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import kotlin.math.min
 

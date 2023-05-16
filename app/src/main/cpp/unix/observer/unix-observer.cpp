@@ -2,7 +2,7 @@
 #include "sys/inotify.h"
 #include <cerrno>
 #include <cstdlib>
-#include "string"
+#include <string>
 #include "sys/poll.h"
 
 static void clearErrno() {

@@ -1,7 +1,7 @@
 package io.github.excu101.vortex.ui.component.theme.value.color.ocean
 
-import io.github.excu101.pluginsystem.model.Color
-import io.github.excu101.pluginsystem.ui.theme.Theme
+import io.github.excu101.manager.model.Color
+import io.github.excu101.manager.ui.theme.Theme
 import io.github.excu101.vortex.ui.component.theme.key.accentColorKey
 import io.github.excu101.vortex.ui.component.theme.key.backgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.layoutProgressActionTintColorKey
@@ -30,8 +30,10 @@ import io.github.excu101.vortex.ui.component.theme.key.storageListAdditionalActi
 import io.github.excu101.vortex.ui.component.theme.key.storageListAdditionalSurfaceColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListAdditionalTitleTextColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundBookmarkedColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundSelectedColorKey
+import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBookmarkedColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconSelectedTintColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconTintColorKey
 import io.github.excu101.vortex.ui.component.theme.key.storageListItemIndexTextColorKey
@@ -72,7 +74,7 @@ fun initOceanLightColorValues(): Theme {
     Theme[mainBarNavigationIconContextualTintColorKey] = Color.White
     Theme[mainBarTitleContextualTextColorKey] = Color.White
 
-    Theme[mainDrawerTitleColorKey] = Color.Black
+    Theme[mainDrawerTitleColorKey] = Color.Gray
     Theme[mainDrawerBackgroundColorKey] = Color.White
     Theme[mainDrawerSurfaceColorKey] = Color.White
 
@@ -93,8 +95,7 @@ fun initOceanLightColorValues(): Theme {
     Theme[trailSurfaceColorKey] = Color.White
     Theme[trailItemTitleTextColorKey] = Color.Black
     Theme[trailItemArrowTintColorKey] = Color.Black
-    Theme[trailItemRippleTintColorKey] =
-        Color(value = 0x52000000)
+    Theme[trailItemRippleTintColorKey] = Color(value = 0x52000000)
 
     Theme[trailItemTitleSelectedTextColorKey] = Color(value = 0xFF3062FF)
     Theme[trailItemArrowSelectedTintColorKey] = Color(value = 0xFF3062FF)
@@ -119,6 +120,9 @@ fun initOceanLightColorValues(): Theme {
     Theme[storageListItemSecondarySelectedTextColorKey] = Color(value = 0xFF3062FF)
     Theme[storageListItemIconSelectedTintColorKey] = Color(value = 0xFF3062FF)
     Theme[storageListItemIconBackgroundSelectedColorKey] = Color.LightGray
+
+    Theme[storageListItemIconBackgroundBookmarkedColorKey] = Color(value = 0x1F3062FF)
+    Theme[storageListItemIconBookmarkedColorKey] = Color(value = 0xFF3062FF)
 
     Theme[layoutProgressBarBackgroundColorKey] = Color.White
     Theme[layoutProgressBarTintColorKey] = Color(value = 0xFF3062FF)

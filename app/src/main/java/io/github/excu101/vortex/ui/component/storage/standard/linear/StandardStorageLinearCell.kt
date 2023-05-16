@@ -2,14 +2,9 @@ package io.github.excu101.vortex.ui.component.storage.standard.linear
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.ColorStateList.valueOf
-import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
-import android.os.Build
 import android.text.TextUtils
-import android.view.View.MeasureSpec.AT_MOST
-import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.ImageView.ScaleType
@@ -20,25 +15,16 @@ import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.ui.component.StorageCellBadgeIcon
 import io.github.excu101.vortex.ui.component.ThemeDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.storage.RecyclableStorageCell
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemHorizontalInfoPaddingKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemHorizontalTitlePaddingKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemLinearHeightDimenKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemLinearWidthDimenKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemSecondaryTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceRippleColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemTitleTextColorKey
+import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.themeMeasure
+import io.github.excu101.vortex.utils.icon
 
 
 class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
@@ -48,7 +34,7 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private val middleInnerPadding = 8.dp
 
     private val titlePadding = ThemeDp(storageListItemHorizontalTitlePaddingKey)
-    private val infoPadding = ThemeDp(storageListItemHorizontalInfoPaddingKey)
+    private val infoPadding = ThemeDp(storageListItemHorizontalSubtitlePaddingKey)
 
     private val iconSize = 40.dp
 
@@ -67,47 +53,19 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
 
     }
 
-    private val iconForeground = RippleDrawable(
-        valueOf(ThemeColor(storageListItemIconTintColorKey)),
-        null,
-        iconSurface
-    )
-
     private val surface = MaterialShapeDrawable(
-        builder().setAllCorners(ROUNDED, 0F).build()
+        builder().build()
     ).apply {
-//        shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
         initializeElevationOverlay(context)
         tintList = createSurfaceStateList()
     }
 
-    private val foreground = RippleDrawable(
-        createRippleStateList(),
-        null,
-        null
-    )
-
-    private val iconBadge = StorageCellBadgeIcon(iconSize, iconSize).apply {
-        duration = 500L
-    }
-
-    private val iconView = object : ImageView(context) {
-        override fun draw(canvas: Canvas) {
-            super.draw(canvas)
-            iconBadge.draw(canvas)
-        }
-    }.apply {
-        layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+    private val iconView = ImageView(context).apply {
+        layoutParams = LayoutParams(iconSize, iconSize)
         scaleType = ScaleType.CENTER_INSIDE
         id = ViewIds.Storage.Item.IconId
-        minimumWidth = iconSize
-        minimumHeight = iconSize
-        background = iconSurface
-        // TODO: Replace with FrameLayout
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            foreground = iconForeground
-        }
-        imageTintList = createIconStateList()
+
+        background = createIconRippleBackground()
     }
 
     private val titleView = TextView(context).apply {
@@ -152,13 +110,11 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     override var isCellSelected: Boolean
         get() = isSelected
         set(value) {
-            iconBadge.isSelected = value
             isSelected = value
         }
 
     override var isBookmarked: Boolean = false
         set(value) {
-            iconBadge.isBookmarked = value
             field = value
         }
 
@@ -201,11 +157,18 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         isFocusable = true
         clipToOutline = true
 
-        setBackground(surface)
-        setForeground(foreground)
+        background = surface
+        foreground = createRippleForeground()
         updateStateLists()
     }
 
+    private fun createIconRippleBackground(): RippleDrawable {
+        return RippleDrawable(
+            ColorStateList.valueOf(ThemeColor(storageListItemIconTintColorKey)),
+            iconSurface,
+            null
+        )
+    }
 
     fun setOnIconClickListener(listener: OnClickListener?) {
         iconView.setOnClickListener(listener)
@@ -215,36 +178,17 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         iconView.setOnLongClickListener(listener)
     }
 
-    override fun setBackgroundTintList(tint: ColorStateList?) {
-        surface.tintList = tint
-    }
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val (width, height) = themeMeasure(
-            widthMeasureSpec,
-            heightMeasureSpec,
+            widthSpec = widthMeasureSpec,
+            heightSpec = heightMeasureSpec,
             widthKey = storageListItemLinearWidthDimenKey,
             heightKey = storageListItemLinearHeightDimenKey
         )
 
         setMeasuredDimension(width, height)
 
-        val availableWidth = width - largeInnerPadding
-        if (containsIcon) {
-            iconView.measure(makeMeasureSpec(iconSize, AT_MOST), makeMeasureSpec(iconSize, AT_MOST))
-        }
-        if (containsTitle) {
-            titleView.measure(
-                makeMeasureSpec(availableWidth, AT_MOST),
-                makeMeasureSpec(24.dp, AT_MOST)
-            )
-        }
-        if (containsInfo) {
-            infoView.measure(
-                makeMeasureSpec(availableWidth, AT_MOST),
-                makeMeasureSpec(20.dp, AT_MOST)
-            )
-        }
+        measureChildren(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -252,9 +196,9 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         if (containsIcon) {
             iconView.layout(
                 widthLeft,
-                middleInnerPadding,
+                (measuredHeight - iconView.measuredHeight) shr 1,
                 widthLeft + iconView.measuredWidth,
-                height - middleInnerPadding
+                ((measuredHeight - iconView.measuredHeight) shr 1) + iconView.measuredHeight
             )
             widthLeft += iconView.measuredWidth
         }
@@ -263,23 +207,29 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
                 widthLeft + titlePadding,
                 middleInnerPadding,
                 widthLeft + titlePadding + titleView.measuredWidth,
-                middleInnerPadding + 3.dp + titleView.lineHeight
+                middleInnerPadding + titleView.measuredHeight
             )
         }
         if (containsInfo) {
             infoView.layout(
                 widthLeft + infoPadding,
-                middleInnerPadding + titleView.lineHeight,
+                middleInnerPadding + titleView.measuredHeight,
                 widthLeft + infoPadding + infoView.measuredWidth,
-                middleInnerPadding + 3.dp + titleView.lineHeight + infoView.lineHeight
+                middleInnerPadding + titleView.measuredHeight + infoView.measuredHeight
             )
         }
     }
 
     override fun onBind(item: PathItem) = with(item) {
-        onColorChanged()
         super.onBind(item)
-        isBookmarked = bookmarkExists
+        this@StandardStorageLinearCell.icon = icon
+        onColorChanged()
+    }
+
+    override fun onBindPayload(payload: Any?) {
+        if (payload is Boolean) {
+            isBookmarked = payload
+        }
     }
 
     override fun onUnbind() {
@@ -311,11 +261,18 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
 
     private fun updateStateLists() {
         surface.tintList = createSurfaceStateList()
-        foreground.setColor(createRippleStateList())
         titleView.setTextColor(createTitleStateList())
         infoView.setTextColor(createInfoStateList())
         iconView.imageTintList = createIconStateList()
         iconSurface.tintList = createIconSurfaceStateList()
+    }
+
+    private fun createRippleForeground(): RippleDrawable {
+        return RippleDrawable(
+            createRippleStateList(),
+            null,
+            null
+        )
     }
 
     private fun createSurfaceStateList(): ColorStateList {
@@ -378,7 +335,12 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
             ),
             intArrayOf(
 //                ThemeColor(storageListItemIconSelectedTintColorKey),
-                ThemeColor(storageListItemIconTintColorKey)
+                if (isBookmarked) ThemeColor(
+                    storageListItemIconBookmarkedColorKey
+                )
+                else ThemeColor(
+                    storageListItemIconTintColorKey
+                )
             )
         )
     }
@@ -391,7 +353,12 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
             ),
             intArrayOf(
 //                ThemeColor(storageListItemIconBackgroundSelectedColorKey),
-                ThemeColor(storageListItemIconBackgroundColorKey)
+                if (isBookmarked) ThemeColor(
+                    storageListItemIconBackgroundBookmarkedColorKey
+                )
+                else ThemeColor(
+                    storageListItemIconBackgroundColorKey
+                )
             )
         )
     }

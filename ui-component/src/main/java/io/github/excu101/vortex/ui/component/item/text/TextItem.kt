@@ -4,7 +4,7 @@ import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView.TEXT_ALIGNMENT_TEXT_START
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.dsl.ItemScope
 import io.github.excu101.vortex.ui.component.list.adapter.Item

@@ -3,14 +3,13 @@ package io.github.excu101.vortex.ui.component.list.scroll
 import android.animation.AnimatorSet
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.MeasureSpec.getSize
 import androidx.recyclerview.widget.RecyclerView
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.accentColorKey
 import kotlin.math.ceil

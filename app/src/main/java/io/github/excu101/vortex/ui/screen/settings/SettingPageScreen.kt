@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.ui.screen.settings
 
-import io.github.excu101.pluginsystem.model.Color
+import io.github.excu101.manager.model.Color
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.ui.component.dsl.scope
 import io.github.excu101.vortex.ui.component.item.drawer.drawerItem

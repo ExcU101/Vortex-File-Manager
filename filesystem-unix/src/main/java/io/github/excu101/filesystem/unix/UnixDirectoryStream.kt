@@ -17,8 +17,8 @@ class UnixDirectoryStream internal constructor(
     private var iterator: LinuxPathIterator? = null
 
     companion object {
-        private val DOT = byteArrayOf('.'.code.toByte())
-        private val DOUBLE_DOT = "..".toByteArray()
+        val DOT = byteArrayOf('.'.code.toByte())
+        val DOUBLE_DOT = "..".toByteArray()
     }
 
     private var isClosed: Boolean = false

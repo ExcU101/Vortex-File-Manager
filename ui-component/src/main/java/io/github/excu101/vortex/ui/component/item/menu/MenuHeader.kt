@@ -3,7 +3,7 @@ package io.github.excu101.vortex.ui.component.item.menu
 import android.content.Context
 import android.widget.TextView
 import androidx.core.view.contains
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.menu.MenuLayout
 import kotlin.math.min

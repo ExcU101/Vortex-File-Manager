@@ -1,7 +1,6 @@
 package io.github.excu101.vortex.data
 
 import android.os.Parcelable
-import kotlinx.coroutines.flow.Flow
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

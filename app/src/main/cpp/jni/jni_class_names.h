@@ -9,5 +9,6 @@
 #define DIRECTORY_ENTRY "io/github/excu101/filesystem/unix/structure/UnixDirectoryEntryStructure"
 #define MOUNT_ENTRY "io/github/excu101/filesystem/unix/structure/UnixMountEntryStructure"
 #define OBSERVABLE_EVENT  "io/github/excu101/filesystem/unix/structure/UnixPathObservableStructureEvent"
+#define GROUP  "io/github/excu101/filesystem/unix/structure/UnixGroupStructure"
 
 #endif //VORTEX_FILE_MANAGER_JNI_CLASS_NAMES_H

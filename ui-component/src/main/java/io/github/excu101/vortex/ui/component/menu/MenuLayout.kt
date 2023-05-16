@@ -70,8 +70,8 @@ class MenuLayout(context: Context) : FrameLayout(context) {
     }
 
     private fun notify(item: MenuAction) {
-        listeners.forEach { listener ->
-            listener.onMenuActionCall(item)
+        for (listener in listeners) {
+            if (listener.onMenuActionCall(item)) break
         }
     }
 

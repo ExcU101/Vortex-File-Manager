@@ -4,6 +4,6 @@
         <item name="colorSurface">#FFFFFF</item>
         <item name="elevationOverlayColor">#52000000</item>
         <item name="elevationOverlayEnabled">false</item>
-
+<item name="textAppearanceBody1">@style/TextAppearance.AppCompat.Medium</item>
     </style>
 </resources>

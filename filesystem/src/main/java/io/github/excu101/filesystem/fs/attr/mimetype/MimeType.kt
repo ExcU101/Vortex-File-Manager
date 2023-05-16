@@ -6,11 +6,18 @@ interface MimeType {
     val extension: String
     val internetMediaType: String
     val isNotStandard: Boolean
-    val type: String
+    val type: Int
     val isVendor: Boolean
     override fun toString(): String
 
     companion object {
+        const val TYPE_EMPTY = -1
+        const val TYPE_APP = 0
+        const val TYPE_TEXT = 1
+        const val TYPE_AUDIO = 2
+        const val TYPE_IMAGE = 3
+        const val TYPE_VIDEO = 4
+
         fun fromName(name: String): MimeType {
             if (name.length <= 1) return EmptyMimeType
 
@@ -27,8 +34,14 @@ interface MimeType {
                     get() = extension
                 override val internetMediaType: String
                     get() = subtype
-                override val type: String
-                    get() = subtype.substringBefore('/')
+                override val type: Int
+                    get() = when (subtype.substringBefore('/')) {
+                        "application" -> TYPE_APP
+                        "video" -> TYPE_VIDEO
+                        "audio" -> TYPE_AUDIO
+                        "text" -> TYPE_TEXT
+                        else -> TYPE_EMPTY
+                    }
 
                 override val isNotStandard: Boolean
                     get() = subtype.startsWith("x-")

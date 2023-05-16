@@ -17,7 +17,6 @@ import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.Window
-import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.*
 import android.widget.FrameLayout
 import androidx.core.animation.addListener
@@ -29,9 +28,8 @@ import androidx.core.view.WindowInsetsCompat.Type.statusBars
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.pluginsystem.model.Color
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.vortex.ui.component.dp
+import io.github.excu101.manager.model.Color
+import io.github.excu101.manager.ui.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

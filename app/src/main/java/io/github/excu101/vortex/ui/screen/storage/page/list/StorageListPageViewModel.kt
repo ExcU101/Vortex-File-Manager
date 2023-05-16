@@ -4,8 +4,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.view.View
-import androidx.lifecycle.SavedStateHandle
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.fs.observer.PathObservableEventType
 import io.github.excu101.filesystem.fs.operation.FileOperation
@@ -15,32 +13,15 @@ import io.github.excu101.filesystem.fs.operation.option.Options.Copy.NoFollowLin
 import io.github.excu101.filesystem.fs.operation.option.Options.Copy.ReplaceExists
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.asPath
-import io.github.excu101.filesystem.unix.utils.unixCopy
-import io.github.excu101.filesystem.unix.utils.unixCreateDirectory
-import io.github.excu101.filesystem.unix.utils.unixCreateFile
-import io.github.excu101.filesystem.unix.utils.unixCreateSymbolicLink
-import io.github.excu101.filesystem.unix.utils.unixCut
-import io.github.excu101.filesystem.unix.utils.unixDelete
-import io.github.excu101.filesystem.unix.utils.unixRename
-import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
-import io.github.excu101.pluginsystem.ui.theme.ThemeText
-import io.github.excu101.vortex.base.utils.ViewModelContainerHandler
-import io.github.excu101.vortex.base.utils.intent
-import io.github.excu101.vortex.base.utils.logIt
-import io.github.excu101.vortex.base.utils.new
-import io.github.excu101.vortex.base.utils.side
-import io.github.excu101.vortex.base.utils.state
+import io.github.excu101.filesystem.unix.utils.*
+import io.github.excu101.manager.ui.theme.FormatterThemeText
+import io.github.excu101.manager.ui.theme.ThemeText
+import io.github.excu101.vortex.base.utils.*
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.trail.TrailNavigator
 import io.github.excu101.vortex.provider.FileOperationActionHandler
 import io.github.excu101.vortex.provider.StorageActionContentProvider
-import io.github.excu101.vortex.provider.storage.CopyTask
-import io.github.excu101.vortex.provider.storage.Filter
-import io.github.excu101.vortex.provider.storage.MoveTask
-import io.github.excu101.vortex.provider.storage.Order
-import io.github.excu101.vortex.provider.storage.Sorter
-import io.github.excu101.vortex.provider.storage.StorageProvider
-import io.github.excu101.vortex.provider.storage.Task
+import io.github.excu101.vortex.provider.storage.*
 import io.github.excu101.vortex.provider.storage.View.COLUMN
 import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl
 import io.github.excu101.vortex.ui.component.dsl.scope
@@ -48,20 +29,14 @@ import io.github.excu101.vortex.ui.component.item.info.info
 import io.github.excu101.vortex.ui.component.item.text.text
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.menu.MenuAction
-import io.github.excu101.vortex.ui.component.theme.key.fileListLoadingInitiatingTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningEmptyTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningNotificationAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessTitleKey
+import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.icon.Icons
 import io.github.excu101.vortex.ui.screen.storage.Actions
 import io.github.excu101.vortex.ui.screen.storage.Actions.BarActions
 import io.github.excu101.vortex.ui.screen.storage.Actions.Tasks
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.DataResolver
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect
-import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.Snackbar
-import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.StorageAction
-import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.StorageFilter
+import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.*
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.State
 import io.github.excu101.vortex.utils.isAndroidR
 import io.github.excu101.vortex.utils.isAndroidTiramisu
@@ -71,10 +46,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 
-@HiltViewModel
 class StorageListPageViewModel @Inject constructor(
     private val provider: StorageProvider,
-    private val handle: SavedStateHandle,
+//    private val handle: SavedStateHandle,
     private val handler: FileOperationActionHandler<String?>,
 ) : ViewModelContainerHandler<State, SideEffect>(
     State(
@@ -82,9 +56,6 @@ class StorageListPageViewModel @Inject constructor(
         loadingTitle = ThemeText(fileListLoadingInitiatingTitleKey)
     )
 ) {
-    companion object {
-        private const val PathItemKey = "PathItem"
-    }
 
     private var onDispose: ((MenuAction) -> Unit)? = null
 
@@ -117,17 +88,15 @@ class StorageListPageViewModel @Inject constructor(
     val restrictedDirectories: StateFlow<Uri?>
         get() = _restrictedDirectories.asStateFlow()
 
-    private val path =
-        handle[PathItemKey] ?: PathItem(Environment.getExternalStorageDirectory().asPath())
+    private val path = PathItem(Environment.getExternalStorageDirectory().asPath())
 
 
     init {
         checkPermission()
-        navigateTo(path)
     }
 
     fun view(
-        view: io.github.excu101.vortex.provider.storage.View
+        view: io.github.excu101.vortex.provider.storage.View,
     ) = intent {
         _view.emit(view)
     }
@@ -252,6 +221,8 @@ class StorageListPageViewModel @Inject constructor(
 
         startCheckingPathTrail()
         startCheckingTasks()
+
+        navigateTo(path)
     }
 
     private fun startCheckingPathTrail() = intent {
@@ -337,7 +308,7 @@ class StorageListPageViewModel @Inject constructor(
 
         if (item.isDirectory) {
             navigator.navigateTo(item)
-            handle[PathItemKey] = item
+//            handle[PathItemKey] = item
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (item.value in StorageProviderImpl.restrictedDirs) {
@@ -437,10 +408,10 @@ class StorageListPageViewModel @Inject constructor(
         action: View.OnClickListener? = null,
     ) = intent {
         side(
-            Snackbar(
-                message = text,
-                messageActionTitle = title,
-                messageAction = action
+            Message(
+                title = text,
+                actionTitle = title,
+                action = action
             )
         )
     }
@@ -621,12 +592,12 @@ class StorageListPageViewModel @Inject constructor(
         provider.registerTask(task)
     }
 
-    fun watcher(
+    fun addWatcher(
         item: PathItem,
         vararg types: PathObservableEventType,
-    ) = watcher(item.value, *types)
+    ) = addWatcher(item.value, *types)
 
-    fun watcher(
+    fun addWatcher(
         path: Path,
         vararg types: PathObservableEventType,
     ) = intent {
@@ -638,10 +609,22 @@ class StorageListPageViewModel @Inject constructor(
         }
     }
 
+    fun removeWatcher(
+        item: PathItem,
+    ) = removeWatcher(item.value)
+
+    fun removeWatcher(
+        path: Path,
+    ) {
+        provider.closeObserver(path) { observer ->
+            observer.cancel()
+        }
+    }
+
     fun copy(
         sources: Set<Path>,
         dest: Path,
-        options: Int = NoFollowLinks and ReplaceExists
+        options: Int = NoFollowLinks and ReplaceExists,
     ) = intent {
         operation(
             operation = unixCopy(sources, dest, options),
@@ -654,7 +637,7 @@ class StorageListPageViewModel @Inject constructor(
     fun cut(
         sources: Set<Path>,
         dest: Path,
-        options: Int = NoFollowLinks and ReplaceExists
+        options: Int = NoFollowLinks and ReplaceExists,
     ) = intent {
         operation(
             operation = unixCut(sources, dest, options),

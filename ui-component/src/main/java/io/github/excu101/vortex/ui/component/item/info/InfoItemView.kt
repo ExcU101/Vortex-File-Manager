@@ -10,8 +10,8 @@ import android.widget.TextView
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
 import com.google.android.material.shape.MaterialShapeDrawable
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey

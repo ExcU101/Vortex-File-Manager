@@ -3,66 +3,46 @@ package io.github.excu101.vortex.ui.screen.storage.page.list
 // I hate imports...
 
 import android.Manifest
-import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Dialog
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.launch
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.luminance
-import androidx.core.os.bundleOf
 import androidx.core.view.*
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar.make
-import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.utils.*
-import io.github.excu101.pluginsystem.model.Color.Companion.Transparent
-import io.github.excu101.pluginsystem.ui.theme.*
+import io.github.excu101.manager.ui.theme.*
 import io.github.excu101.vortex.R.drawable.*
 import io.github.excu101.vortex.ViewIds
-import io.github.excu101.vortex.base.utils.collectEffect
-import io.github.excu101.vortex.base.utils.collectState
-import io.github.excu101.vortex.base.utils.logIt
-import io.github.excu101.vortex.base.utils.toastIt
+import io.github.excu101.vortex.base.utils.*
+import io.github.excu101.vortex.bindVortexService
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.data.storage.PathItemFilters
-import io.github.excu101.vortex.data.storage.PathItemSorters
-import io.github.excu101.vortex.navigation.dsl.Arguments
-import io.github.excu101.vortex.navigation.dsl.FragmentFactory
-import io.github.excu101.vortex.navigation.navigator.FragmentNavigator
-import io.github.excu101.vortex.navigation.utils.NavigationController
-import io.github.excu101.vortex.provider.command.Command
-import io.github.excu101.vortex.provider.command.CommandConsumer
-import io.github.excu101.vortex.provider.command.CopyFilesCommand
-import io.github.excu101.vortex.provider.command.CreateDirectoryCommand
-import io.github.excu101.vortex.provider.command.CreateFileCommand
-import io.github.excu101.vortex.provider.command.CutFilesCommand
-import io.github.excu101.vortex.provider.command.DeleteFilesCommand
-import io.github.excu101.vortex.provider.command.RegisterWatcherCommand
-import io.github.excu101.vortex.provider.command.RenameFileCommand
-import io.github.excu101.vortex.provider.contract.Contracts
+import io.github.excu101.vortex.provider.command.*
+import io.github.excu101.vortex.provider.contract.Contracts.FullStorageAccess
 import io.github.excu101.vortex.provider.contract.Contracts.Permission
 import io.github.excu101.vortex.provider.contract.Contracts.RestrictedDirectoriesAccess
 import io.github.excu101.vortex.provider.storage.CopyTask
-import io.github.excu101.vortex.provider.storage.Order
-import io.github.excu101.vortex.provider.storage.StorageBookmarkProvider
 import io.github.excu101.vortex.provider.storage.View.*
+import io.github.excu101.vortex.service.VortexServiceBinder
+import io.github.excu101.vortex.service.component.file.operation.OperationComponentState
 import io.github.excu101.vortex.ui.component.*
 import io.github.excu101.vortex.ui.component.animation.fade
 import io.github.excu101.vortex.ui.component.drawer.ItemBottomDrawerFragment
@@ -76,23 +56,17 @@ import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewLongL
 import io.github.excu101.vortex.ui.component.menu.MenuAction
 import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.theme.key.*
-import io.github.excu101.vortex.ui.navigation.AppNavigation.Args.Storage
-import io.github.excu101.vortex.ui.navigation.AppNavigation.Args.Storage.CreatePage
-import io.github.excu101.vortex.ui.navigation.AppNavigation.Routes
-import io.github.excu101.vortex.ui.navigation.PageFragment
 import io.github.excu101.vortex.ui.screen.storage.StorageListRenameDialog
 import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.SideEffect.*
 import io.github.excu101.vortex.utils.*
+import androidx.activity.result.ActivityResultLauncher as Launcher
 
-@AndroidEntryPoint
-class StorageListPageFragment : PageFragment(),
+// TODO: REFACTOR THIS ALL
+
+class StorageListPageFragment : Fragment(),
     MenuActionListener,
     ThemeColorChangeListener, ItemViewListener<Item<*>>, ItemViewLongListener<Item<*>>,
-    CommandConsumer {
-
-    companion object : FragmentFactory<StorageListPageFragment> {
-        override fun createFragment(): StorageListPageFragment = StorageListPageFragment()
-    }
+    CommandConsumer, ServiceConnection {
 
     private val viewModel by viewModels<StorageListPageViewModel>()
 
@@ -112,14 +86,14 @@ class StorageListPageFragment : PageFragment(),
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private val storageAccessLauncher: ActivityResultLauncher<Unit> =
-        registerForActivityResult(Contracts.FullStorageAccess) { isGranted ->
+    private val storageAccessLauncher: Launcher<Unit> =
+        registerForActivityResult(FullStorageAccess) { isGranted ->
             if (isGranted) {
                 viewModel.checkPermission()
             }
         }
 
-    private val permissionLauncher: ActivityResultLauncher<String> =
+    private val permissionLauncher: Launcher<String> =
         registerForActivityResult(Permission) { isGranted ->
             if (isGranted) {
                 viewModel.checkPermission()
@@ -127,7 +101,7 @@ class StorageListPageFragment : PageFragment(),
         }
 
     @RequiresApi(Q)
-    private val restrictedDirectoriesLauncher: ActivityResultLauncher<Uri> =
+    private val restrictedDirectoriesLauncher: Launcher<Uri> =
         registerForActivityResult(
             RestrictedDirectoriesAccess
         ) { uri ->
@@ -139,10 +113,13 @@ class StorageListPageFragment : PageFragment(),
             }
         }
 
+    private var service: VortexServiceBinder? = null
+
     private var controller: WindowInsetsControllerCompat? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setFragmentResultListener("operation") { key, bundle ->
             val path = bundle.getString("path")!!
             val mode = bundle.getInt("mode")
@@ -156,13 +133,14 @@ class StorageListPageFragment : PageFragment(),
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+
+        context?.bindVortexService(this, Context.BIND_AUTO_CREATE)
 
         binding = StorageListPageBinding(requireContext())
         controller = binding?.root?.let { view ->
@@ -174,8 +152,8 @@ class StorageListPageFragment : PageFragment(),
 
         binding?.list?.adapter = adapter
 
-        activity?.window?.statusBarColor = Transparent.value
-        activity?.window?.navigationBarColor = Transparent.value
+        activity?.window?.statusBarColor = ThemeColor(storageListBackgroundColorKey)
+        activity?.window?.navigationBarColor = ThemeColor(storageListBackgroundColorKey)
 
         Theme.registerColorChangeListener(listener = this)
 
@@ -190,21 +168,11 @@ class StorageListPageFragment : PageFragment(),
             list.setOnApplyWindowInsetsListener { view, insets ->
                 val compat = WindowInsetsCompat.toWindowInsetsCompat(insets)
                 view.updatePadding(
-                    bottom = compat.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                    bottom = (bar?.height ?: 0)
+                            + compat.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
                 )
                 insets
             }
-            list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (recyclerView.layoutManager?.findViewByPosition(0) == null) {
-                        bar?.hide()
-                    } else {
-                        bar?.show()
-                    }
-                }
-            })
-
-            scroller.bindRecycler(binding?.list)
 
             trailAdapter.register(listener = this@StorageListPageFragment)
             trailAdapter.registerLong(listener = this@StorageListPageFragment)
@@ -225,11 +193,23 @@ class StorageListPageFragment : PageFragment(),
                         adapter.replace(items = state.data)
                     }
 
+                    if (state.search != null) {
+                        adapter.replace(items = state.data)
+                    }
+
                     loading.fade(isOut = !state.isLoading, duration = 250L)
                     warning.fade(isOut = !state.isWarning, duration = 250L)
                     list.fade(isOut = state.isLoading || state.isWarning, duration = 250L)
                 }
             }
+
+//            repeatedLifecycle {
+//                viewModel.bookmarked.collectLatest { bookmarks ->
+//                    bookmarks.forEach { bookmark ->
+//                        adapter.changed(bookmark, true)
+//                    }
+//                }
+//            }
 
             repeatedLifecycle {
                 viewModel.trail.collect { (items, selectedIndex, selected) ->
@@ -238,8 +218,9 @@ class StorageListPageFragment : PageFragment(),
                     }
 
                     if (!viewModel.isSelectionEnabled) {
-                        onPageSelected()
+
                     }
+
                     if (selectedIndex >= 0) {
                         binding?.trail?.smoothScrollToPosition(selectedIndex)
                         trailAdapter.updateSelected(selectedIndex)
@@ -252,8 +233,38 @@ class StorageListPageFragment : PageFragment(),
             }
 
             repeatedLifecycle {
+                service?.subscribeCount?.collect { count ->
+                    count.toastIt(
+                        context = requireContext(),
+                    )
+                }
+            }
+
+            repeatedLifecycle {
+                service?.operation?.state?.collect { state ->
+                    when (state) {
+                        OperationComponentState.Idle -> {
+
+                        }
+
+                        is OperationComponentState.OperationAction -> {
+
+                        }
+
+                        is OperationComponentState.OperationCompleted -> {
+
+                        }
+
+                        is OperationComponentState.OperationError -> {
+
+                        }
+                    }
+                }
+            }
+
+            repeatedLifecycle {
                 viewModel.selected.collect { selected ->
-                    onPageSelected()
+                    onSelected()
 
                     adapter.replaceSelected(selected = selected)
                 }
@@ -267,17 +278,7 @@ class StorageListPageFragment : PageFragment(),
                         }
 
                         GRID -> {
-                            list.layoutManager =
-                                GridLayoutManager(requireContext(), 3).apply {
-                                    spanSizeLookup = object : SpanSizeLookup() {
-                                        override fun getSpanSize(position: Int): Int =
-                                            if (adapter[position] is TextItem) {
-                                                3
-                                            } else {
-                                                1
-                                            }
-                                    }
-                                }
+
                         }
                     }
                 }
@@ -286,28 +287,28 @@ class StorageListPageFragment : PageFragment(),
             repeatedLifecycle {
                 viewModel.collectEffect { effect ->
                     when (effect) {
-                        is Snackbar -> {
-                            make(
-                                requireView(),
-                                effect.message,
-                                effect.messageDuration
-                            ).setAnchorView(bar).setAction(
-                                effect.messageActionTitle,
-                                effect.messageAction
-                            ).show()
+                        is Message -> {
+                            effect.title.snackIt(
+                                view = requireView(),
+                                duration = effect.duration,
+                                anchorView = bar,
+                                actionTitle = effect.actionTitle,
+                                listener = effect.action
+                            )
                         }
 
                         is StorageItemCreate -> {
-                            NavigationController().navigate(
-                                route = Routes.Storage.Create.Page,
-                                Arguments(CreatePage.ParentDirectoryKey to effect.parent)
-                            )
+
+//                            NavigationController().navigate(
+//                                route = Routes.Storage.Create.Page,
+//                                Arguments(CreatePage.ParentDirectoryKey to effect.parent)
+//                            )
                         }
 
                         is StorageFilter -> {
                             if (lastDialog != null) lastDialog?.hide()
                             lastDialog = StorageListFilterDialog(
-                                requireContext(),
+                                context = requireContext(),
                                 onViewChange = viewModel::view,
                                 onFilterChange = viewModel::filter,
                                 onOrderChange = viewModel::order,
@@ -343,7 +344,7 @@ class StorageListPageFragment : PageFragment(),
             }
 
             is InfoItem -> {
-                // Removes 1 because list has a text element which is not out task
+                // Removes 1 because list has a text element which is not our task
                 viewModel.performTask(position - 1)
             }
 
@@ -365,6 +366,14 @@ class StorageListPageFragment : PageFragment(),
                 }
             }
         }
+    }
+
+    override fun onServiceConnected(name: ComponentName?, serviceBinder: IBinder?) {
+        service = serviceBinder as? VortexServiceBinder
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        service = null
     }
 
     override fun onLongClick(view: View, item: Item<*>, position: Int): Boolean {
@@ -425,7 +434,7 @@ class StorageListPageFragment : PageFragment(),
         }
     }
 
-    fun onSingleItemActionCall(
+    private fun onSingleItemActionCall(
         action: MenuAction,
         item: PathItem,
         view: View,
@@ -454,53 +463,45 @@ class StorageListPageFragment : PageFragment(),
                 }.show()
             }
 
-            ViewIds.Storage.Menu.AddBookmarkId -> {
-                if (StorageBookmarkProvider.unregister(item)) {
-                    adapter.changed(item)
-                }
-            }
-
-            ViewIds.Storage.Menu.RemoveBookmarkId -> {
-                if (StorageBookmarkProvider.unregister(item)) {
-                    adapter.changed(item)
-                }
-            }
+//            ViewIds.Storage.Menu.AddBookmarkId -> viewModel.addBookmark(item)
+//
+//            ViewIds.Storage.Menu.RemoveBookmarkId -> viewModel.removeBookmark(item)
 
             ViewIds.Storage.Menu.CopyId -> viewModel.task(CopyTask(setOf(item.value)))
 
             ViewIds.Storage.Menu.DeleteId -> viewModel.deleteItems(setOf(item))
 
-            ViewIds.Storage.Menu.AddWatcherId -> {
-//                viewModel.watcher(item)
-            }
+            ViewIds.Storage.Menu.AddWatcherId -> viewModel.addWatcher(item)
 
-            ViewIds.Storage.Menu.InfoId -> {
-                NavigationController().navigate(
-                    Routes.Storage.List.ItemPageInfo,
-                    Arguments(Storage.ItemInfoPage.ItemInfoPageKey to item)
-                )
-            }
+            ViewIds.Storage.Menu.RemoveWatcherId -> viewModel.removeWatcher(item)
+
+            ViewIds.Storage.Menu.InfoId -> {}
+
         }
     }
 
-    fun onSelectedActionCall(
+    private fun onSelectedActionCall(
         action: MenuAction,
         view: View,
     ) {
-        when (action.title) {
-            ThemeText(storageListOperationDeleteActionTitleKey) -> viewModel.deleteItems()
+        when (action.id) {
+            ViewIds.Storage.Menu.DeleteId -> viewModel.deleteItems()
 
-            ThemeText(storageListOperationCopyActionTitleKey) -> {
+            ViewIds.Storage.Menu.CopyId -> {
                 viewModel.task(CopyTask(viewModel.selected.value.map { it.value }.toSet()))
                 viewModel.deselectAll()
             }
 
-            "Deselect" -> viewModel.deselect(viewModel.selected.value.toSet())
+            ViewIds.Storage.Menu.DeselectAll -> viewModel.deselect(viewModel.selected.value.toSet())
         }
     }
 
-    fun onDrawerActionCall(action: MenuAction) {
+    private fun onDrawerActionCall(action: MenuAction) {
         if (viewModel.disposeAction(action)) return
+
+        when (action.id) {
+            ViewIds.Storage.Menu.ShowTasks -> viewModel.showTasks()
+        }
 
         // TODO: Replace by action.id
         when (action.title) {
@@ -522,44 +523,8 @@ class StorageListPageFragment : PageFragment(),
 
             ThemeText(fileListMoreNavigateRightActionTitleKey) -> viewModel.navigateRight()
 
-            ThemeText(fileListOrderAscendingActionTitleKey) -> viewModel.order(Order.ASCENDING)
-
-            ThemeText(fileListOrderDescendingActionTitleKey) -> viewModel.order(Order.DESCENDING)
-
-            ThemeText(fileListSortNameActionTitleKey) -> viewModel.sort(PathItemSorters.Name)
-
-            ThemeText(fileListSortPathActionTitleKey) -> viewModel.sort(PathItemSorters.Path)
-
-            ThemeText(fileListSortSizeActionTitleKey) -> viewModel.sort(PathItemSorters.Size)
-
-            ThemeText(fileListSortLastModifiedTimeActionTitleKey) -> viewModel.sort(PathItemSorters.LastModifiedTime)
-
-            ThemeText(fileListSortLastAccessTimeActionTitleKey) -> viewModel.sort(PathItemSorters.LastAccessTime)
-
-            ThemeText(fileListSortCreationTimeActionTitleKey) -> viewModel.sort(PathItemSorters.CreationTime)
-
-            // Filter
-            ThemeText(fileListFilterOnlyFilesActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyFile)
-
-            ThemeText(fileListFilterOnlyFoldersActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyFolder)
-
-            ThemeText(fileListFilterOnlyVideoFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyVideoFile)
-
-            ThemeText(fileListFilterOnlyVideoFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyApplicationFile)
-
-            ThemeText(fileListFilterOnlyImageFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyImageFile)
-
-            ThemeText(fileListFilterOnlyImageFileActionTitleKey) -> viewModel.filter(PathItemFilters.OnlyImageFile)
-
             ThemeText(fileListMoreInfoActionTitleKey) -> {
-                viewModel.current?.let { current ->
-                    NavigationController().navigate(
-                        route = Routes.Storage.List.ItemPageInfo,
-                        FragmentNavigator.Arguments(
-                            bundleOf(Storage.ItemInfoPage.ItemInfoPageKey to current)
-                        )
-                    )
-                }
+
             }
 
             "Open tasks" -> viewModel.showTasks()
@@ -605,38 +570,6 @@ class StorageListPageFragment : PageFragment(),
         lastDialog?.dismiss()
     }
 
-    fun onWarningActionCall(action: MenuAction) {
-        when (action.title) {
-            "Grant" -> {
-                if (isAndroidQ) {
-
-                }
-            }
-
-            "Add new" -> viewModel.createNew()
-
-            "Reload" -> viewModel.current?.let(viewModel::navigateTo)
-
-            "Back to parent" -> viewModel.navigateLeft()
-
-            ThemeText(fileListWarningStorageAccessActionTitleKey) -> {
-                permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
-
-            ThemeText(fileListWarningFullStorageAccessActionTitleKey) -> {
-                if (isAndroidR) {
-                    storageAccessLauncher.launch()
-                }
-            }
-
-            ThemeText(fileListWarningNotificationAccessActionTitleKey) -> {
-                if (isAndroidTiramisu) {
-                    permissionLauncher.launch(POST_NOTIFICATIONS)
-                }
-            }
-        }
-    }
-
     // Using as EventBus pattern
     override suspend fun consume(command: Command) {
         when (command) {
@@ -671,43 +604,54 @@ class StorageListPageFragment : PageFragment(),
                 options = command.options
             )
 
-            is RegisterWatcherCommand -> viewModel.watcher(
+            is RegisterWatcherCommand -> viewModel.addWatcher(
                 path = command.source,
                 types = command.types
             )
         }
     }
 
-    fun onSelected() {
-        if (viewModel.selected.value.isNotEmpty()) {
-            bar?.title = viewModel.selected.value.size.toString()
-            bar?.subtitle = Size(viewModel.selected.value.fold(initial = 0L) { init, current ->
-                init + current.size.memory
-            }).convertToThemeText()
-        } else {
-            bar?.subtitle = null
-            bar?.title = null
-        }
+    private fun onSelected() {
+        if (isAdded)
+            if (viewModel.selected.value.isNotEmpty()) {
+                bar?.setTitleWithAnimation(
+                    title = viewModel.selected.value.size.toString(),
+                    isReverse = adapter.getSelectedCount() < viewModel.selected.value.size
+                )
+                bar?.subtitle = Size(viewModel.selected.value.fold(initial = 0L) { init, current ->
+                    init + current.size.memory
+                }).convertToThemeText()
+            } else {
+                bar?.setTitleWithAnimation(
+                    title = viewModel.current?.name,
+                    isVertical = false,
+                    isReverse = false
+                )
+                bar?.subtitle = null
+            }
     }
 
-    override fun onPageSelected() {
-        bar?.registerListener(listener = this)
+//    override fun onPageSelected() {
+//        super.onPageSelected()
+//        bar?.registerListener(listener = this)
+//
+//        bar?.show()
+//        bar?.replaceItems(viewModel.container.state.value.actions)
+//
+//        onSelected()
+//    }
+//
+//    override fun onPageUnselected() {
+//        bar?.unregisterListener(listener = this)
+//        super.onPageSelected()
+//    }
 
-        bar?.show()
-        bar?.replaceItems(viewModel.container.state.value.actions)
-
-        onSelected()
-    }
-
-    override fun onPageUnselected() {
-        bar?.unregisterListener(listener = this)
-    }
-
-    override fun onMenuActionCall(action: MenuAction) {
-        // TODO: Replace by action.id
+    override fun onMenuActionCall(action: MenuAction): Boolean {
         when (action.id) {
             ViewIds.Storage.Menu.ProvideFullStorageAccessId -> {
-                storageAccessLauncher.launch()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    storageAccessLauncher.launch()
+                }
             }
 
             ViewIds.Storage.Menu.ProvideStorageAccessId -> {
@@ -731,6 +675,8 @@ class StorageListPageFragment : PageFragment(),
                 viewModel.openDrawerSortActions()
             }
         }
+
+        return false
     }
 
     override fun onDestroyView() {
@@ -740,7 +686,7 @@ class StorageListPageFragment : PageFragment(),
         binding = null
         backPressed.isEnabled = false
         lastDialog = null
-        onPageUnselected()
+        context?.unbindService(this)
     }
 
     override fun onColorChanged() {

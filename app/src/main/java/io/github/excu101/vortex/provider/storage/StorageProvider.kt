@@ -22,6 +22,13 @@ interface StorageProvider {
         vararg types: PathObservableEventType,
     ): DirectoryObserver
 
+    fun closeObserver(
+        directory: Path,
+        onRemove: (StorageDirectoryObserver) -> Unit
+    )
+
+    fun closeObservers()
+
     fun copyPath(path: Path)
 
     fun requiresNotificationsAccess(): Boolean

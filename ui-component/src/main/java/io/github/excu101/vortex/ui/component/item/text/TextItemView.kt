@@ -12,8 +12,8 @@ import android.widget.TextView
 import androidx.core.view.contains
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
 import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
@@ -32,15 +32,6 @@ class TextItemView(
     private val title = TextView(context).apply {
         setTextColor(ThemeColor(mainDrawerTitleColorKey))
         textSize = 14F
-    }
-
-    private val shape = MaterialShapeDrawable().apply {
-        initializeElevationOverlay(context)
-        setTint(ThemeColor(mainDrawerBackgroundColorKey))
-    }
-
-    override fun setBackgroundTintList(tint: ColorStateList?) {
-        shape.tintList = tint
     }
 
     private val containsTitle: Boolean
@@ -65,10 +56,6 @@ class TextItemView(
     fun setTitleTextSize(size: Float) {
         ensureContainingTitle()
         title.textSize = size
-    }
-
-    init {
-        background = shape
     }
 
     fun setTitle(value: String? = null) {
@@ -110,25 +97,14 @@ class TextItemView(
                 layoutWidth,
                 (height - title.lineHeight) / 2,
                 layoutWidth + title.measuredWidth - innerWidthPadding,
-                (height - title.lineHeight) / 2 + title.lineHeight
+                (height - title.lineHeight) / 2 + title.lineHeight + 3.dp
             )
             layoutWidth += title.measuredWidth - innerWidthPadding
         }
     }
 
-    override fun setBackgroundColor(color: Int) {
-        shape.setTint(color)
-    }
-
-    override fun setElevation(elevation: Float) {
-        super.setElevation(elevation)
-
-        MaterialShapeUtils.setElevation(this, elevation)
-    }
-
     override fun onColorChanged() {
         title.setTextColor(ThemeColor(mainDrawerTitleColorKey))
-        setBackgroundColor(ThemeColor(mainDrawerBackgroundColorKey))
     }
 
     override fun onBind(item: TextItem) {

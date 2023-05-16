@@ -1,6 +1,7 @@
 #ifndef VORTEX_FILE_MANAGER_STATUS
 #define VORTEX_FILE_MANAGER_STATUS
 
+#include <climits>
 #include "sys/stat.h"
 #include "sys/statvfs.h"
 
@@ -12,6 +13,14 @@
 #define LINK_STATUS64(...) lstat64(__VA_ARGS__)
 #define FILESYSTEM_STATUS(...) statvfs(__VA_ARGS__)
 #define FILESYSTEM_STATUS64(...) statvfs64(__VA_ARGS__)
+
+int isCurrentDirectory(const char *name, unsigned int len);
+
+int isParentDirectory(const char *name, unsigned int len);
+
+int isCurrentDirectory(const char *name);
+
+int isParentDirectory(const char *name);
 
 int getStatus(const char *path, struct stat *buffer);
 

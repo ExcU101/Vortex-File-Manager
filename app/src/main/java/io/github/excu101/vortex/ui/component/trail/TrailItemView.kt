@@ -2,111 +2,92 @@ package io.github.excu101.vortex.ui.component.trail
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.RippleDrawable
-import android.view.Gravity.CENTER
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.core.view.contains
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import com.google.android.material.shape.CornerFamily.ROUNDED
-import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.ui.component.ThemeDp
+import io.github.excu101.vortex.ui.component.ThemeMaterialShapeDrawable
 import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.foundtation.InnerPaddingOwner
-import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
+import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
 import io.github.excu101.vortex.ui.component.theme.key.*
 
-class TrailItemView(context: Context) : ThemeLinearLayout(context),
-    InnerPaddingOwner,
-    ThemeColorChangeListener,
-    ViewHolder.RecyclableView<PathItem> {
+class TrailItemView(
+    context: Context,
+) : ThemeFrameLayout(context), RecyclableView<PathItem> {
 
-    companion object {
-        private const val TITLE_INDEX = 0
-        private const val ARROW_INDEX = 1
-    }
+    private val leftPadding = ThemeDp(trailItemLeftPaddingKey)
+    private val rightPadding = ThemeDp(trailItemRightPaddingKey)
 
-    private val surface = MaterialShapeDrawable(
-        builder().setAllCorners(
-            ROUNDED, 16F.dp
-        ).build()
-    ).apply {
-        setTint(ThemeColor(trailSurfaceColorKey))
-        initializeElevationOverlay(context)
-    }
-
-    private val foreground = RippleDrawable(
-        valueOf(ThemeColor(trailItemTitleTextColorKey)),
-        surface,
-        null,
+    private val surface = ThemeMaterialShapeDrawable(
+        builder = {
+            setAllCorners(
+                ROUNDED, 16F.dp
+            )
+        },
+        colorKey = trailSurfaceColorKey
     )
 
-    var isArrowVisible: Boolean
-        get() = arrow.isVisible
+    var title: CharSequence?
+        get() = titleView.text
         set(value) {
-            setArrowVisibility(value)
+            if (value == titleView.text) return
+            ensureContainingTitle()
+            titleView.text = value
         }
 
-    private val desireHeight = ThemeUDp(trailItemHeightKey)
-
-    override val innerLargePadding = 16.dp
-    override val innerMediumPadding = 8.dp
-    override val innerSmallPadding = 4.dp
+    var isArrowVisible: Boolean
+        get() = arrowView.isVisible
+        set(value) {
+            if (value == arrowView.isVisible) return
+            ensureContainingArrow()
+            arrowView.isVisible = value
+        }
 
     init {
         id = ViewIds.Storage.Trail.RootId
-        gravity = CENTER
-        minimumHeight = desireHeight
         isClickable = true
         isFocusable = true
-        setBackground(foreground)
+        background = surface
+        foreground = createRippleForeground()
     }
 
-    override fun setElevation(elevation: Float) {
-        MaterialShapeUtils.setElevation(this, elevation)
-    }
-
-    private val title = TextView(context).apply {
+    private val titleView = TextView(context).apply {
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         textSize = 16F
-        updatePadding(left = innerMediumPadding, right = innerMediumPadding)
     }
 
-    private val arrow = ImageView(context).apply {
+    private val arrowView = ImageView(context).apply {
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         setImageResource(R.drawable.ic_arrow_right_24)
     }
 
     private fun ensureContainingTitle() {
-        if (!contains(title)) {
-            addView(title, TITLE_INDEX)
+        if (!contains(titleView)) {
+            addView(titleView)
         }
     }
 
     private fun ensureContainingArrow() {
-        if (!contains(arrow)) {
-            addView(arrow, ARROW_INDEX)
+        if (!contains(arrowView)) {
+            addView(arrowView)
         }
     }
 
-    fun setTitle(value: String? = null) {
-        ensureContainingTitle()
-        title.text = value
-    }
-
     override fun onBind(item: PathItem) {
-        setTitle(value = item.name)
+        title = item.name
     }
 
     override fun onBindSelection(isSelected: Boolean) {
@@ -114,9 +95,15 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
         setSelected(isSelected)
     }
 
+    override fun onBindPayload(payload: Any?) {
+        if (payload is Boolean) {
+            isArrowVisible = payload
+        }
+    }
+
     override fun onUnbind() {
-        setTitle(null)
-        setArrowVisibility(false)
+        title = null
+        isArrowVisible = false
     }
 
     override fun onBindListener(listener: OnClickListener) {
@@ -132,21 +119,18 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
         setOnLongClickListener(null)
     }
 
-    fun setArrowVisibility(isVisible: Boolean) {
-        ensureContainingArrow()
-        arrow.visibility = if (isVisible) {
-            VISIBLE
-        } else {
-            GONE
-        }
-    }
-
     private fun updateStateLists() {
-        title.setTextColor(createTitleStateList())
-        arrow.imageTintList = createArrowStateList()
-        foreground.setColor(createRippleStateList())
+        titleView.setTextColor(createTitleStateList())
+        arrowView.imageTintList = createArrowStateList()
+        foreground = createRippleForeground()
         surface.setTint(ThemeColor(trailSurfaceColorKey))
     }
+
+    private fun createRippleForeground() = RippleDrawable(
+        createRippleStateList(),
+        null,
+        surface,
+    )
 
     override fun onColorChanged() {
         updateStateLists()
@@ -196,28 +180,66 @@ class TrailItemView(context: Context) : ThemeLinearLayout(context),
         )
     }
 
-//    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
-//        val widthSize = MeasureSpec.getSize(widthSpec)
-//        val widthMode = MeasureSpec.getMode(widthSpec)
-//        val heightSize = MeasureSpec.getSize(heightSpec)
-//        val heightMode = MeasureSpec.getMode(heightSpec)
-//
-//        val width = when (widthMode) {
-//            MeasureSpec.EXACTLY -> widthSize
-//            MeasureSpec.AT_MOST -> min(suggestedMinimumWidth, widthSize)
-//            else -> widthSize
-//        } + paddingStart + paddingEnd
-//
-//        val height = when (heightMode) {
-//            MeasureSpec.EXACTLY -> heightSize
-//            MeasureSpec.AT_MOST -> min(suggestedMinimumHeight, heightSize)
-//            else -> suggestedMinimumHeight
-//        } + paddingBottom + paddingTop
-//
-//        setMeasuredDimension(width, height)
-//
-//        val availableWidth = width - paddingStart - paddingRight
-//
-//    }
+    override fun onMeasure(widthSpec: Int, heightSpec: Int) {
+        var width = rightPadding + leftPadding
+        val height = ThemeUDp(trailItemHeightKey)
+
+        if (!title.isNullOrEmpty()) {
+            measureChild(
+                titleView,
+                widthSpec,
+                heightSpec
+            )
+            width += titleView.measuredWidth
+        }
+
+        if (arrowView.isVisible) {
+            measureChild(
+                arrowView,
+                widthSpec,
+                heightSpec
+            )
+            width += arrowView.measuredWidth
+        }
+
+        setMeasuredDimension(width, height)
+    }
+
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        var width = 0
+
+        if (!title.isNullOrEmpty()) {
+            width += 8.dp
+            titleView.layout(
+                width,
+                getVerticalPadding(titleView),
+                width + titleView.measuredWidth,
+                getVerticalPadding(titleView) + titleView.measuredHeight
+            )
+            width += titleView.measuredWidth
+        }
+
+        if (isArrowVisible) {
+            width += 8.dp
+            arrowView.layout(
+                width,
+                getVerticalPadding(arrowView),
+                width + arrowView.measuredWidth,
+                getVerticalPadding(arrowView) + arrowView.measuredHeight
+            )
+        }
+    }
+
+    private fun getVerticalPadding(
+        view: View,
+    ): Int {
+        return (height - view.measuredHeight) / 2
+    }
+
+    private fun getHorizontalPadding(
+        view: View,
+    ): Int {
+        return (width - view.measuredWidth) / 2
+    }
 
 }

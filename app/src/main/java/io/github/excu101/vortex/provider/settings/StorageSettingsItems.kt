@@ -10,6 +10,10 @@ object StorageSettingsItems {
     }
 
     object IntItems {
+        val SpanItemCountKey = intPreferencesKey(
+            name = "settings_int_list_span_item_count"
+        )
+
         val PathItemLastModifiedTimeInfoPositionKey = intPreferencesKey(
             name = "settings_int_path_item_modified_time_info_pos"
         )

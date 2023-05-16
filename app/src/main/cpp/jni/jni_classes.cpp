@@ -95,13 +95,12 @@ static void throwUnixException(JNIEnv *env, int error, const char *name) {
     env->Throw((jthrowable) exception);
 }
 
-
 static jclass findUnixStatusStructureStatClass(JNIEnv *env) {
     static jclass structure;
     if (structure == NULL) {
         structure = findClass(
                 env,
-                "io/github/excu101/filesystem/unix/structure/UnixStatusStructure"
+                STATUS_STRUCTURE
         );
     }
     return structure;
@@ -153,6 +152,25 @@ static jmethodID findUnixFileSystemStatusStructureInitMethod(JNIEnv *env) {
     );
 }
 
+static jclass findUnixGroupStructureClass(JNIEnv *env) {
+    static jclass clazz = NULL;
+    if (clazz == NULL) {
+        clazz = findClass(
+                env,
+                GROUP
+        );
+    }
+    return clazz;
+}
+
+static jmethodID findUnixGroupStructureInitMethod(JNIEnv *env) {
+    return env->GetMethodID(
+            findUnixGroupStructureClass(env),
+            "<init>",
+            "([B[BI[[B)V"
+    );
+}
+
 static jclass findUnixMountEntryStructureClass(JNIEnv *env) {
     static jclass entry;
 
@@ -199,11 +217,11 @@ static jmethodID findUnixPathObservableEventInitMethod(JNIEnv *env) {
 
 static char *fromByteArrayToPath(JNIEnv *env, jbyteArray path) {
     jbyte *segments = env->GetByteArrayElements(path, nullptr);
-    jsize jLength = env->GetArrayLength( path);
+    jsize jLength = env->GetArrayLength(path);
     size_t length = jLength;
     char *cPath = (char *) malloc(length + 1);
     memcpy(cPath, segments, length);
-    env->ReleaseByteArrayElements( path, segments, JNI_ABORT);
+    env->ReleaseByteArrayElements(path, segments, JNI_ABORT);
     cPath[length] = '\0';
     return cPath;
 }
@@ -211,12 +229,12 @@ static char *fromByteArrayToPath(JNIEnv *env, jbyteArray path) {
 static jbyteArray createByteArray(JNIEnv *env, char *name) {
     size_t length = strlen(name);
     jsize javaLength = length;
-    jbyteArray bytes = env->NewByteArray( javaLength);
+    jbyteArray bytes = env->NewByteArray(javaLength);
 
     if (bytes == NULL) {
         return NULL;
     }
 
-    env->SetByteArrayRegion( bytes, 0, javaLength, (jbyte *) name);
+    env->SetByteArrayRegion(bytes, 0, javaLength, (jbyte *) name);
     return bytes;
 }

@@ -42,7 +42,12 @@ object ViewIds {
             val CopyPathId = View.generateViewId()
             val MoveId = View.generateViewId()
             val InfoId = View.generateViewId()
+
             val AddWatcherId = View.generateViewId()
+            val RemoveWatcherId = View.generateViewId()
+
+            val ShowTasks = View.generateViewId()
+
             val AddBookmarkId = View.generateViewId()
             val RemoveBookmarkId = View.generateViewId()
 
@@ -53,6 +58,9 @@ object ViewIds {
 
             val ProvideFullStorageAccessId = View.generateViewId()
             val ProvideStorageAccessId = View.generateViewId()
+
+            val SelectAll = View.generateViewId()
+            val DeselectAll = View.generateViewId()
         }
 
         object Create {

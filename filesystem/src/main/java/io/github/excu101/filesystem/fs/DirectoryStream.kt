@@ -1,10 +1,7 @@
 package io.github.excu101.filesystem.fs
 
 import io.github.excu101.filesystem.fs.path.Path
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.withIndex
 import java.io.Closeable
-import java.io.File
 
 interface DirectoryStream<P : Path> : Iterable<Path>, Closeable {
 
@@ -26,6 +23,16 @@ interface DirectoryStream<P : Path> : Iterable<Path>, Closeable {
         companion object {
             fun <T> acceptAll() = object : Filter<T> {
                 override fun accept(value: T): Boolean {
+                    return true
+                }
+            }
+
+            fun <T : Path> excludeCurrentAndPrevieousDirs() = object : Filter<T> {
+                override fun accept(value: T): Boolean {
+                    val bytes = value.bytes
+                    if (bytes.contentEquals(".".toByteArray())) return false
+                    if (bytes.contentEquals("..".toByteArray())) return false
+
                     return true
                 }
             }

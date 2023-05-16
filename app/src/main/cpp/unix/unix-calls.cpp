@@ -1,17 +1,16 @@
 #include <cstdlib>
 #include "dirent.h"
-#include "string"
 #include <cerrno>
 #include "mntent.h" // Mount entry
-#include "../log.h"
+#include "android/log.h"
 #include "../jni/jni_classes.cpp"
 #include "sys/sendfile.h"
-#include "fcntl.h"
 #include "sys/socket.h"
 #include "operations.сpp"
-#include "sys/syscall.h"
 #include "status/status.h"
+#include "../log.h"
 #include <jni.h>
+#include <grp.h>
 
 static void clearErrno() {
     errno = 0;
@@ -154,6 +153,60 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl__IJ(
     return result;
 }
 
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_getGroupImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jint groupId
+) {
+    struct group *group = getgrgid(groupId);
+
+    if (errno) {
+        throwUnixException(env, errno, "getgrgid");
+    }
+
+    static jmethodID init = nullptr;
+
+    if (!init) {
+        init = findUnixGroupStructureInitMethod(env);
+    }
+
+    jbyteArray name = createByteArray(env, group->gr_name);
+    jbyteArray password = createByteArray(env, group->gr_passwd);
+    jint id = group->gr_gid;
+
+    jsize gr_memLength = 0;
+    for (char **gr_memIterator = group->gr_mem; *gr_memIterator; ++gr_memIterator) {
+        ++gr_memLength;
+    }
+
+    jobjectArray members = env->NewObjectArray(
+            gr_memLength,
+            findClass(env, "javassist/bytecode/ByteArray"),
+            nullptr
+    );
+
+    jsize gr_memIndex = 0;
+    for (char **gr_memIterator = group->gr_mem; *gr_memIterator; ++gr_memIterator,
+            ++gr_memIndex) {
+        jobject member = createByteArray(env, *gr_memIterator);
+        if (!member) {
+            return nullptr;
+        }
+        env->SetObjectArrayElement(members, gr_memIndex, member);
+        env->DeleteLocalRef(member);
+    }
+
+    return env->NewObject(
+            findUnixGroupStructureClass(env),
+            init,
+            name,
+            password,
+            id,
+            members
+    );
+}
 
 extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_truncateImpl___3BJ(
@@ -591,6 +644,12 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getCountImpl(
     int count = 0;
 
     while ((ent = readdir64(dir))) {
+        char *name = ent->d_name;
+        unsigned len = strlen(name);
+
+        if (isCurrentDirectory(name, len)) continue;
+        if (isParentDirectory(name, len)) continue;
+
         ++count;
     }
 
@@ -621,7 +680,6 @@ long getDirectorySize(char *path) {
     closedir(dir);
     return result;
 }
-
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_getDirectorySizeImpl(
@@ -850,6 +908,23 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_createSocketPairImpl(
     );
 }
 
+extern "C"
+JNIEXPORT void JNICALL
+Java_io_github_excu101_filesystem_unix_UnixCalls_changeOwnerImpl(
+        JNIEnv *env,
+        jobject thiz,
+        jbyteArray path,
+        jint user_id,
+        jint group_id
+) {
+    char *cPath = fromByteArrayToPath(env, path);
+
+    if (!chown(cPath, user_id, group_id)) {
+        throwUnixException(env, errno, "changeOwnerImpl");
+    }
+
+    free(cPath);
+}
 
 extern "C" JNIEXPORT jint JNICALL
 Java_io_github_excu101_filesystem_unix_UnixCalls_manipulateDescriptorImpl(
@@ -857,10 +932,9 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_manipulateDescriptorImpl(
         jint descriptor,
         jint command
 ) {
-
     int result = fcntl(descriptor, command);
 
-    if (errno != 0) {
+    if (result == -1) {
         throwUnixException(env, errno, "manipulateDescriptorImpl");
         return 0;
     }

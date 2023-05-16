@@ -2,7 +2,6 @@ package io.github.excu101.vortex.ui.screen.storage.page.list
 
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.data.storage.PathItemFilters
@@ -11,6 +10,7 @@ import io.github.excu101.vortex.provider.storage.Filter
 import io.github.excu101.vortex.provider.storage.Order
 import io.github.excu101.vortex.provider.storage.Sorter
 import io.github.excu101.vortex.provider.storage.View
+import io.github.excu101.vortex.ui.component.sheet.BottomSheetDialog
 import io.github.excu101.vortex.ui.component.storage.filter.StorageListFilterBinding
 
 class StorageListFilterDialog(

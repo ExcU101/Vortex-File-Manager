@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.ui.component.theme.key
 
-import io.github.excu101.pluginsystem.annotation.StringSpecifier
+import io.github.excu101.manager.annotation.StringSpecifier
 
 // Format Specifiers
 // %c - char
@@ -102,6 +102,7 @@ const val fileListMoreDeselectAllActionTitleKey = "fileListMoreDeselectAllAction
 const val fileListMoreInfoActionTitleKey = "fileListMoreInfoActionTitle"
 const val fileListMoreNavigateLeftActionTitleKey = "fileListMoreNavigateLeftActionTitle"
 const val fileListMoreNavigateRightActionTitleKey = "fileListMoreNavigateRightActionTitle"
+const val fileListMoreShowTasksActionTitleKey = "fileListMoreShowTasksActionTitle"
 
 // List
 const val fileListFilesCountTitleKey = "fileListFilesCountTitle"

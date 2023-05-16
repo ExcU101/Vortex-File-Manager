@@ -2,6 +2,7 @@ package io.github.excu101.filesystem.unix.utils
 
 import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
+import io.github.excu101.filesystem.unix.operation.*
 import io.github.excu101.filesystem.unix.operation.UnixCopyOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateDirectoryOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateFileOperation
@@ -14,6 +15,16 @@ fun unixDelete(
     data: Collection<Path>,
 ): FileOperation = UnixDeleteOperation(
     data = data
+)
+
+fun unixChangeOwner(
+    source: Path,
+    owner: Int,
+    group: Int
+): FileOperation = UnixChangeOwnerOperation(
+    path = source,
+    owner = owner,
+    group = group,
 )
 
 fun unixCopy(

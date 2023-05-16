@@ -5,6 +5,7 @@ import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
+import io.github.excu101.filesystem.unix.attr.posix.PosixGroup
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
 import io.github.excu101.filesystem.unix.path.UnixPath
 import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
@@ -57,8 +58,11 @@ internal class UnixAttributes private constructor(
         }
     }
 
-    override val group: String
-        get() = structure.groupId.toString()
+    override val group: PosixGroup
+        get() {
+            val g = UnixCalls.getGroup(structure.groupId)
+            return PosixGroup(g.id, g.name.decodeToString())
+        }
 
     override val owner: String
         get() = structure.userId.toString()

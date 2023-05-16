@@ -16,6 +16,8 @@ class FileTime(
     }
 
     override fun toString(): String {
+        if (nanos <= 0L) return ""
+
         val builder = StringBuilder()
 
         val millis = nanos / NanosPerMillis
@@ -26,16 +28,31 @@ class FileTime(
         val month = day / DayPerMonth
         val year = month / MonthPerYear
 
-        builder.append(month.toLong())
-        builder.append("m:")
-        builder.append(day)
-        builder.append("d:")
-        builder.append(year.toLong())
-        builder.append("y ")
-        builder.append(hour)
-        builder.append("d:")
-        builder.append(minute)
-        builder.append("m:")
+        if (month < 0) {
+            builder.append(month.toLong())
+            builder.append("m:")
+        }
+
+        if (day < 0) {
+            builder.append(day)
+            builder.append("d:")
+        }
+
+        if (year < 0) {
+            builder.append(year.toLong())
+            builder.append("y ")
+        }
+
+        if (hour < 0) {
+            builder.append(hour)
+            builder.append("d:")
+        }
+
+        if (minute < 0) {
+            builder.append(minute)
+            builder.append("m:")
+        }
+
         builder.append(seconds)
         builder.append("s")
 

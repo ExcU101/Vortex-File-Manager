@@ -10,12 +10,17 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.ThemeDimen
 import io.github.excu101.vortex.ui.component.ViewBinding
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.info.InfoView
 import io.github.excu101.vortex.ui.component.list.scroll.FastScroller
 import io.github.excu101.vortex.ui.component.loading.LoadingView
+import io.github.excu101.vortex.ui.component.theme.key.storageListBackgroundColorKey
+import io.github.excu101.vortex.ui.component.theme.key.trailItemHeightKey
 import io.github.excu101.vortex.ui.component.trail.TrailListView
+import io.github.excu101.vortex.ui.component.udp
 
 class StorageListPageBinding(
     context: Context,
@@ -23,21 +28,22 @@ class StorageListPageBinding(
 
     override var root: FrameLayout = FrameLayout(context).apply {
         layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        setBackgroundColor(ThemeColor(storageListBackgroundColorKey))
     }
 
     var list: RecyclerView = RecyclerView(
         context,
     ).apply {
-        visibility = View.GONE
-        layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        visibility = View.VISIBLE
+//        layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         updatePadding(
-            top = 40.dp
+            top = ThemeDimen(trailItemHeightKey).udp,
         )
 
         setHasFixedSize(true)
         isNestedScrollingEnabled = true
-//        clipToPadding = false
+        clipToPadding = false
 
         layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
     }

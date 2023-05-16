@@ -1,7 +1,6 @@
 package io.github.excu101.filesystem.unix.provider
 
-import android.system.OsConstants.O_CREAT
-import android.system.OsConstants.O_EXCL
+import android.system.OsConstants.*
 import io.github.excu101.filesystem.fs.DirectoryStream
 import io.github.excu101.filesystem.fs.DirectoryStream.Filter
 import io.github.excu101.filesystem.fs.FileStore
@@ -25,6 +24,8 @@ import io.github.excu101.filesystem.unix.channel.UnixFileChannel
 import io.github.excu101.filesystem.unix.observer.UnixMasks.maskWith
 import io.github.excu101.filesystem.unix.path.UnixPath
 import io.github.excu101.filesystem.unix.structure.UnixDirectoryEntryStructure
+import io.github.excu101.filesystem.unix.structure.isCurrentDirectory
+import io.github.excu101.filesystem.unix.structure.isParentDirectory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.reflect.KClass
@@ -56,8 +57,9 @@ class UnixFileSystemProvider : FileSystemProvider() {
         val createNew = flags maskWith Options.Open.CreateNew
 
         var cFlags = if (readable && writable) 2 else if (readable) 0 else 1
+
         if (appendable) {
-            cFlags = cFlags or 0x400
+            cFlags = cFlags or O_APPEND
         }
 
         if (createNew) {
@@ -129,6 +131,11 @@ class UnixFileSystemProvider : FileSystemProvider() {
 
         var entry = getNextEntry(pointer)
         while (entry != null) {
+            if (entry.name.isCurrentDirectory() || entry.name.isParentDirectory()) {
+                entry = getNextEntry(pointer)
+                continue
+            }
+
             val path = directory.resolve(entry.name)
 
             if (filter.accept(path)) {

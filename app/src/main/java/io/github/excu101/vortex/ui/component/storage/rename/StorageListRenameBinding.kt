@@ -10,7 +10,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.ViewBinding
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.accentColorKey

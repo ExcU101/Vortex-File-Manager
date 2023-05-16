@@ -25,6 +25,8 @@ interface Path : Comparable<Path> {
     val scheme: String
         get() = system.scheme
 
+    fun getParentAt(index: Int): Path?
+
     infix fun startsWith(other: Path): Boolean
 
     infix fun endsWith(other: Path): Boolean

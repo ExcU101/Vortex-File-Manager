@@ -12,12 +12,9 @@ import io.github.excu101.vortex.ui.component.bar.Bar
 
 class NavigationPageBinding(
     private val context: Context,
-    private val adapter: FragmentAdapter
 ) {
-
     var root: CoordinatorLayout? = null
     var bar: Bar? = null
-    var pager: ViewPager2? = null
 
     fun onCreate() {
         root = CoordinatorLayout(context).apply {
@@ -30,19 +27,12 @@ class NavigationPageBinding(
             }
         }
 
-        pager = ViewPager2(context).apply {
-            layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
-            adapter = this@NavigationPageBinding.adapter
-        }
-
-        root?.addView(pager)
         root?.addView(bar)
     }
 
     fun onDestroy() {
         root = null
         bar = null
-        pager = null
     }
 
 

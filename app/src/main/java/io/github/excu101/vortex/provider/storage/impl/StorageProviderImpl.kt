@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.getSystemService
 import io.github.excu101.filesystem.fs.DirectoryObserver
+import io.github.excu101.filesystem.fs.DirectoryStream.Filter.*
 import io.github.excu101.filesystem.fs.observer.PathObservableEventType
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.asPath
@@ -24,12 +25,7 @@ import io.github.excu101.vortex.provider.storage.StorageDirectoryObserver
 import io.github.excu101.vortex.provider.storage.StorageProvider
 import io.github.excu101.vortex.provider.storage.Task
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -86,21 +82,35 @@ class StorageProviderImpl @Inject constructor(
 
     override fun registerObserver(
         directory: Path,
-        vararg types: PathObservableEventType
+        vararg types: PathObservableEventType,
     ): DirectoryObserver {
         val unit = StorageDirectoryObserver(directory, types = types)
         observers[directory] = unit
         return unit
     }
 
+    override fun closeObserver(
+        directory: Path,
+        onRemove: (StorageDirectoryObserver) -> Unit,
+    ) {
+        observers.remove(directory)?.let(onRemove)
+    }
+
+    override fun closeObservers() {
+        observers.forEach { (path, observer) ->
+            observer.cancel()
+            observers.remove(path)
+        }
+    }
+
     override fun requiresPermissions(): Boolean {
-        return !(checkSelfPermission(
+        return checkSelfPermission(
             context,
             READ_EXTERNAL_STORAGE
-        ) == PERMISSION_GRANTED && checkSelfPermission(
+        ) != PERMISSION_GRANTED || checkSelfPermission(
             context,
             WRITE_EXTERNAL_STORAGE
-        ) == PERMISSION_GRANTED)
+        ) != PERMISSION_GRANTED
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

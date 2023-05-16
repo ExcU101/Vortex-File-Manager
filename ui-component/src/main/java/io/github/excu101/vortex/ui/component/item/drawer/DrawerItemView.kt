@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.shape.CornerFamily.ROUNDED
@@ -12,8 +13,8 @@ import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.shape.ShapeAppearanceModel.builder
 import com.google.android.material.shape.Shapeable
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.ItemViewIds
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
@@ -34,7 +35,6 @@ class DrawerItemView(
 
     private val iconHorizontalPadding = 16.dp
     private val titleHorizontalPadding = 32.dp
-    private val additionalTitleViewHeight = 2.dp
     private val iconSize = 24.dp
 
     private val rippleTintList = ColorStateList(
@@ -56,11 +56,13 @@ class DrawerItemView(
 
     private val iconView = ImageView(context).apply {
         imageTintList = createIconColorStateList()
+        layoutParams = LayoutParams(24.dp, 24.dp)
     }
 
     private val titleView = TextView(context).apply {
         textSize = 16F
         setTextColor(createTitleColorStateList())
+        layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
     }
 
     var icon: Drawable?
@@ -105,7 +107,6 @@ class DrawerItemView(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-
         val (width, height) = themeMeasure(
             widthMeasureSpec,
             heightMeasureSpec,
@@ -114,18 +115,8 @@ class DrawerItemView(
         )
 
         setMeasuredDimension(width, height)
-        val availableWidth = width - iconHorizontalPadding
 
-        if (!isEmptyIcon) {
-            iconView.measure(
-                MeasureSpec.makeMeasureSpec(iconSize, MeasureSpec.AT_MOST),
-                MeasureSpec.makeMeasureSpec(iconSize, MeasureSpec.AT_MOST)
-            )
-        }
-        titleView.measure(
-            MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(iconSize, MeasureSpec.AT_MOST)
-        )
+        measureChildren(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -133,9 +124,9 @@ class DrawerItemView(
         if (!isEmptyIcon) {
             iconView.layout(
                 widthLeft,
-                height / 2 - iconView.measuredHeight,
-                widthLeft + iconSize,
-                height / 2 + iconView.measuredHeight
+                (measuredHeight - iconView.measuredHeight) shr 1,
+                widthLeft + iconView.measuredWidth,
+                ((measuredHeight - iconView.measuredHeight) shr 1) + iconView.measuredHeight
             )
             widthLeft += iconSize
         }
@@ -143,11 +134,12 @@ class DrawerItemView(
         if (!isEmptyIcon) {
             widthLeft += titleHorizontalPadding
         }
+
         titleView.layout(
             widthLeft,
-            (height - titleView.lineHeight) / 2,
+            (height - titleView.lineHeight) shr 1,
             widthLeft + titleView.measuredWidth,
-            (height - titleView.lineHeight) / 2 + titleView.lineHeight + additionalTitleViewHeight
+            ((height - titleView.lineHeight) shr 1) + titleView.measuredHeight
         )
     }
 
@@ -191,7 +183,7 @@ class DrawerItemView(
         return RippleDrawable(
             rippleTintList,
             null,
-            null
+            surface
         )
     }
 

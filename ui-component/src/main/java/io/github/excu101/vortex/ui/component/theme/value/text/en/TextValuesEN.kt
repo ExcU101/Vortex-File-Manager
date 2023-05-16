@@ -1,54 +1,8 @@
 package io.github.excu101.vortex.ui.component.theme.value.text.en
 
-import io.github.excu101.pluginsystem.model.Text
-import io.github.excu101.pluginsystem.ui.theme.Theme
-import io.github.excu101.vortex.ui.component.theme.key.fileListCreateDialogNameHintTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListCreateDialogPathHintTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListDirectoriesCountSectionKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListDirectoriesCountTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListFilesCountSectionKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListFilesCountTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListGroupFilterActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListGroupMoreActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListGroupOperationDefaultActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListGroupOrderActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListGroupSortActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListGroupViewActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListLoadingInitiatingTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListLoadingNavigatingTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreDeselectAllActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreInfoActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreNavigateLeftActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreNavigateRightActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreSelectAllActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListOperationDeleteItemTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListOrderAscendingActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListOrderDescendingActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSearchActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSelectionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortCreationTimeActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortLastAccessTimeActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortLastModifiedTimeActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortNameActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortPathActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListSortSizeActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListViewGridActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListViewListActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningEmptyTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningNotificationAccessActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningNotificationAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.integerSpecifier
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationAddBookmarkTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationRemoveBookmarkTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.stringSpecifier
-import io.github.excu101.vortex.ui.component.theme.key.vortexServiceConnectedKey
-import io.github.excu101.vortex.ui.component.theme.key.vortexServiceDisconnectedKey
+import io.github.excu101.manager.model.Text
+import io.github.excu101.manager.ui.theme.Theme
+import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.theme.value.text.en.navigation.initNavigationValuesEN
 import io.github.excu101.vortex.ui.component.theme.value.text.en.storage.filter.initStorageFilterEN
 import io.github.excu101.vortex.ui.component.theme.value.text.en.storage.item.initStorageItemValuesEN
@@ -132,6 +86,7 @@ fun initVortexTextValuesEN() {
     Theme[fileListMoreInfoActionTitleKey] = Text(value = "Info")
     Theme[fileListMoreNavigateLeftActionTitleKey] = Text(value = "Navigate left")
     Theme[fileListMoreNavigateRightActionTitleKey] = Text(value = "Navigate right")
+    Theme[fileListMoreShowTasksActionTitleKey] = Text(value = "Show Tasks")
 
     Theme[fileListFilesCountTitleKey] = Text(value = "Files: $integerSpecifier")
     Theme[fileListDirectoriesCountTitleKey] = Text(value = "Folders: $integerSpecifier")

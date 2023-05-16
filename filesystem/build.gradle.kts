@@ -23,6 +23,15 @@ android {
             )
         }
     }
+
+    compileOptions {
+        sourceCompatibility = BuildConfig.JDK.VerEnum
+        targetCompatibility = BuildConfig.JDK.VerEnum
+    }
+
+    kotlinOptions {
+        jvmTarget = BuildConfig.JDK.Ver
+    }
 }
 dependencies {
     implementation(Deps.Coroutines.Core)

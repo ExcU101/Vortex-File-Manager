@@ -7,26 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import io.github.excu101.filesystem.fs.utils.toPath
 import io.github.excu101.vortex.ViewIds
-import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.navigation.dsl.FragmentFactory
-import io.github.excu101.vortex.navigation.utils.NavigationController
-import io.github.excu101.vortex.ui.component.bar
 import io.github.excu101.vortex.ui.component.menu.MenuAction
 import io.github.excu101.vortex.ui.component.menu.MenuActionListener
-import io.github.excu101.vortex.ui.component.parcelable
 import io.github.excu101.vortex.ui.component.storage.create.StorageItemCreateBinding
-import io.github.excu101.vortex.ui.navigation.AppNavigation.Args.Storage
-import io.github.excu101.vortex.ui.navigation.PageFragment
-import io.github.excu101.vortex.ui.screen.storage.Actions
 
-class StorageItemCreatePage : PageFragment(), MenuActionListener {
-
-    companion object : FragmentFactory<StorageItemCreatePage> {
-        override fun createFragment(): StorageItemCreatePage = StorageItemCreatePage()
-    }
+class StorageItemCreatePage : Fragment(), MenuActionListener {
 
     private var binding: StorageItemCreateBinding? = null
 
@@ -39,35 +28,35 @@ class StorageItemCreatePage : PageFragment(), MenuActionListener {
         return binding?.root
     }
 
-    override fun onPageSelected() {
-        bar?.replaceItems(listOf(Actions.Create))
-        bar?.registerListener(listener = this)
-        bar?.show()
-    }
+//    override fun onPageSelected() {
+//        bar?.replaceItems(listOf(Actions.Create))
+//        bar?.registerListener(listener = this)
+//        bar?.show()
+//    }
 
-    override fun onPageUnselected() {
-        bar?.unregisterListener(listener = this)
-    }
+//    override fun onPageUnselected() {
+//        bar?.unregisterListener(listener = this)
+//    }
 
-    override fun onMenuActionCall(action: MenuAction) {
+    override fun onMenuActionCall(action: MenuAction): Boolean {
         when (action.id) {
             ViewIds.Storage.Create.CreateConfirmId -> {
                 binding?.apply {
                     if (name.text?.isEmpty() != false) {
                         nameLayout.error = "To create item needs to enter item name"
-                        return
+                        return false
                     }
                     if (path.text?.isEmpty() != false) {
                         pathLayout.error = "To create item needs to enter item path"
-                        return
+                        return false
                     }
                     if (type.text?.isEmpty() != false) {
                         typeLayout.error = "To create item needs to enter item type"
-                        return
+                        return false
                     }
                     if (mode.text?.isEmpty() != false) {
                         modeLayout.error = "To create item needs to enter item type"
-                        return
+                        return false
                     }
                     val name = this.name.text.toString().toPath()
                     val src = this.path.text.toString().toPath()
@@ -82,18 +71,19 @@ class StorageItemCreatePage : PageFragment(), MenuActionListener {
                             "isDir" to (type.text.toString() == "Directory")
                         )
                     )
-                    NavigationController().navigateUp()
+//                    NavigationController().navigateUp()
                 }
             }
         }
+        return false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
-            arguments?.parcelable<PathItem>(Storage.CreatePage.ParentDirectoryKey)?.path?.let {
-                path.setText(it)
-            }
+//            arguments?.parcelable<PathItem>(Storage.CreatePage.ParentDirectoryKey)?.path?.let {
+//                path.setText(it)
+//            }
 
             name.requestFocus()
 

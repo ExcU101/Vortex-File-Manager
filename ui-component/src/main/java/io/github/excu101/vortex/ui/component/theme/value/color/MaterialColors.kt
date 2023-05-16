@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.ui.component.theme.value.color
 
-import io.github.excu101.pluginsystem.model.Color
+import io.github.excu101.manager.model.Color
 
 object MaterialColors {
     object Red : MaterialColor, AdditionalMaterialColor {

@@ -19,7 +19,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.ThemeColor
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.ui.component.ViewBinding
 import io.github.excu101.vortex.ui.component.dp

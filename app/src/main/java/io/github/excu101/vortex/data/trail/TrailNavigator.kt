@@ -18,11 +18,6 @@ class TrailNavigator : Iterable<PathItem> {
             get() = items.getOrNull(selectedIndex)
     }
 
-    data class SelectedItem(
-        val index: Int,
-        val item: PathItem?,
-    )
-
     private val _trail = MutableStateFlow(Trail())
     val trail: StateFlow<Trail>
         get() = _trail.asStateFlow()

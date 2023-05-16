@@ -7,8 +7,6 @@ import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListe
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewLongListener
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewSelectionListener
 import io.github.excu101.vortex.ui.component.list.adapter.listener.SelectionListenerRegister
-import io.github.excu101.vortex.ui.component.list.adapter.section.SelectionOwner
-import io.github.excu101.vortex.ui.component.list.adapter.section.SelectionOwner.Mode.MULTIPLE
 
 abstract class SelectionListAdapterImpl<T, VH : RecyclerView.ViewHolder>(
     differ: DiffUtil.ItemCallback<T>,
@@ -17,8 +15,6 @@ abstract class SelectionListAdapterImpl<T, VH : RecyclerView.ViewHolder>(
     private val listeners = mutableListOf<ItemViewListener<T>>()
     private val longListeners = mutableListOf<ItemViewLongListener<T>>()
     private val selectionListeners = mutableListOf<ItemViewSelectionListener<T>>()
-
-    override var selectionMode: SelectionOwner.Mode = MULTIPLE
 
     override fun register(listener: ItemViewListener<T>) {
         listeners.add(listener)
@@ -61,13 +57,11 @@ abstract class SelectionListAdapterImpl<T, VH : RecyclerView.ViewHolder>(
         position: Int,
         isSelected: Boolean,
     ): Boolean {
-        var clicked = false
-
         selectionListeners.forEach { listener ->
-            clicked = listener.onSelectionChanged(view, item, position, isSelected)
+            if (listener.onSelectionChanged(view, item, position, isSelected)) return true
         }
 
-        return clicked
+        return false
     }
 
 

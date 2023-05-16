@@ -21,3 +21,4 @@ local.properties
 /pluginsystem/build/intermediates/javac/debug/classes/
 /pluginsystem-common/build/
 /pluginsystem-common/build/intermediates/javac/debug/classes/
+/package-manager/build/

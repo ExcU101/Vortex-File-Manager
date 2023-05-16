@@ -37,6 +37,10 @@ static jclass findUnixFileSystemStatusStructureClass(JNIEnv *env);
 
 static jmethodID findUnixFileSystemStatusStructureInitMethod(JNIEnv *env);
 
+static jclass findUnixGroupStructureClass(JNIEnv *env);
+
+static jmethodID findUnixGroupStructureInitMethod(JNIEnv *env);
+
 static jclass findUnixMountEntryStructureClass(JNIEnv *env);
 
 static jmethodID findUnixMountEntryStructureInitMethod(JNIEnv *env);

@@ -6,6 +6,7 @@ plugins {
 
 android {
     compileSdk = AndroidConfigure.targetSdk
+    namespace = "io.github.excu101.vortex.service"
 
     defaultConfig {
         minSdk = AndroidConfigure.minSdk
@@ -15,37 +16,43 @@ android {
     }
 
     sourceSets {
-        getByName<com.android.build.api.dsl.AndroidSourceSet>(name = "main") {
-            aidl.srcDirs("src/main/aidl")
-        }
+//        getByName<com.android.build.api.dsl.AndroidSourceSet>(name = "main") {
+//            aidl.srcDirs("src/main/aidl/")
+//        }
     }
 
     buildFeatures {
-        aidl = true
+//        aidl = true
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = BuildConfig.JDK.VerEnum
+        targetCompatibility = BuildConfig.JDK.VerEnum
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = BuildConfig.JDK.Ver
     }
 }
 
 dependencies {
     implementation(Deps.AndroidX.Core)
+    implementation(Deps.Ui.Material)
+    implementation(Deps.ExoPlayer.Core)
     implementation(project(Deps.Application.FileSystem))
     implementation(project(Deps.Application.FileSystemUnix))
     implementation(Deps.Lifecycle.Service)
     implementation(Deps.Lifecycle.Runtime)
+    implementation(project(Deps.Application.PackageManager))
     implementation(Deps.Lifecycle.Process)
     implementation(Deps.Coroutines.Android)
 }

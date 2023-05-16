@@ -2,7 +2,6 @@ plugins {
     id(Plugins.AndroidApplication) version Versions.androidVer apply false
     id(Plugins.AndroidLibrary) version Versions.androidVer apply false
     id(Plugins.KotlinAndroid) version Versions.kotlinVer apply false
-    id(Plugins.Hilt) version Versions.hiltVer apply false
 }
 
 tasks.create<Delete>(
@@ -20,7 +19,7 @@ subprojects {
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = BuildConfig.JDK.Ver
         kotlinOptions.freeCompilerArgs = args
     }
 }

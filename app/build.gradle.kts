@@ -1,8 +1,8 @@
+import com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
     id(Plugins.AndroidApplication)
-    id(Plugins.HiltPlugin)
     id(Plugins.Parcelize)
     kotlin(Plugins.Android)
     kotlin(Plugins.Kapt)
@@ -13,6 +13,7 @@ kapt {
 }
 
 android {
+    namespace = "io.github.excu101.vortex"
     compileSdk = AndroidConfigure.targetSdk
 
     defaultConfig {
@@ -55,18 +56,24 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = BuildConfig.JDK.VerEnum
+        targetCompatibility = BuildConfig.JDK.VerEnum
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = BuildConfig.JDK.Ver
     }
 
     externalNativeBuild {
         cmake {
             path = file(BuildConfig.CMake.Path)
             version = Versions.cmakeVer
+        }
+    }
+
+    sourceSets {
+        getByName("main") {
+            (kotlin as DefaultAndroidSourceDirectorySet).filter.excludes += "**/StorageListPageFragment.kt"
         }
     }
 }
@@ -79,11 +86,8 @@ dependencies {
     implementation(Deps.AndroidX.Appcompat)
     implementation(Deps.AndroidX.Collection)
 
-    implementation(Deps.Room.Runtime)
-    kapt(Deps.Room.Compiler)
-
-    implementation(Deps.Hilt.Android)
-    kapt(Deps.Hilt.Compiler)
+    implementation(Deps.Dagger.Lib)
+    kapt(Deps.Dagger.Compiler)
 
     implementation(Deps.Ui.Material)
     implementation(Deps.Ui.RecyclerView)
@@ -93,9 +97,11 @@ dependencies {
     implementation(Deps.Lifecycle.SavedStateViewModel)
     implementation(Deps.Lifecycle.ViewModel)
 
+//    debugImplementation(Deps.LeakCanary.Android)
+
     implementation(project(Deps.Application.FileSystem))
     implementation(project(Deps.Application.FileSystemUnix))
-    implementation(project(Deps.Application.PluginSystem))
+    implementation(project(Deps.Application.PackageManager))
     implementation(project(Deps.Application.PluginSystemUi))
     implementation(project(Deps.Application.UiComponent))
     implementation(project(Deps.Application.VortexService))

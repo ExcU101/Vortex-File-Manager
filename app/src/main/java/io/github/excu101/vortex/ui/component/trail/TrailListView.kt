@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_NEVER
 import com.google.android.material.shape.MaterialShapeUtils
-import io.github.excu101.pluginsystem.ui.theme.Theme
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.ThemeColorChangeListener
-import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
+import io.github.excu101.manager.ui.theme.Theme
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.ThemeColorChangeListener
+import io.github.excu101.manager.ui.theme.ThemeDimen
 import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.foundtation.MarginItemDecoration
@@ -86,9 +86,11 @@ class TrailListView : RecyclerView,
         adapter = trailAdapter
         elevation = ThemeDimen(trailElevationKey).toFloat()
         layoutManager = trailLayoutManager
-        addItemDecoration(MarginItemDecoration(
-            horizontal = 4.dp
-        ))
+        addItemDecoration(
+            MarginItemDecoration(
+                horizontal = 4.dp
+            )
+        )
         setOnApplyWindowInsetsListener(this)
     }
 

@@ -1,15 +1,11 @@
 package io.github.excu101.vortex.provider.storage
 
 import io.github.excu101.filesystem.fs.operation.FileOperation
-import io.github.excu101.filesystem.fs.operation.action.CopyAction
-import io.github.excu101.filesystem.fs.operation.action.CreateDirectoryAction
-import io.github.excu101.filesystem.fs.operation.action.CreateFileAction
-import io.github.excu101.filesystem.fs.operation.action.DeleteAction
-import io.github.excu101.filesystem.fs.operation.action.MoveAction
-import io.github.excu101.filesystem.fs.operation.action.WriteAction
+import io.github.excu101.filesystem.fs.operation.action.*
 import io.github.excu101.vortex.provider.FileOperationActionHandler
+import javax.inject.Inject
 
-class StorageOperationActionHandler : FileOperationActionHandler<String?> {
+class StorageOperationActionHandler @Inject constructor() : FileOperationActionHandler<String?> {
 
     override fun resolveMessage(action: FileOperation.Action): String? {
         return when (action) {

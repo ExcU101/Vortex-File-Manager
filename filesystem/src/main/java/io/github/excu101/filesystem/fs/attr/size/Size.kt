@@ -1,5 +1,6 @@
 package io.github.excu101.filesystem.fs.attr.size
 
+import kotlinx.coroutines.*
 import java.text.DecimalFormat
 
 class Size(val memory: Long) {
@@ -17,27 +18,27 @@ class Size(val memory: Long) {
     }
 
     enum class BinaryPrefixes(val value: Long) {
-        B(2 pow 3),
-        KiB(2 pow 10),
-        MiB(2 pow 20),
-        GiB(2 pow 30),
-        TiB(2 pow 40),
-        PiB(2 pow 50),
-        EiB(2 pow 60),
-        ZiB(2 pow 70),
-        YiB(2 pow 80)
+        B(value = 2 pow 3),
+        KiB(value = 2 pow 10),
+        MiB(value = 2 pow 20),
+        GiB(value = 2 pow 30),
+        TiB(value = 2 pow 40),
+        PiB(value = 2 pow 50),
+        EiB(value = 2 pow 60),
+        ZiB(value = 2 pow 70),
+        YiB(value = 2 pow 80)
     }
 
     enum class SiPrefixes(val value: Long) {
-        B(1L),
-        KB(B.value * 1000),
-        MB(KB.value * 1000),
-        GB(MB.value * 1000),
-        TB(GB.value * 1000),
-        PB(TB.value * 1000),
-        EB(PB.value * 1000),
-        ZB(EB.value * 1000),
-        YB(ZB.value * 1000),
+        B(value = 1L),
+        KB(value = 1000L),
+        MB(value = 1000000L),
+        GB(value = 1000000000L),
+        TB(value = 1000000000000L),
+        PB(value = 1000000000000000L),
+        EB(value = 1000000000000000000L),
+        ZB(value = EB.value * 1000L),
+        YB(value = ZB.value * 1000L),
     }
 
     var pattern = simplePattern

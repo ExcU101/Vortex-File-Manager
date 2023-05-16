@@ -16,12 +16,11 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.manager.ui.theme.FormatterThemeText
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.ui.component.StorageCellBadgeIcon
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.storage.RecyclableStorageCell
 import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundColorKey
@@ -49,19 +48,13 @@ class StandardStorageGridCell(
         setTint(ThemeColor(storageListItemIconBackgroundColorKey))
     }
 
-    private val iconBadge = StorageCellBadgeIcon(iconSize, iconSize).apply {
-        duration = 500L
-    }
-
     override var isCellSelected: Boolean
         get() = isSelected
         set(value) {
-            iconBadge.isSelected = value
             isSelected = value
         }
     override var isBookmarked: Boolean = false
         set(value) {
-            iconBadge.isBookmarked = value
             field = value
         }
 
@@ -74,7 +67,6 @@ class StandardStorageGridCell(
     private val iconView = object : AppCompatImageView(context) {
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
-            iconBadge.draw(canvas)
         }
     }.apply {
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
@@ -194,7 +186,7 @@ class StandardStorageGridCell(
     }
 
     override fun onBind(item: PathItem) {
-        icon = item.icon
+//        icon = item.icon
         title = FormatterThemeText(key = fileListItemNameKey, item.name)
         info = item.info
     }

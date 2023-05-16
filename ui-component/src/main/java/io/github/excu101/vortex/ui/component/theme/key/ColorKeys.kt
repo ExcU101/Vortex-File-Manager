@@ -83,6 +83,13 @@ const val storageListItemIconBackgroundSelectedColorKey =
 const val storageListItemTitleSelectedTextColorKey = "storageListItemTitleSelectedTextColor"
 const val storageListItemSecondarySelectedTextColorKey = "storageListItemSecondarySelectedTextColor"
 
+// Storage List Screen : storageList Item (bookmarked)
+
+const val storageListItemIconBackgroundBookmarkedColorKey =
+    "storageListItemIconBackgroundBookmarkedColor"
+
+const val storageListItemIconBookmarkedColorKey = "storageListItemIconBookmarkedColor"
+
 // Layouts : Progress
 const val layoutProgressBarBackgroundColorKey = "layoutProgressBarBackgroundColorKey"
 const val layoutProgressBarTintColorKey = "layoutProgressBarTintColor"

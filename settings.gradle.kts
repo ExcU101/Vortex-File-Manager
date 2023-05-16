@@ -18,10 +18,9 @@ include(
     ":app",
     ":filesystem",
     ":filesystem-unix",
-    ":pluginsystem",
+    ":package-manager",
     ":ui-component",
     ":vortex-service",
-    ":manifest-dsl",
     ":pluginsystem-ui",
     ":navigation"
 )

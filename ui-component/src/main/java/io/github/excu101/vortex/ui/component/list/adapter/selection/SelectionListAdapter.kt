@@ -4,7 +4,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ClickListenerRegister
-import io.github.excu101.vortex.ui.component.list.adapter.section.SelectionOwner
 
 abstract class SelectionListAdapter<T, VH : RecyclerView.ViewHolder>(
     differ: DiffUtil.ItemCallback<T>,

@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.ui.navigation
 
-import io.github.excu101.pluginsystem.ui.theme.ThemeText
+import io.github.excu101.manager.ui.theme.ThemeText
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.ui.component.drawer.ItemBottomDrawerFragment
 import io.github.excu101.vortex.ui.component.dsl.scope

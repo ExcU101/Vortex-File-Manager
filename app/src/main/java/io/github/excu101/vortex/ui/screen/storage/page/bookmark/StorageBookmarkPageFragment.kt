@@ -7,20 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.transition.Fade
-import dagger.hilt.android.AndroidEntryPoint
 import io.github.excu101.vortex.base.utils.collectState
-import io.github.excu101.vortex.navigation.dsl.FragmentFactory
 import io.github.excu101.vortex.ui.component.repeatedLifecycle
 import io.github.excu101.vortex.ui.component.requireBar
 
-@AndroidEntryPoint
 class StorageBookmarkPageFragment : Fragment() {
-
-    companion object : FragmentFactory<StorageBookmarkPageFragment> {
-        override fun createFragment(): StorageBookmarkPageFragment {
-            return StorageBookmarkPageFragment()
-        }
-    }
 
     private var binding: StorageBookmarkBinding? = null
 

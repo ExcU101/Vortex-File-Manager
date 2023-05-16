@@ -1,4 +1,23 @@
 #include "status.h"
+#include <iostream>
+
+int isCurrentDirectory(const char *name, unsigned int len) {
+    if (len == 1 && name[0] == '.') return 1;
+    return 0;
+}
+
+int isParentDirectory(const char *name, unsigned int len) {
+    if (len == 2 && (name[0] == '.' && name[1] == '.')) return 1;
+    return 0;
+}
+
+int isCurrentDirectory(const char *name) {
+    return isCurrentDirectory(name, *(&name + 1) - name);
+}
+
+int isParentDirectory(const char *name) {
+    return isParentDirectory(name, *(&name + 1) - name);
+}
 
 int getStatus(const char *path, struct stat *buffer) {
     return STATUS(path, buffer);

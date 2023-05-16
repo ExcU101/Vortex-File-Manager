@@ -18,20 +18,21 @@ object StorageListPageScreen {
 
     data class State(
         val data: List<Item<*>> = listOf(),
+        val search: List<Item<*>>? = null,
         val isLoading: Boolean = false,
         val loadingTitle: String? = null,
         val isWarning: Boolean = false,
         val warningIcon: Drawable? = null,
         val warningMessage: String? = null,
-        val actions: List<MenuAction> = Actions.BarActions
+        val actions: List<MenuAction> = Actions.BarActions,
     )
 
     sealed class SideEffect {
-        data class Snackbar(
-            val message: String,
-            val messageDuration: Int = com.google.android.material.snackbar.Snackbar.LENGTH_SHORT,
-            val messageActionTitle: String? = null,
-            val messageAction: (OnClickListener)? = null,
+        data class Message(
+            val title: String,
+            val duration: Int = com.google.android.material.snackbar.Snackbar.LENGTH_SHORT,
+            val actionTitle: String? = null,
+            val action: (OnClickListener)? = null,
         ) : SideEffect()
 
         class StorageItemCreate(
@@ -44,7 +45,7 @@ object StorageListPageScreen {
 
         data class StorageFilter(
             val currentSorter: Sorter<PathItem>,
-            val currentFilter: Filter<PathItem>
+            val currentFilter: Filter<PathItem>,
         ) : SideEffect()
     }
 
@@ -74,4 +75,3 @@ object StorageListPageScreen {
     }
 
 }
-

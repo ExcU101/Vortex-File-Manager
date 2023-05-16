@@ -1,14 +1,7 @@
 package io.github.excu101.filesystem.unix.observer
 
-import android.content.Context
 import io.github.excu101.filesystem.fs.observer.PathObservableKey
-import io.github.excu101.filesystem.fs.observer.event.CreateEvent
-import io.github.excu101.filesystem.unix.calls.UnixObserverCalls
-import io.github.excu101.filesystem.unix.observer.UnixMasks.OVERFLOW
-import io.github.excu101.filesystem.unix.observer.UnixMasks.maskWith
 import io.github.excu101.filesystem.unix.path.UnixPath
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 

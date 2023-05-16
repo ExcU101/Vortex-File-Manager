@@ -1,11 +1,7 @@
 package io.github.excu101.vortex.data
 
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Parcelable
-import android.view.View
-import android.view.ViewGroup
-import androidx.room.PrimaryKey
 import io.github.excu101.filesystem.FileProvider
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.attr.EmptyAttrs
@@ -17,18 +13,18 @@ import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.parsePath
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
+import io.github.excu101.filesystem.unix.attr.posix.PosixGroup
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
-import io.github.excu101.pluginsystem.ui.theme.ThemeText
+import io.github.excu101.manager.ui.theme.ThemeText
 import io.github.excu101.vortex.data.storage.PathItemContentParsers
-import io.github.excu101.vortex.provider.storage.StorageBookmarkProvider
 import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl.Companion.EXTERNAL_STORAGE
 import io.github.excu101.vortex.service.utils.PathParceler
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
+import io.github.excu101.vortex.ui.component.list.adapter.holder.contextViewHolderFactory
 import io.github.excu101.vortex.ui.component.storage.standard.linear.StandardStorageLinearCell
 import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemInfoSeparatorKey
-import io.github.excu101.vortex.ui.icon.Icons
 import io.github.excu101.vortex.utils.StorageItem
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -38,8 +34,8 @@ import java.io.File
 @Parcelize
 class PathItem(
     override val value: @WriteWith<PathParceler> Path,
-    override val tags: List<Tag> = emptyList()
-) : Item<Path>, Comparable<PathItem>, Parcelable, BookmarkState, TagOwner {
+    override val tags: List<Tag> = emptyList(),
+) : Item<Path>, Comparable<PathItem>, Parcelable, TagOwner {
 
     constructor(path: String) : this(value = parsePath(path))
 
@@ -55,7 +51,7 @@ class PathItem(
         get() = Uri.fromFile(File(path))
 
     @IgnoredOnParcel
-    @PrimaryKey
+//    @PrimaryKey
     override val id: Long = hashCode().toLong()
 
     override val type: Int
@@ -74,21 +70,18 @@ class PathItem(
         EmptyAttrs
     }
 
-    override val bookmarkExists
-        get() = this in StorageBookmarkProvider.items
-
     val perms: Set<PosixPermission>
         get() = (attrs as? PosixAttrs)?.perms ?: setOf()
 
     val owner: String?
         get() = (attrs as? PosixAttrs)?.owner
 
-    val group: String?
+    val group: PosixGroup?
         get() = (attrs as? PosixAttrs)?.group
 
     @IgnoredOnParcel
     val name: String = if (value == EXTERNAL_STORAGE) {
-        "Internal storage"
+        "Internal storage" // TODO: Move to Locale files
     } else {
         value.getName().toString()
     }
@@ -133,36 +126,21 @@ class PathItem(
         get() = if (!attrs.containsInode()) null else attrs.inode
 
     @IgnoredOnParcel
-    val icon: Drawable?
-        get() = when {
-            isDirectory -> Icons.Rounded.Folder
-            isLink -> Icons.Rounded.Link
-            else -> when (mime.type) {
-                "video" -> Icons.Rounded.Video
-                "image" -> Icons.Rounded.Image
-                "audio" -> Icons.Rounded.Audio
-                "text" -> Icons.Rounded.Text
-                else -> Icons.Rounded.File
-            }
-        }
-
-    @IgnoredOnParcel
     val info: String = resolveInfo()
 
     // TODO: (if needed) do cache
-    private fun resolveInfo(): String {
-        var result = ""
-
-        PathItemContentParsers.forEach { parser ->
-            parser.getPartInfo(item = this)?.let { part ->
-                if (result.isNotEmpty() && part.isNotEmpty()) {
-                    result += ThemeText(fileListItemInfoSeparatorKey)
-                }
-                result += part
+    private fun resolveInfo(): String = PathItemContentParsers.fold("") { accumulator, parser ->
+        val part = parser.getPartInfo(item = this)
+        val out = if (part.isNullOrEmpty()) {
+            accumulator
+        } else {
+            if (accumulator.isNotEmpty() && part.isNotEmpty()) {
+                accumulator + ThemeText(fileListItemInfoSeparatorKey) + part
+            } else {
+                part
             }
         }
-
-        return result
+        return@fold out
     }
 
     override operator fun compareTo(other: PathItem): Int {
@@ -180,9 +158,8 @@ class PathItem(
         if (javaClass != other?.javaClass) return false
 
         other as PathItem
-        if (value != other.value) return false
 
-        return true
+        return value == other.value
     }
 
     override fun hashCode(): Int {
@@ -200,10 +177,7 @@ class PathItem(
         return result
     }
 
-    companion object : ViewHolderFactory<PathItem> {
-        override fun produceView(parent: ViewGroup): View {
-            return StandardStorageLinearCell(parent.context)
-        }
-    }
+    companion object :
+        ViewHolderFactory<PathItem> by contextViewHolderFactory(::StandardStorageLinearCell)
 
 }

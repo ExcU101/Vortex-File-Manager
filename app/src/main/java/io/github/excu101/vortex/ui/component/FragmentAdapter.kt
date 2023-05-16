@@ -19,7 +19,6 @@ class FragmentAdapter : FragmentStateAdapter {
     )
 
     private val stack = mutableListOf<Fragment>()
-    private val commands = Channel<Command>()
 
     operator fun get(index: Int) = stack[index]
 
@@ -39,14 +38,6 @@ class FragmentAdapter : FragmentStateAdapter {
             }
         }
     }
-
-    suspend fun sendCommand(
-        index: Int,
-        command: Command,
-    ) {
-        (stack[index] as? CommandConsumer)?.consume(command)
-    }
-
 
     override fun createFragment(position: Int): Fragment = stack[position]
 

@@ -1,19 +1,14 @@
 package io.github.excu101.vortex.provider.storage
 
 import io.github.excu101.vortex.data.PathItem
+import kotlinx.coroutines.flow.StateFlow
 
-object StorageBookmarkProvider {
+interface StorageBookmarkProvider {
 
-    private val _items = HashSet<PathItem>()
-    val items: Set<PathItem>
-        get() = _items
+    val bookmarks: StateFlow<Set<PathItem>>
 
-    fun register(item: PathItem): Boolean {
-        return _items.add(item)
-    }
+    suspend fun register(path: PathItem)
 
-    fun unregister(item: PathItem): Boolean {
-        return _items.remove(item)
-    }
+    suspend fun unregister(path: PathItem)
 
 }

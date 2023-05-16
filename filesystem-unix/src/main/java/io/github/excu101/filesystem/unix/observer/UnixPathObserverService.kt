@@ -100,6 +100,7 @@ internal class UnixPathObserverService(
                     key.setNotActual()
                     keys.remove(key.descriptor)
                 }
+
                 is UnixPollRequest.Close -> {
                     for (pending in pendingKeys) {
                         UnixObserverCalls.removeObservable(
@@ -177,11 +178,13 @@ internal class UnixPathObserverService(
         if (!source.attrs<BasicAttrs>().isDirectory) throw IllegalArgumentException("Source isn't directory ($source)")
         val response = CompletableDeferred<UnixPathObservableKey>()
 
-        poller.send(element = UnixPollRequest.Register(
-            path = source,
-            types = types,
-            response = response
-        ))
+        poller.send(
+            element = UnixPollRequest.Register(
+                path = source,
+                types = types,
+                response = response
+            )
+        )
 
         return response.await()
     }
@@ -213,6 +216,7 @@ internal class UnixPathObserverService(
             UnixMasks.CREATE -> {
                 CreateEvent(context)
             }
+
             else -> null
         }
     }
@@ -227,9 +231,11 @@ internal class UnixPathObserverService(
                 is PathObservableModifyEventType -> {
                     mask = mask or UnixMasks.MODIFY
                 }
+
                 is PathObservableDeleteEventType -> {
                     mask = mask or UnixMasks.DELETE
                 }
+
                 is PathObservableCreateEventType -> {
                     mask = mask or UnixMasks.CREATE
                 }

@@ -2,7 +2,7 @@ package io.github.excu101.vortex.ui.screen.storage
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import io.github.excu101.pluginsystem.ui.theme.ThemeText
+import io.github.excu101.manager.ui.theme.ThemeText
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.ViewIds.Storage.Menu
 import io.github.excu101.vortex.ui.component.menu.MenuAction

@@ -2,7 +2,6 @@ package io.github.excu101.filesystem.unix.observer
 
 object UnixMasks {
     const val POLL_IN = 0x0001
-//    const val POLL_IN = 0x0001
 
     // Some files were edited
     const val MODIFY = 0x00000002

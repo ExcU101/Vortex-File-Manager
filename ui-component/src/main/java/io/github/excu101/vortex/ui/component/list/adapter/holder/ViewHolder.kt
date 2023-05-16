@@ -15,6 +15,10 @@ open class ViewHolder<T>(itemView: View) : ViewHolder(itemView) {
         delegate?.onBind(item)
     }
 
+    open fun bindPayload(item: Any?) {
+        delegate?.onBindPayload(item)
+    }
+
     // Unbind view, when it's recycled
     open fun unbind() {
         delegate?.onUnbind()
@@ -44,6 +48,10 @@ open class ViewHolder<T>(itemView: View) : ViewHolder(itemView) {
         fun onBind(item: T)
 
         fun onUnbind()
+
+        fun onBindPayload(payload: Any?) {
+
+        }
 
         fun onBindSelection(isSelected: Boolean) {
 

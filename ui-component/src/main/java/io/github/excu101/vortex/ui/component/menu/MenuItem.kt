@@ -10,8 +10,8 @@ import android.view.View.MeasureSpec.getSize
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.ImageView
 import android.widget.TextView
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.theme.key.mainBarActionIconTintColorKey
 import kotlin.math.min
@@ -34,6 +34,7 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
     var action: MenuAction? = null
         set(value) {
             field = value
+            id = value?.id ?: NO_ID
             titleView.text = value?.title
             iconView.setImageDrawable(value?.icon)
         }

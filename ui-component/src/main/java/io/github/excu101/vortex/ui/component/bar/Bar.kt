@@ -1,42 +1,35 @@
 package io.github.excu101.vortex.ui.component.bar
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.ColorStateList.valueOf
 import android.graphics.Paint
 import android.graphics.drawable.RippleDrawable
-import android.view.View
+import android.text.TextUtils
 import android.view.View.MeasureSpec.AT_MOST
-import android.view.View.MeasureSpec.EXACTLY
-import android.view.View.MeasureSpec.getMode
-import android.view.View.MeasureSpec.getSize
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewPropertyAnimator
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.children
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.textfield.TextInputEditText
-import io.github.excu101.pluginsystem.ui.theme.ThemeColor
-import io.github.excu101.pluginsystem.ui.theme.ThemeDimen
-import io.github.excu101.pluginsystem.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.bar.NavigationIcon.Type.CLOSE
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.menu.MenuAction
 import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.menu.MenuLayout
-import io.github.excu101.vortex.ui.component.theme.key.mainBarHeightKey
-import io.github.excu101.vortex.ui.component.theme.key.mainBarNavigationIconTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainBarSurfaceColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainBarTitleTextColorKey
-import kotlin.math.min
+import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.ui.component.themeMeasure
+
 
 class Bar(context: Context) : ThemeFrameLayout(context) {
 
@@ -62,8 +55,6 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
     private val titleHorizontalPadding = 32.dp
     private val behavior = BarBehavior()
 
-    private val desireHeight = ThemeDimen(mainBarHeightKey).dp
-
     private val shape = MaterialShapeDrawable().apply {
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_ALWAYS
         paintStyle = Paint.Style.FILL
@@ -74,18 +65,14 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
     private val navigationIconView = ImageView(context).apply {
         isClickable = true
         isFocusable = true
+        layoutParams = LayoutParams(24.dp, 24.dp)
         background =
             RippleDrawable(valueOf(ThemeColor(mainBarNavigationIconTintColorKey)), null, null)
         setColorFilter(ThemeColor(mainBarNavigationIconTintColorKey))
         setImageDrawable(icon)
     }
 
-    private val titleView: TextView = TextView(context).apply {
-        textSize = 18F
-//        ellipsize = TextUtils.TruncateAt.END
-        setLines(1)
-        setTextColor(ThemeColor(mainBarTitleTextColorKey))
-    }
+    private val titleView = arrayOfNulls<TextView>(size = 2)
 
     private val subtitleView = TextView(context).apply {
         textSize = 14F
@@ -106,30 +93,13 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
     var animatesTitleChanges: Boolean = true
     var animatesSubtitleChanges: Boolean = true
 
-    private val titleAnimator = AnimatorSet().apply {
-        interpolator = FastOutSlowInInterpolator()
-        playTogether(ObjectAnimator.ofFloat(titleView, View.ALPHA, 1F, 0F, 1F))
-    }
-
-    private val subtitleAnimator = AnimatorSet().apply {
-        interpolator = FastOutSlowInInterpolator()
-        playTogether(ObjectAnimator.ofFloat(subtitleView, View.ALPHA, 1F, 0F, 1F))
-    }
-
     private var textWidth = 0
 
     var title: CharSequence?
-        get() = titleView.text
+        get() = titleView.getOrNull(0)?.text
         set(value) {
-            ensureContainingTitle()
-            if (animatesTitleChanges) {
-                titleView.animate().alpha(0F).setDuration(150L).withEndAction {
-                    titleView.text = value
-                    titleView.animate().alpha(1F).setDuration(150L).start()
-                }.start()
-            } else {
-                titleView.text = value
-            }
+            ensureContainingTitle(0)
+            titleView[0]?.text = value
         }
 
     var subtitle: CharSequence?
@@ -139,6 +109,7 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
                 removeView(subtitleView)
                 return
             }
+            if (subtitle == value) return
             ensureContainingSubtitle()
             if (animatesSubtitleChanges) {
                 subtitleView.animate().alpha(0F).setDuration(150L).withEndAction {
@@ -151,7 +122,7 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
         }
 
     val containsTitle: Boolean
-        get() = titleView in children
+        get() = (titleView[0] ?: false) in children
 
     val containsSubtitle: Boolean
         get() = subtitleView in children
@@ -180,9 +151,20 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
         return shape.tintList
     }
 
-    private fun ensureContainingTitle() {
+    private fun createTitle(index: Int) {
+        titleView[index] = TextView(context).apply {
+            textSize = 18F
+            ellipsize = TextUtils.TruncateAt.END
+            setLines(1)
+            setTextColor(ThemeColor(mainBarTitleTextColorKey))
+            layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+        }
+    }
+
+    private fun ensureContainingTitle(index: Int) {
         if (!containsTitle) {
-            addView(titleView)
+            createTitle(index)
+            addView(titleView[index])
         }
     }
 
@@ -250,44 +232,61 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val widthSize = getSize(widthMeasureSpec) // requires full width-size
-        val widthMode = getMode(widthMeasureSpec)
-        val heightSize = getSize(heightMeasureSpec)
-        val heightMode = getMode(heightMeasureSpec)
-
-        val width = when (widthMode) {
-            EXACTLY -> widthSize
-            AT_MOST -> min(MATCH_PARENT, widthSize)
-            else -> MATCH_PARENT
-        } + paddingStart + paddingRight
-
-
-        val height = when (heightMode) {
-            EXACTLY -> heightSize
-            AT_MOST -> min(desireHeight, heightSize)
-            else -> desireHeight
-        } + paddingTop + paddingBottom
+        val (width, height) = themeMeasure(
+            widthMeasureSpec,
+            heightMeasureSpec,
+            mainBarWidthKey,
+            mainBarHeightKey
+        )
 
         setMeasuredDimension(width, height)
 
         val availableWidth = width - horizontalPadding - paddingLeft - paddingRight
         if (containsNavigationIcon) {
-            navigationIconView.measure(
-                makeMeasureSpec(24.dp, EXACTLY),
-                makeMeasureSpec(24.dp, EXACTLY)
+            measureChild(
+                navigationIconView,
+                widthMeasureSpec,
+                heightMeasureSpec
             )
+//            navigationIconView.measure(
+//                makeMeasureSpec(24.dp, EXACTLY),
+//                makeMeasureSpec(24.dp, EXACTLY)
+//            )
         }
         if (containsTitle) {
-            titleView.measure(
-                makeMeasureSpec(availableWidth, AT_MOST),
-                makeMeasureSpec(24.dp, AT_MOST)
-            )
+            titleView.forEach { view ->
+                view?.let {
+                    if (it.visibility != GONE) {
+                        measureChild(
+                            it,
+                            widthMeasureSpec,
+                            heightMeasureSpec
+                        )
+//                    view?.measure(
+//                        makeMeasureSpec(availableWidth, AT_MOST),
+//                        makeMeasureSpec(24.dp, AT_MOST)
+//                    )
+                        it.pivotX = 0F
+                        it.pivotY = 1F
+                    }
+                }
+
+            }
+//            titleView.measure(
+//                makeMeasureSpec(availableWidth, AT_MOST),
+//                makeMeasureSpec(24.dp, AT_MOST)
+//            )
         }
         if (containsSubtitle) {
-            subtitleView.measure(
-                makeMeasureSpec(availableWidth, AT_MOST),
-                makeMeasureSpec(20.dp, AT_MOST)
+            measureChild(
+                subtitleView,
+                widthMeasureSpec,
+                heightMeasureSpec
             )
+//            subtitleView.measure(
+//                makeMeasureSpec(availableWidth, AT_MOST),
+//                makeMeasureSpec(20.dp, AT_MOST)
+//            )
         }
         if (containsMenu) {
 //            textWidth = if (titleView.measuredWidth > subtitleView.measuredWidth) {
@@ -327,13 +326,16 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
         }
 
         if (containsTitle) {
-            titleView.layout(
-                widthPosition,
-                textHeightPosition,
-                widthPosition + titleView.measuredWidth,
-                textHeightPosition + titleView.lineHeight
-            )
-            textHeightPosition += titleView.lineHeight
+            titleView.forEach { view ->
+                view?.layout(
+                    widthPosition,
+                    textHeightPosition,
+                    widthPosition + view.measuredWidth,
+                    textHeightPosition + view.measuredHeight
+                )
+            }
+
+            textHeightPosition += titleView[0]?.measuredHeight ?: 0
         }
 
         if (containsSubtitle) {
@@ -341,7 +343,7 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
                 widthPosition,
                 textHeightPosition,
                 widthPosition + subtitleView.measuredWidth,
-                textHeightPosition + subtitleView.lineHeight + 3.dp
+                textHeightPosition + subtitleView.measuredHeight
             )
         }
 
@@ -359,9 +361,79 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
 
     override fun onColorChanged() {
         shape.setTint(ThemeColor(mainBarSurfaceColorKey))
-        titleView.setTextColor(ThemeColor(mainBarTitleTextColorKey))
+        titleView[0]?.setTextColor(ThemeColor(mainBarTitleTextColorKey))
+        titleView[1]?.setTextColor(ThemeColor(mainBarTitleTextColorKey))
         subtitleView.setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
         navigationIconView.setColorFilter(ThemeColor(mainBarNavigationIconTintColorKey))
     }
 
+    fun setTitleWithAnimation(
+        title: CharSequence?,
+        isVertical: Boolean = true,
+        isReverse: Boolean = false,
+        duration: Long = 150L
+    ) {
+        if (title == this.title) return
+        val isCrossfade = title.isNullOrEmpty()
+
+        if (isCrossfade) {
+
+        }
+
+        if (titleView[1]?.parent != null) {
+            (titleView[1]?.parent as ViewGroup).removeView(titleView[1])
+            titleView[1] = null
+        }
+        titleView[1] = titleView[0]
+        titleView[0] = null
+        this.title = title
+        titleView[0]?.alpha = 0F
+
+
+        val a: ViewPropertyAnimator? = titleView[0]?.animate()?.alpha(1f)?.setDuration(
+            duration
+        )
+
+        if (isVertical) {
+            a?.translationY(0F)
+        } else {
+            a?.translationX(0F)
+        }
+
+        a?.start()
+
+        val animator = titleView[1]?.animate()?.alpha(0F)
+        if (!isCrossfade) {
+            if (isVertical) {
+                animator?.translationY(
+                    if (isReverse) {
+                        (-20F).dp
+                    } else {
+                        20F.dp
+                    }
+                )
+            }
+            else {
+                animator?.translationX(
+                    if (isReverse) {
+                        (-20F).dp
+                    } else {
+                        20F.dp
+                    }
+                )
+            }
+        }
+        animator?.setDuration(duration)?.setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                if (titleView[1]?.parent != null) {
+                    (titleView[1]?.parent as ViewGroup).removeView(titleView[1])
+                    titleView[1] = null
+                }
+
+                requestLayout()
+            }
+        })
+        animator?.start()
+        requestLayout()
+    }
 }

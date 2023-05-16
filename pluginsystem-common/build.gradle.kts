@@ -25,7 +25,7 @@ android {
 }
 
 dependencies {
-    implementation(project(Deps.Application.PluginSystem))
+    implementation(project(Deps.Application.PackageManager))
     implementation(project(Deps.Application.FileSystemUnix))
     implementation(project(Deps.Application.FileSystem))
 }

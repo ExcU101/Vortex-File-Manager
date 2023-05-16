@@ -6,12 +6,9 @@ import io.github.excu101.vortex.base.Logger
 import io.github.excu101.vortex.base.utils.ContainerScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Unconfined
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ContainerImpl<S, E>(
@@ -28,39 +25,31 @@ class ContainerImpl<S, E>(
         get() = _collector
 
     override val effect: Flow<E>
-        get() = _effect.consumeAsFlow()
+        get() = _effect.receiveAsFlow()
 
     override val state: StateFlow<S>
         get() = _state.asStateFlow()
 
     private val scope: ContainerScope<S, E> = ContainerScope(
-        getState = { state.value },
+        getState = state::value,
         reduce = { reducer ->
             emitState(reducer(state.value))
         },
-        effect = { effect ->
-            emitEffect(effect)
-        },
-        message = { message ->
-            logger.log(message)
-        }
+        effect = ::emitEffect,
+        message = logger::log
     )
 
-    private fun emitState(state: S) {
-        parentScope.launch {
-            _state.emit(state)
-            _collector.emit(state)
-        }
+    private suspend fun emitState(state: S) {
+        _state.emit(state)
+        _collector.emit(state)
     }
 
-    private fun emitEffect(effect: E) {
-        parentScope.launch(Unconfined) {
-            _effect.send(effect)
-        }
+    private suspend fun emitEffect(effect: E) {
+        _effect.send(effect)
     }
 
     override fun emit(block: suspend ContainerScope<S, E>.() -> Unit) {
-        parentScope.launch(Unconfined) {
+        parentScope.launch(context = Unconfined) {
             scope.block()
         }
     }

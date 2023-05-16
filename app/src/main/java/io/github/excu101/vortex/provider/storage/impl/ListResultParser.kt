@@ -1,6 +1,6 @@
 package io.github.excu101.vortex.provider.storage.impl
 
-import io.github.excu101.pluginsystem.ui.theme.FormatterThemeText
+import io.github.excu101.manager.ui.theme.FormatterThemeText
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.provider.storage.ResultParser
 import io.github.excu101.vortex.ui.component.item.text.TextItem

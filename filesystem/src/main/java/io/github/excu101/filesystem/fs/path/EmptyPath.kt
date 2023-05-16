@@ -20,6 +20,8 @@ object EmptyPath : Path {
 
     override fun getName(index: Int): Path = this
     override fun normalize(): Path = this
+
+    override fun getParentAt(index: Int): Path? = null
     override fun relativize(other: Path): Path = this
     override fun resolve(other: Path): Path = this
     override fun sub(from: Int, to: Int): Path = this

@@ -8,9 +8,10 @@ import io.github.excu101.filesystem.fs.provider.FileSystemProvider
 import io.github.excu101.filesystem.fs.utils.FileSystemHelper
 import io.github.excu101.filesystem.unix.observer.UnixPathObserverService
 import io.github.excu101.filesystem.unix.path.UnixPath
+import io.github.excu101.filesystem.unix.provider.UnixFileSystemProvider
 
 class UnixFileSystem(
-    override val provider: FileSystemProvider,
+    override val provider: FileSystemProvider = UnixFileSystemProvider(),
 ) : FileSystem(provider = provider) {
 
     override val separator: Byte

@@ -1,7 +1,7 @@
 package io.github.excu101.vortex.data.theme
 
 import android.os.Parcel
-import io.github.excu101.pluginsystem.model.Dimen
+import io.github.excu101.manager.model.Dimen
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize

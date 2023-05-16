@@ -25,9 +25,9 @@ object PathItemContentParsers : Iterable<PathItemPartInfoParser> {
 
     private val parsers = mutableListOf(
         ItemCount,
-        LastModifiedTime,
         Size,
-        MimeType
+        MimeType,
+        LastModifiedTime,
     )
 }
 

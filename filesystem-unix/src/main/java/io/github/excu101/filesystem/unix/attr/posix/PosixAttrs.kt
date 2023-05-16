@@ -4,7 +4,7 @@ import io.github.excu101.filesystem.fs.attr.BasicAttrs
 
 interface PosixAttrs : BasicAttrs {
 
-    val group: String
+    val group: PosixGroup
 
     val owner: String
 

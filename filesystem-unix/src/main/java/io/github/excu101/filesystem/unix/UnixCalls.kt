@@ -4,6 +4,7 @@ import android.system.Int64Ref
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.structure.UnixDirectoryEntryStructure
 import io.github.excu101.filesystem.unix.structure.UnixFileSystemStatusStructure
+import io.github.excu101.filesystem.unix.structure.UnixGroupStructure
 import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
 import java.io.FileDescriptor
 
@@ -12,6 +13,10 @@ internal object UnixCalls {
     init {
         System.loadLibrary("unix-calls")
     }
+
+    internal fun getGroup(groupId: Int) = getGroupImpl(groupId)
+
+    private external fun getGroupImpl(groupId: Int): UnixGroupStructure
 
     internal fun allocate(size: Long) = allocateImpl(size)
 
@@ -110,6 +115,22 @@ internal object UnixCalls {
         descriptor: Int,
         command: Int,
     ): Int
+
+    internal fun changeOwner(
+        path: ByteArray,
+        userId: Int,
+        groupId: Int,
+    ) = changeOwnerImpl(
+        path = path,
+        userId = userId,
+        groupId = groupId
+    )
+
+    private external fun changeOwnerImpl(
+        path: ByteArray,
+        userId: Int,
+        groupId: Int,
+    )
 
     internal fun createSocketPair(
         domain: Int,
