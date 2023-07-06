@@ -1,57 +1,34 @@
 package io.github.excu101.vortex.ui.component
 
-import android.animation.ValueAnimator
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.ThemeColorChangeListener
-import io.github.excu101.manager.ui.theme.ThemeDimen
+import io.github.excu101.vortex.theme.ThemeColorChangeListener
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
-
-@Suppress(names = ["FunctionName"])
-inline fun AnimatableColor(
-    @ColorInt from: Int,
-    @ColorInt to: Int,
-    crossinline onChange: (Int) -> Unit,
-) {
-    val _animator = ValueAnimator.ofArgb(from, to)
-    _animator.addUpdateListener { animator ->
-        onChange((animator.animatedValue as Int))
-    }
-    _animator.start()
-}
-
-class Position(val x: Int, val y: Int)
-
-fun ViewGroup.removeViewFrom(range: IntRange) {
-    for (i in range) {
-        removeViewAt(i)
-    }
-}
 
 context (View)
 fun Int.toDp(): Int {
     return dp
 }
 
-context (ViewGroup)
-fun ThemeColorChangeListener.themeMeasure(
+context (View)
+inline fun ThemeColorChangeListener.themeMeasure(
     widthSpec: Int,
     heightSpec: Int,
     widthKey: String? = null,
     heightKey: String? = null,
-): Pair<Int, Int> {
+    onResult: (width: Int, height: Int) -> Unit,
+) {
     val widthSize = MeasureSpec.getSize(widthSpec)
     val widthMode = MeasureSpec.getMode(widthSpec)
     val heightSize = MeasureSpec.getSize(heightSpec)
@@ -72,41 +49,30 @@ fun ThemeColorChangeListener.themeMeasure(
         else -> desireHeight
     } + paddingTop + paddingBottom
 
-    return width to height
+    onResult(width, height)
 }
-
-var ViewPager2.sensitivityFactor: Int
-    get() = 0
-    set(value) {
-        val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
-        recyclerViewField.isAccessible = true
-        val recyclerView = recyclerViewField.get(this) as RecyclerView
-
-        val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop")
-        touchSlopField.isAccessible = true
-        val touchSlop = touchSlopField.get(recyclerView) as Int
-        touchSlopField.set(recyclerView, touchSlop * value)
-    }
 
 context(View)
 fun ThemeDp(key: String): Int {
-    return ThemeDimen(key).dp
+    return io.github.excu101.vortex.theme.ThemeDimen(key).dp
 }
 
 context(View)
 fun ThemeUDp(key: String): Int {
-    return ThemeDimen(key).udp
+    return io.github.excu101.vortex.theme.ThemeDimen(key).udp
 }
 
 context (View)
-inline fun ThemeMaterialShapeDrawable(
+        inline fun ThemeMaterialShapeDrawable(
     builder: ShapeAppearanceModel.Builder.() -> Unit,
     colorKey: String,
 ) = MaterialShapeDrawable(
     ShapeAppearanceModel.Builder().apply(builder).build()
 ).apply {
-    setTint(ThemeColor(colorKey))
+    setTint(io.github.excu101.vortex.theme.ThemeColor(colorKey))
 }
+
+fun Context.dp(size: Float): Float = resources.displayMetrics.density * size
 
 context(View)
 val Int.dp: Int
@@ -131,6 +97,10 @@ val Float.sp: Float
 context(Drawable)
 val Int.dp: Int
     get() = ceil(Resources.getSystem().displayMetrics.density * this).toInt()
+
+context(Drawable)
+val Int.ddp: Int
+    get() = dp
 
 context(Drawable)
 val Float.dp: Float

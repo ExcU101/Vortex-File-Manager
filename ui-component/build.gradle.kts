@@ -18,8 +18,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -34,10 +36,10 @@ android {
 
 dependencies {
     implementation(Deps.Ui.RecyclerView)
-    implementation(Deps.Coroutines.Core)
     implementation(Deps.Coroutines.Android)
     implementation(Deps.Ui.Material)
+    implementation(Deps.AndroidX.Collection)
     implementation(project(Deps.Application.PackageManager))
-    implementation(project(Deps.Application.PluginSystemUi))
     implementation(project(Deps.Application.FileSystem))
+    implementation(project(Deps.Application.VortexTheme))
 }

@@ -4,7 +4,11 @@ import android.content.Context
 import android.content.res.ColorStateList.valueOf
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
-import android.view.View.MeasureSpec.*
+import android.view.View.MeasureSpec.AT_MOST
+import android.view.View.MeasureSpec.EXACTLY
+import android.view.View.MeasureSpec.getMode
+import android.view.View.MeasureSpec.getSize
+import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -13,12 +17,12 @@ import androidx.annotation.DrawableRes
 import androidx.core.view.contains
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.ThemeDimen
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.theme.ThemeDimen
+import io.github.excu101.vortex.theme.key.storageListItemHorizontalTitlePaddingKey
+import io.github.excu101.vortex.theme.key.storageListItemLinearHeightDimenKey
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
-import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.utils.icon
 import kotlin.math.min
 
@@ -45,11 +49,12 @@ class SimpleStorageLinearCell(context: Context) : FrameLayout(context), Recyclab
     private val shape = MaterialShapeDrawable(
     ).apply {
         initializeElevationOverlay(context)
-        fillColor = valueOf(ThemeColor(storageListItemSurfaceColorKey))
+        fillColor =
+            valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceColorKey))
     }
 
     private val background = RippleDrawable(
-        valueOf(ThemeColor(storageListItemIconTintColorKey)),
+        valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconTintColorKey)),
         shape,
         null
     )
@@ -61,13 +66,14 @@ class SimpleStorageLinearCell(context: Context) : FrameLayout(context), Recyclab
         minimumHeight = iconSize
         isClickable = true
         isFocusable = true
-        imageTintList = valueOf(ThemeColor(storageListItemIconTintColorKey))
+        imageTintList =
+            valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconTintColorKey))
     }
 
     private val title = TextView(context).apply {
         textSize = 16F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        setTextColor(ThemeColor(storageListItemTitleTextColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemTitleTextColorKey))
     }
 
     private fun ensureContainingTitle() {
@@ -99,13 +105,17 @@ class SimpleStorageLinearCell(context: Context) : FrameLayout(context), Recyclab
 
     fun updateSelection(isSelected: Boolean) {
         if (isSelected) {
-            titleColor = ThemeColor(storageListItemTitleSelectedTextColorKey)
-            icon.setColorFilter(ThemeColor(storageListItemIconSelectedTintColorKey))
-            shape.fillColor = valueOf(ThemeColor(storageListItemSurfaceSelectedColorKey))
+            titleColor =
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemTitleSelectedTextColorKey)
+            icon.setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconSelectedTintColorKey))
+            shape.fillColor =
+                valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceSelectedColorKey))
         } else {
-            titleColor = ThemeColor(storageListItemTitleTextColorKey)
-            icon.setColorFilter(ThemeColor(storageListItemIconTintColorKey))
-            shape.fillColor = valueOf(ThemeColor(storageListItemSurfaceColorKey))
+            titleColor =
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemTitleTextColorKey)
+            icon.setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconTintColorKey))
+            shape.fillColor =
+                valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceColorKey))
         }
     }
 
@@ -127,7 +137,8 @@ class SimpleStorageLinearCell(context: Context) : FrameLayout(context), Recyclab
     init {
         isClickable = true
         isFocusable = true
-        minimumHeight = ThemeDimen(storageListItemLinearHeightDimenKey).dp
+        minimumHeight =
+            ThemeDimen(storageListItemLinearHeightDimenKey).dp
         setBackground(background)
     }
 

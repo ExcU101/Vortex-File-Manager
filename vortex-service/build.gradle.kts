@@ -2,11 +2,16 @@ plugins {
     id(Plugins.AndroidLibrary)
     id(Plugins.Parcelize)
     kotlin(Plugins.Android)
+    kotlin(Plugins.Kapt)
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 android {
     compileSdk = AndroidConfigure.targetSdk
-    namespace = "io.github.excu101.vortex.service"
+    namespace = "io.github.excu101.vortex"
 
     defaultConfig {
         minSdk = AndroidConfigure.minSdk
@@ -55,4 +60,9 @@ dependencies {
     implementation(project(Deps.Application.PackageManager))
     implementation(Deps.Lifecycle.Process)
     implementation(Deps.Coroutines.Android)
+
+    implementation(project(Deps.Application.VortexTheme))
+
+    implementation(Deps.Dagger.Lib)
+    kapt(Deps.Dagger.Compiler)
 }

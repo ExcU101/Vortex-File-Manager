@@ -4,11 +4,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.updatePadding
 import com.google.android.material.divider.MaterialDivider
+import io.github.excu101.vortex.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.dsl.ItemScope
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
+import io.github.excu101.vortex.theme.key.mainDrawerDividerColorKey
 
 object DividerHeaderItem : Item<Unit>, ViewHolderFactory<DividerHeaderItem> {
 
@@ -23,6 +25,8 @@ object DividerHeaderItem : Item<Unit>, ViewHolderFactory<DividerHeaderItem> {
 
     override fun produceView(parent: ViewGroup): View {
         return MaterialDivider(parent.context).apply {
+            dividerColor =
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainDrawerDividerColorKey)
             updatePadding(
                 top = 3.dp,
                 bottom = 3.dp

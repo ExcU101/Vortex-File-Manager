@@ -28,9 +28,9 @@ import androidx.core.view.WindowInsetsCompat.Type.statusBars
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.manager.model.Color
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
+import io.github.excu101.vortex.theme.model.Color
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.key.mainDrawerBackgroundColorKey
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -61,7 +61,7 @@ open class BottomSheetDialog(
             .setTopRightCorner(CornerFamily.ROUNDED, 50F)
             .build()
     ).apply {
-        setTint(ThemeColor(mainDrawerBackgroundColorKey))
+        setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainDrawerBackgroundColorKey))
     }
 
     private var animator: Animator? = null
@@ -120,8 +120,8 @@ open class BottomSheetDialog(
         })
 
         requireWindow().apply {
-            statusBarColor = Color.Transparent.value
-            navigationBarColor = Color.Transparent.value
+            statusBarColor = io.github.excu101.vortex.theme.model.Color.Transparent.value
+            navigationBarColor = io.github.excu101.vortex.theme.model.Color.Transparent.value
 
             val attrs = attributes
 

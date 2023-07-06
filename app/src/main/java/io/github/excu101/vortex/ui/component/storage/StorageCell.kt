@@ -1,10 +1,10 @@
 package io.github.excu101.vortex.ui.component.storage
 
 import android.graphics.drawable.Drawable
-import io.github.excu101.manager.ui.theme.FormatterThemeText
+import io.github.excu101.vortex.theme.FormatterThemeText
 import io.github.excu101.vortex.data.PathItem
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemNameKey
+import io.github.excu101.vortex.theme.key.text.storage.item.fileListItemNameKey
 
 interface StorageCell {
 
@@ -23,7 +23,10 @@ interface StorageCell {
 interface RecyclableStorageCell : StorageCell, ViewHolder.RecyclableView<PathItem> {
 
     override fun onBind(item: PathItem) {
-        title = FormatterThemeText(key = fileListItemNameKey, item.name)
+        title = io.github.excu101.vortex.theme.FormatterThemeText(
+            key = io.github.excu101.vortex.theme.key.text.storage.item.fileListItemNameKey,
+            item.name
+        )
         info = item.info
     }
 

@@ -12,6 +12,8 @@ local.properties
 /signing
 
 # Project exclude paths
+/app/src/main/java/io/github/excu101/vortex/TestActivity.kt
+/app/src/main/java/io/github/excu101/vortex/CheckBoxCanvas.kt
 /buildSrc/build/
 /filesystem/build/
 /filesystem/build/intermediates/javac/debug/classes/
@@ -22,3 +24,5 @@ local.properties
 /pluginsystem-common/build/
 /pluginsystem-common/build/intermediates/javac/debug/classes/
 /package-manager/build/
+/filesystem-experimental
+/filesystem-experimental-linux

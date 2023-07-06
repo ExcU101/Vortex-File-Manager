@@ -7,24 +7,24 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
 import android.widget.TextView
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.theme.key.storageListWarningIconTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListWarningTitleTextColorKey
+import io.github.excu101.vortex.theme.key.storageListWarningIconTintColorKey
+import io.github.excu101.vortex.theme.key.storageListWarningTitleTextColorKey
 
-class InfoView(context: Context) : ThemeLinearLayout(context) {
+class InfoView(context: Context) : io.github.excu101.vortex.theme.widget.ThemeLinearLayout(context) {
 
     private val iconView = ImageView(context).apply {
         minimumHeight = 56.dp
         minimumWidth = 56.dp
-        setColorFilter(ThemeColor(storageListWarningIconTintColorKey))
+        setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListWarningIconTintColorKey))
     }
 
     private val messageView = TextView(context).apply {
         textSize = 20F
         textAlignment = TextView.TEXT_ALIGNMENT_CENTER
-        setTextColor(ThemeColor(storageListWarningTitleTextColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListWarningTitleTextColorKey))
     }
 
     var icon: Drawable?
@@ -36,7 +36,7 @@ class InfoView(context: Context) : ThemeLinearLayout(context) {
     var message: CharSequence?
         get() = messageView.text
         set(value) {
-            messageView.text = value
+            if (value != messageView.text) messageView.text = value
         }
 
     init {
@@ -47,8 +47,8 @@ class InfoView(context: Context) : ThemeLinearLayout(context) {
     }
 
     override fun onColorChanged() {
-        iconView.setColorFilter(ThemeColor(storageListWarningIconTintColorKey))
-        messageView.setTextColor(ThemeColor(storageListWarningTitleTextColorKey))
+        iconView.setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListWarningIconTintColorKey))
+        messageView.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListWarningTitleTextColorKey))
     }
 
 }

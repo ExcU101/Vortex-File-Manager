@@ -15,22 +15,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_NEVER
 import com.google.android.material.shape.MaterialShapeUtils
-import io.github.excu101.manager.ui.theme.Theme
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.ThemeColorChangeListener
-import io.github.excu101.manager.ui.theme.ThemeDimen
+import io.github.excu101.vortex.theme.Theme
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.ThemeColorChangeListener
+import io.github.excu101.vortex.theme.ThemeDimen
 import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.foundtation.MarginItemDecoration
-import io.github.excu101.vortex.ui.component.theme.key.trailElevationKey
-import io.github.excu101.vortex.ui.component.theme.key.trailHeightKey
-import io.github.excu101.vortex.ui.component.theme.key.trailSurfaceColorKey
-import io.github.excu101.vortex.ui.component.theme.key.trailWidthKey
+import io.github.excu101.vortex.theme.key.trailElevationKey
+import io.github.excu101.vortex.theme.key.trailHeightKey
+import io.github.excu101.vortex.theme.key.trailSurfaceColorKey
+import io.github.excu101.vortex.theme.key.trailWidthKey
 import kotlin.math.min
 
 class TrailListView : RecyclerView,
     CoordinatorLayout.AttachedBehavior,
-    View.OnApplyWindowInsetsListener, ThemeColorChangeListener {
+    View.OnApplyWindowInsetsListener, io.github.excu101.vortex.theme.ThemeColorChangeListener {
 
     constructor(context: Context) : super(context) {
         behavior = TrailBehavior()
@@ -72,19 +72,20 @@ class TrailListView : RecyclerView,
     private val trailLayoutManager = LinearLayoutManager(context, HORIZONTAL, false)
 
     private val shape = MaterialShapeDrawable().apply {
-        setTint(ThemeColor(trailSurfaceColorKey))
+        setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailSurfaceColorKey))
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_NEVER
         initializeElevationOverlay(context)
     }
 
-    private val desireWidth = ThemeUDp(trailWidthKey)
-    private val desireHeight = ThemeUDp(trailHeightKey)
+    private val desireWidth = ThemeUDp(io.github.excu101.vortex.theme.key.trailWidthKey)
+    private val desireHeight = ThemeUDp(io.github.excu101.vortex.theme.key.trailHeightKey)
 
     init {
         background = shape
         clipToPadding = false
         adapter = trailAdapter
-        elevation = ThemeDimen(trailElevationKey).toFloat()
+        elevation = io.github.excu101.vortex.theme.ThemeDimen(io.github.excu101.vortex.theme.key.trailElevationKey)
+            .toFloat()
         layoutManager = trailLayoutManager
         addItemDecoration(
             MarginItemDecoration(
@@ -107,18 +108,31 @@ class TrailListView : RecyclerView,
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Theme.registerColorChangeListener(listener = this)
+        io.github.excu101.vortex.theme.Theme.registerColorChangeListener(listener = this)
 
         MaterialShapeUtils.setParentAbsoluteElevation(this, shape)
 
         if (parent is ViewGroup) {
             (parent as ViewGroup).clipChildren = false
         }
+
+        if (isAttachedToWindow) {
+            requestApplyInsets()
+        } else {
+            addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    v.removeOnAttachStateChangeListener(this)
+                    v.requestApplyInsets()
+                }
+
+                override fun onViewDetachedFromWindow(v: View) = Unit
+            })
+        }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Theme.unregisterColorChangeListener(listener = this)
+        io.github.excu101.vortex.theme.Theme.unregisterColorChangeListener(listener = this)
     }
 
     override fun getAdapter(): TrailAdapter = trailAdapter
@@ -157,7 +171,7 @@ class TrailListView : RecyclerView,
     fun slideDown() = behavior.slideDown(view = this)
 
     override fun onColorChanged() {
-        shape.setTint(ThemeColor(trailSurfaceColorKey))
+        shape.setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailSurfaceColorKey))
     }
 
 }

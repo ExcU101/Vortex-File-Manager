@@ -1,7 +1,6 @@
 package io.github.excu101.filesystem.fs.operation
 
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.random.Random
 
 abstract class FileOperation {
 
@@ -14,8 +13,8 @@ abstract class FileOperation {
 
     val id: Int = _id.incrementAndGet()
 
-    private val _observers: MutableList<FileOperationObserver> = mutableListOf()
-    protected val observes: List<FileOperationObserver>
+    private val _observers: MutableList<PathOperationObserver> = mutableListOf()
+    protected val observes: List<PathOperationObserver>
         get() = _observers
 
     suspend operator fun invoke() {
@@ -24,7 +23,7 @@ abstract class FileOperation {
 
     abstract suspend fun perform()
 
-    internal fun subscribe(observer: List<FileOperationObserver>) {
+    internal fun subscribe(observer: List<PathOperationObserver>) {
         _observers.addAll(observer)
     }
 
@@ -41,7 +40,7 @@ abstract class FileOperation {
     }
 
     protected fun completion() {
-        observes.forEach(FileOperationObserver::onComplete)
+        observes.forEach(PathOperationObserver::onComplete)
     }
 
 }

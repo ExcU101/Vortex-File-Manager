@@ -1,6 +1,11 @@
 package io.github.excu101.filesystem.fs.attr.mimetype
 
-import io.github.excu101.filesystem.fs.utils.*
+import io.github.excu101.filesystem.fs.utils.EmptyMimeType
+import io.github.excu101.filesystem.fs.utils.applicationMimeTypes
+import io.github.excu101.filesystem.fs.utils.audioMimeTypes
+import io.github.excu101.filesystem.fs.utils.imageMimeTypes
+import io.github.excu101.filesystem.fs.utils.textMimeType
+import io.github.excu101.filesystem.fs.utils.videoMimeTypes
 
 interface MimeType {
     val extension: String
@@ -38,6 +43,7 @@ interface MimeType {
                     get() = when (subtype.substringBefore('/')) {
                         "application" -> TYPE_APP
                         "video" -> TYPE_VIDEO
+                        "image" -> TYPE_IMAGE
                         "audio" -> TYPE_AUDIO
                         "text" -> TYPE_TEXT
                         else -> TYPE_EMPTY

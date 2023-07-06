@@ -15,11 +15,11 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.vortex.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.ViewBinding
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.theme.key.accentColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
+import io.github.excu101.vortex.theme.key.accentColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerBackgroundColorKey
 
 class StorageItemCreateBinding(
     context: Context,
@@ -76,7 +76,8 @@ class StorageItemCreateBinding(
         setBoxCornerFamily(CornerFamily.ROUNDED)
         boxStrokeWidth = 0
         boxStrokeWidthFocused = 0
-        boxStrokeColor = ThemeColor(accentColorKey)
+        boxStrokeColor =
+            ThemeColor(accentColorKey)
         hintTextColor = ColorStateList.valueOf(ThemeColor(accentColorKey))
         boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_FILLED
         layoutParams = LinearLayout.LayoutParams(
@@ -108,7 +109,8 @@ class StorageItemCreateBinding(
         boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_FILLED
         hintTextColor = ColorStateList.valueOf(ThemeColor(accentColorKey))
         endIconDrawable?.setTint(ThemeColor(accentColorKey))
-        boxStrokeColor = ThemeColor(accentColorKey)
+        boxStrokeColor =
+            ThemeColor(accentColorKey)
         boxStrokeWidth = 0
         boxStrokeWidthFocused = 0
         layoutParams = LinearLayout.LayoutParams(
@@ -160,7 +162,8 @@ class StorageItemCreateBinding(
             16F.dp,
             16F.dp
         )
-        boxStrokeColor = ThemeColor(accentColorKey)
+        boxStrokeColor =
+            ThemeColor(accentColorKey)
         hintTextColor = ColorStateList.valueOf(ThemeColor(accentColorKey))
         boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_FILLED
         layoutParams = LinearLayout.LayoutParams(

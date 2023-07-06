@@ -16,23 +16,13 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.manager.ui.theme.FormatterThemeText
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.key.storageListItemIconBackgroundColorKey
+import io.github.excu101.vortex.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.storage.RecyclableStorageCell
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconBackgroundSelectedColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconSelectedTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemIconTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceRippleColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceSelectedColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemTitleSelectedTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemTitleTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemNameKey
 
 class StandardStorageGridCell(
     context: Context,
@@ -59,7 +49,7 @@ class StandardStorageGridCell(
         }
 
     private val iconBackground = RippleDrawable(
-        ColorStateList.valueOf(ThemeColor(storageListItemIconTintColorKey)),
+        ColorStateList.valueOf(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconTintColorKey)),
         iconShape,
         null
     )
@@ -74,13 +64,13 @@ class StandardStorageGridCell(
         background = iconBackground
         minimumWidth = iconSize
         minimumHeight = iconSize
-        setColorFilter(ThemeColor(storageListItemIconTintColorKey))
+        setColorFilter(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconTintColorKey))
     }
     private val titleView = TextView(context).apply {
         textAlignment = TextView.TEXT_ALIGNMENT_CENTER
         textSize = 16F
         layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-        setTextColor(ThemeColor(storageListItemTitleTextColorKey))
+        setTextColor(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemTitleTextColorKey))
     }
 
     var titleColor: Int
@@ -95,11 +85,11 @@ class StandardStorageGridCell(
         shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
         initializeElevationOverlay(context)
         setUseTintColorForShadow(true)
-        setTint(ThemeColor(storageListItemSurfaceColorKey))
+        setTint(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceColorKey))
     }
 
     private val background = RippleDrawable(
-        ColorStateList.valueOf(ThemeColor(storageListItemSurfaceRippleColorKey)),
+        ColorStateList.valueOf(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceRippleColorKey)),
         shape,
         null
     )
@@ -165,17 +155,19 @@ class StandardStorageGridCell(
 
     private fun updateSelectionState() {
         if (isItemSelected) {
-            titleColor = ThemeColor(storageListItemTitleSelectedTextColorKey)
+            titleColor =
+                ThemeColor(io.github.excu101.vortex.theme.key.storageListItemTitleSelectedTextColorKey)
 //            infoColor = ThemeColor(storageListItemSecondarySelectedTextColorKey)
-            iconView.setColorFilter(ThemeColor(storageListItemIconSelectedTintColorKey))
-            iconShape.setTint(ThemeColor(storageListItemIconBackgroundSelectedColorKey))
-            shape.setTint(ThemeColor(storageListItemSurfaceSelectedColorKey))
+            iconView.setColorFilter(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconSelectedTintColorKey))
+            iconShape.setTint(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconBackgroundSelectedColorKey))
+            shape.setTint(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceSelectedColorKey))
         } else {
-            titleColor = ThemeColor(storageListItemTitleTextColorKey)
+            titleColor =
+                ThemeColor(io.github.excu101.vortex.theme.key.storageListItemTitleTextColorKey)
 //            infoColor = ThemeColor(storageListItemSecondaryTextColorKey)
-            iconView.setColorFilter(ThemeColor(storageListItemIconTintColorKey))
+            iconView.setColorFilter(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconTintColorKey))
             iconShape.setTint(ThemeColor(storageListItemIconBackgroundColorKey))
-            shape.setTint(ThemeColor(storageListItemSurfaceColorKey))
+            shape.setTint(ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceColorKey))
         }
     }
 
@@ -187,7 +179,10 @@ class StandardStorageGridCell(
 
     override fun onBind(item: PathItem) {
 //        icon = item.icon
-        title = FormatterThemeText(key = fileListItemNameKey, item.name)
+        title = io.github.excu101.vortex.theme.FormatterThemeText(
+            key = io.github.excu101.vortex.theme.key.text.storage.item.fileListItemNameKey,
+            item.name
+        )
         info = item.info
     }
 

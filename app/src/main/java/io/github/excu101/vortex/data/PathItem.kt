@@ -8,6 +8,7 @@ import io.github.excu101.filesystem.fs.attr.EmptyAttrs
 import io.github.excu101.filesystem.fs.attr.containsInode
 import io.github.excu101.filesystem.fs.attr.inode
 import io.github.excu101.filesystem.fs.attr.mimetype.MimeType
+import io.github.excu101.filesystem.fs.attr.size.SiSize
 import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.fs.path.Path
@@ -15,17 +16,20 @@ import io.github.excu101.filesystem.fs.utils.parsePath
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
 import io.github.excu101.filesystem.unix.attr.posix.PosixGroup
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
-import io.github.excu101.manager.ui.theme.ThemeText
 import io.github.excu101.vortex.data.storage.PathItemContentParsers
 import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl.Companion.EXTERNAL_STORAGE
 import io.github.excu101.vortex.service.utils.PathParceler
+import io.github.excu101.vortex.theme.ThemeText
+import io.github.excu101.vortex.theme.key.text.storage.item.fileListItemInfoSeparatorKey
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 import io.github.excu101.vortex.ui.component.list.adapter.holder.contextViewHolderFactory
 import io.github.excu101.vortex.ui.component.storage.standard.linear.StandardStorageLinearCell
-import io.github.excu101.vortex.ui.component.theme.key.text.storage.item.fileListItemInfoSeparatorKey
 import io.github.excu101.vortex.utils.StorageItem
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.WriteWith
@@ -34,8 +38,7 @@ import java.io.File
 @Parcelize
 class PathItem(
     override val value: @WriteWith<PathParceler> Path,
-    override val tags: List<Tag> = emptyList(),
-) : Item<Path>, Comparable<PathItem>, Parcelable, TagOwner {
+) : Item<Path>, Comparable<PathItem>, Parcelable {
 
     constructor(path: String) : this(value = parsePath(path))
 
@@ -121,6 +124,17 @@ class PathItem(
 
     val size: Size
         get() = attrs.size
+
+    private suspend fun loadSizeDirectoryAsync(path: Path) = coroutineScope {
+        async {
+            SiSize(0L)
+        }
+    }
+
+    suspend fun loadSizeAsync(): Deferred<Size> = coroutineScope {
+        if (isFile) async { attrs.size }
+        else loadSizeDirectoryAsync(path = value)
+    }
 
     val inode: Long?
         get() = if (!attrs.containsInode()) null else attrs.inode

@@ -645,10 +645,8 @@ Java_io_github_excu101_filesystem_unix_UnixCalls_getCountImpl(
 
     while ((ent = readdir64(dir))) {
         char *name = ent->d_name;
-        unsigned len = strlen(name);
 
-        if (isCurrentDirectory(name, len)) continue;
-        if (isParentDirectory(name, len)) continue;
+        if (isCurrentDirectory(name) == 0 || isParentDirectory(name) == 0) continue;
 
         ++count;
     }
@@ -672,8 +670,12 @@ long getDirectorySize(char *path) {
 
     while ((ent = readdir64(dir))) {
         char *name = ent->d_name;
+
         if (isDirectory(name, buf)) {
             result += getDirectorySize(name);
+        }
+        else {
+
         }
     }
 

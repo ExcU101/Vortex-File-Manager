@@ -15,11 +15,11 @@ class BottomSheetDrawerBinding(context: Context) : ViewBinding<FrameLayout> {
 
     var items = ItemRecyclerView(root.context)
 
-    override fun onCreate() {
-        root.updatePadding(
-            top = with(root) { 16.dp }
+    override fun onCreate() = with(root) {
+        updatePadding(
+            top = 16.dp
         )
-        root.addView(items, MATCH_PARENT, WRAP_CONTENT)
+        addView(items, MATCH_PARENT, WRAP_CONTENT)
     }
 
     override fun onDestroy() {

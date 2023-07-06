@@ -23,4 +23,10 @@ object Options {
 
         const val All = NoFollowLinks or ReplaceExists
     }
+
+    object Delete {
+        const val NotifyAll = 128
+
+        const val All = NotifyAll
+    }
 }

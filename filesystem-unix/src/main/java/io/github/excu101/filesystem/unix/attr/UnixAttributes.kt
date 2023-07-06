@@ -1,7 +1,6 @@
 package io.github.excu101.filesystem.unix.attr
 
 import io.github.excu101.filesystem.fs.attr.InodeOwner
-import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
 import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.attr.posix.PosixAttrs
@@ -9,7 +8,21 @@ import io.github.excu101.filesystem.unix.attr.posix.PosixGroup
 import io.github.excu101.filesystem.unix.attr.posix.PosixPermission
 import io.github.excu101.filesystem.unix.path.UnixPath
 import io.github.excu101.filesystem.unix.structure.UnixStatusStructure
-import io.github.excu101.filesystem.unix.utils.*
+import io.github.excu101.filesystem.unix.utils.S_IFDIR
+import io.github.excu101.filesystem.unix.utils.S_IFLNK
+import io.github.excu101.filesystem.unix.utils.S_IFREG
+import io.github.excu101.filesystem.unix.utils.S_IRGRP
+import io.github.excu101.filesystem.unix.utils.S_IROTH
+import io.github.excu101.filesystem.unix.utils.S_IRUSR
+import io.github.excu101.filesystem.unix.utils.S_IWGRP
+import io.github.excu101.filesystem.unix.utils.S_IWOTH
+import io.github.excu101.filesystem.unix.utils.S_IWUSR
+import io.github.excu101.filesystem.unix.utils.S_IXGRP
+import io.github.excu101.filesystem.unix.utils.S_IXOTH
+import io.github.excu101.filesystem.unix.utils.S_IXUSR
+import io.github.excu101.filesystem.unix.utils.modeWith
+import io.github.excu101.filesystem.fs.attr.size.SiSize
+import io.github.excu101.filesystem.fs.attr.size.Size
 
 internal class UnixAttributes private constructor(
     private val structure: UnixStatusStructure,
@@ -104,5 +117,5 @@ internal class UnixAttributes private constructor(
         )
 
     override val size: Size
-        get() = Size(memory = structure.size)
+        get() = SiSize(structure.size)
 }

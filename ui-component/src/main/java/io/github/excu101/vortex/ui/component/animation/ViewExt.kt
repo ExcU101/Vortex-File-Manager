@@ -8,7 +8,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 fun View.fade(
     isOut: Boolean,
-    duration: Long = 500L,
+    duration: Long = 350L,
     isGoneOnOutEnd: Boolean = true,
 ) {
     fade(

@@ -1,7 +1,7 @@
 package io.github.excu101.vortex.navigation.page
 
 import android.content.Context
-import android.os.Bundle
+import android.content.Intent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.FrameLayout.LayoutParams
@@ -9,27 +9,24 @@ import android.widget.FrameLayout.LayoutParams.MATCH_PARENT
 import androidx.annotation.CallSuper
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import io.github.excu101.vortex.navigation.NavPageControllerGraph
 import io.github.excu101.vortex.navigation.NavStack
 import io.github.excu101.vortex.navigation.NavStackListener
 import io.github.excu101.vortex.navigation.NavigationPageAdapter
 import io.github.excu101.vortex.navigation.NavigationPageAdapter.ControllerProvider
-import io.github.excu101.vortex.navigation.current
-import io.github.excu101.vortex.navigation.stack
 
-open class NavigationHostPageController(
+abstract class NavigationHostPageController(
     private val context: Context,
-    val graph: NavPageControllerGraph = NavPageControllerGraph(context),
 ) : PageController(context),
     ControllerProvider,
     OnPageChangeListener,
     NavStackListener<PageController> {
 
     protected val adapter = NavigationPageAdapter(this)
+    protected var root: FrameLayout? = null
+    protected var container: ViewPager? = null
 
-    override fun getControllerCount(): Int {
-        return graph.stack.size
-    }
+    val currentController: PageController?
+        get() = adapter.getController(adapter.wrapIndex(container?.currentItem ?: 0))
 
     @CallSuper
     override fun onStackChanged(stack: NavStack<PageController>) {
@@ -38,10 +35,6 @@ open class NavigationHostPageController(
 //                adapter.notifyControllerRemove(i)
 
         adapter.notifyDataSetChanged()
-    }
-
-    override fun onCreatePageController(position: Int): PageController {
-        return graph.stack[position]
     }
 
     override fun onPrepareController(position: Int, controller: PageController) {
@@ -53,9 +46,6 @@ open class NavigationHostPageController(
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        val current = graph.stack.current
-        val next = graph.stack[adapter.wrapIndex(position)]
-
 
     }
 
@@ -68,40 +58,40 @@ open class NavigationHostPageController(
     }
 
     override fun onCreateView(context: Context): View {
-        val root = FrameLayout(context).apply {
+        root = FrameLayout(context).apply {
             layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
         }
 
-        val container = ViewPager(context).apply {
+        container = ViewPager(context).apply {
+            addOnPageChangeListener(this@NavigationHostPageController)
+            adapter = this@NavigationHostPageController.adapter
             layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
         }
+        onCreateView(context, container!!)
 
-        container.adapter = adapter
-        container.addOnPageChangeListener(this)
-        onCreateView(context, container)
+        root?.addView(container, 0)
 
-        root.addView(container, 0)
-
-        return root
+        return root!!
     }
 
-    fun onCreateView(context: Context, pager: ViewPager) {
+    protected open fun onCreateView(context: Context, pager: ViewPager) {
 
     }
 
-    override fun onSaveInstance(bundle: Bundle, prefix: String): Boolean {
-        graph.saveNavigation(bundle)
-        return false
+    override fun onActivityResult(request: Int, result: Int, data: Intent?): Boolean {
+        return currentController?.onActivityResult(request, result, data) ?: false
     }
 
-    override fun onRestoreInstance(bundle: Bundle, prefix: String): Boolean {
-        graph.restoreNavigation(bundle)
-        return false
+    override fun onBackActivated(): Boolean {
+        return currentController?.onBackActivated() ?: false
     }
-
-    override fun onBackActivated(): Boolean = graph.controller.isBackActivated()
 
     override fun onDestroy() {
         super.onDestroy()
+        if (!isDestroyed) {
+            root?.removeAllViews()
+            root = null
+            container = null
+        }
     }
 }

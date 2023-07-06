@@ -5,90 +5,49 @@ import android.view.View
 object ViewIds {
 
     object Navigation {
-        object Menu {
-            val FileManagerId = View.generateViewId()
-            val BookmarksId = View.generateViewId()
-            val SettingsId = View.generateViewId()
-        }
-    }
-
-    object Settings {
 
         object Menu {
-            val SearchId = View.generateViewId()
-        }
-
-        object Options {
-            val AppearanceId = View.generateViewId()
-            val BehaviorId = View.generateViewId()
-        }
-
-        object Switch {
-            val RootId: Int = View.generateViewId()
-        }
-
-        object Text {
-            val RootId: Int = View.generateViewId()
+            const val FileManagerId = R.id.file_manager_dest
+            const val BookmarksId = R.id.bookmarks_dest
+            const val SettingsId = R.id.settings_dest
         }
     }
 
     object Storage {
         object Menu {
-            val OpenId = View.generateViewId()
-            val AddNewId = View.generateViewId()
-            val DeleteId = View.generateViewId()
-            val RenameId = View.generateViewId()
-            val CopyId = View.generateViewId()
-            val CopyPathId = View.generateViewId()
-            val MoveId = View.generateViewId()
-            val InfoId = View.generateViewId()
+            const val OpenId = R.id.file_manager_menu_open_op
+            const val AddNewId = R.id.file_manager_menu_add_new_op
+            const val DeleteId = R.id.file_manager_menu_delete_op
+            const val RenameId = R.id.file_manager_menu_rename_op
+            const val CopyId = R.id.file_manager_menu_copy_op
+            const val CopyPathId = R.id.file_manager_menu_copy_path_op
+            const val MoveId = R.id.file_manager_menu_move_op
+            const val InfoId = R.id.file_manager_menu_info_op
 
-            val AddWatcherId = View.generateViewId()
-            val RemoveWatcherId = View.generateViewId()
+            const val AddWatcherId = R.id.file_manager_menu_add_watcher_op
+            const val RemoveWatcherId = R.id.file_manager_menu_remove_watcher_op
 
-            val ShowTasks = View.generateViewId()
+            const val ShowTasks = R.id.file_manager_menu_show_tasks
 
-            val AddBookmarkId = View.generateViewId()
-            val RemoveBookmarkId = View.generateViewId()
-
-            val MoreId = View.generateViewId()
+            const val MoreId = R.id.file_manager_menu_more
             val TasksId = View.generateViewId()
-            val SortId = View.generateViewId()
+            const val SortId = R.id.file_manager_menu_sort
             val SearchId = View.generateViewId()
 
-            val ProvideFullStorageAccessId = View.generateViewId()
-            val ProvideStorageAccessId = View.generateViewId()
-
-            val SelectAll = View.generateViewId()
-            val DeselectAll = View.generateViewId()
-        }
-
-        object Create {
-            val CreateConfirmId = View.generateViewId()
-        }
-
-        object Sort {
-            val ColumnId = View.generateViewId()
-            val GridId = View.generateViewId()
-
-            val AscendingId = View.generateViewId()
-            val DescendingId = View.generateViewId()
-
-            val NameId = View.generateViewId()
-            val PathId = View.generateViewId()
-            val SizeId = View.generateViewId()
-
-            val OnlyFoldersId = View.generateViewId()
-            val OnlyFilesId = View.generateViewId()
+            const val ProvideFullStorageAccessId =
+                R.id.file_manager_menu_provide_full_storage_access_op
+            const val ProvideStorageAccessId = R.id.file_manager_menu_provide_storage_access_op
+            const val ProvideRestrictedDirectoryAccess =
+                R.id.file_manager_menu_provide_restricted_dir_access
         }
 
         object Item {
-            val RootId = View.generateViewId()
-            val IconId = View.generateViewId()
+            const val RootId = R.id.file_manager_item_root
+            const val IconId = R.id.file_manager_item_icon
         }
 
         object Trail {
-            val RootId = View.generateViewId()
+            const val RootId = R.id.file_manager_trail_root
         }
     }
 

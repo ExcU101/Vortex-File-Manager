@@ -10,7 +10,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import io.github.excu101.filesystem.fs.utils.toPath
-import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.ui.component.menu.MenuAction
 import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.storage.create.StorageItemCreateBinding
@@ -28,52 +27,39 @@ class StorageItemCreatePage : Fragment(), MenuActionListener {
         return binding?.root
     }
 
-//    override fun onPageSelected() {
-//        bar?.replaceItems(listOf(Actions.Create))
-//        bar?.registerListener(listener = this)
-//        bar?.show()
-//    }
-
-//    override fun onPageUnselected() {
-//        bar?.unregisterListener(listener = this)
-//    }
-
     override fun onMenuActionCall(action: MenuAction): Boolean {
-        when (action.id) {
-            ViewIds.Storage.Create.CreateConfirmId -> {
-                binding?.apply {
-                    if (name.text?.isEmpty() != false) {
-                        nameLayout.error = "To create item needs to enter item name"
-                        return false
-                    }
-                    if (path.text?.isEmpty() != false) {
-                        pathLayout.error = "To create item needs to enter item path"
-                        return false
-                    }
-                    if (type.text?.isEmpty() != false) {
-                        typeLayout.error = "To create item needs to enter item type"
-                        return false
-                    }
-                    if (mode.text?.isEmpty() != false) {
-                        modeLayout.error = "To create item needs to enter item type"
-                        return false
-                    }
-                    val name = this.name.text.toString().toPath()
-                    val src = this.path.text.toString().toPath()
-                    val path = src.resolve(name)
-                    val mode = this.mode.text.toString().toInt()
-
-                    setFragmentResult(
-                        "operation",
-                        bundleOf(
-                            "path" to path.toString(),
-                            "mode" to mode,
-                            "isDir" to (type.text.toString() == "Directory")
-                        )
-                    )
-//                    NavigationController().navigateUp()
-                }
+        binding?.apply {
+            if (name.text?.isEmpty() != false) {
+                nameLayout.error = "To create item needs to enter item name"
+                return false
             }
+            if (path.text?.isEmpty() != false) {
+                pathLayout.error = "To create item needs to enter item path"
+                return false
+            }
+            if (type.text?.isEmpty() != false) {
+                typeLayout.error = "To create item needs to enter item type"
+                return false
+            }
+            if (mode.text?.isEmpty() != false) {
+                modeLayout.error = "To create item needs to enter item type"
+                return false
+            }
+            val name = this.name.text.toString().toPath()
+            val src = this.path.text.toString().toPath()
+            val path = src.resolve(name)
+            val mode = this.mode.text.toString().toInt()
+
+            setFragmentResult(
+                "operation",
+                bundleOf(
+                    "path" to path.toString(),
+                    "mode" to mode,
+                    "isDir" to (type.text.toString() == "Directory")
+                )
+            )
+            return true
+//                    NavigationController().navigateUp()
         }
         return false
     }

@@ -8,21 +8,20 @@ import io.github.excu101.filesystem.fs.channel.AsyncFileChannel
 import io.github.excu101.filesystem.fs.channel.Channel
 import io.github.excu101.filesystem.fs.channel.FileChannel
 import io.github.excu101.filesystem.fs.operation.FileOperation
-import io.github.excu101.filesystem.fs.operation.FileOperationObserver
+import io.github.excu101.filesystem.fs.operation.PathOperationObserver
 import io.github.excu101.filesystem.fs.path.Path
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.withContext
 import kotlin.reflect.KClass
 
 abstract class FileSystemProvider {
 
-    open fun runOperation(
+    open suspend fun runOperation(
         operation: FileOperation,
-        observers: List<FileOperationObserver>,
-    ) = CoroutineScope(IO).launch {
+        observers: List<PathOperationObserver>,
+    ) = withContext(IO) {
         operation.subscribe(observers)
         operation.perform()
     }
@@ -46,11 +45,7 @@ abstract class FileSystemProvider {
     open fun newDirectoryFlow(
         directory: Path,
         filter: Filter<Path> = Filter.acceptAll(),
-    ): Flow<Path> {
-        return flow {
-
-        }
-    }
+    ): Flow<Path> = emptyFlow()
 
     abstract fun newReactiveFileChannel(
         path: Path,

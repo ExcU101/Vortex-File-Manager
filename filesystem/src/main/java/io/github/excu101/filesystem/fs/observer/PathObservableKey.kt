@@ -1,5 +1,7 @@
 package io.github.excu101.filesystem.fs.observer
 
+import io.github.excu101.filesystem.fs.path.Path
+
 interface PathObservableKey {
 
     val isActual: Boolean
@@ -10,5 +12,5 @@ interface PathObservableKey {
 
     suspend fun cancel()
 
-    interface Event
+    data class Event(val type: Int, val path: Path)
 }

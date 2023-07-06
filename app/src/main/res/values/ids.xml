@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="file_manager_dest" type="id" />
+    <item name="bookmarks_dest" type="id" />
+    <item name="settings_dest" type="id" />
+    <!--    File Manager    -->
+    <!--    Item    -->
+    <item name="file_manager_item_root" type="id" />
+    <item name="file_manager_item_icon" type="id" />
+    <item name="file_manager_trail_root" type="id" />
+    <!--    Menu    -->
+    <item name="file_manager_menu_open_op" type="id" />
+    <item name="file_manager_menu_add_new_op" type="id" />
+    <item name="file_manager_menu_delete_op" type="id" />
+    <item name="file_manager_menu_rename_op" type="id" />
+    <item name="file_manager_menu_copy_op" type="id" />
+    <item name="file_manager_menu_copy_path_op" type="id" />
+    <item name="file_manager_menu_move_op" type="id" />
+    <item name="file_manager_menu_info_op" type="id" />
+    <item name="file_manager_menu_add_watcher_op" type="id" />
+    <item name="file_manager_menu_remove_watcher_op" type="id" />
+    <item name="file_manager_menu_provide_full_storage_access_op" type="id" />
+    <item name="file_manager_menu_provide_storage_access_op" type="id" />
+    <item name="file_manager_menu_provide_restricted_dir_access" type="id" />
+    <item name="file_manager_menu_show_tasks" type="id" />
+    <item name="file_manager_menu_more" type="id" />
+    <item name="file_manager_menu_sort" type="id" />
+</resources>

@@ -24,3 +24,6 @@ include(
     ":pluginsystem-ui",
     ":navigation"
 )
+include(":filesystem-experimental")
+include(":filesystem-experimental-linux")
+include(":vortex-theme")

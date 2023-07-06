@@ -1,8 +1,9 @@
 package io.github.excu101.filesystem.unix.utils
 
 import io.github.excu101.filesystem.fs.operation.FileOperation
+import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
-import io.github.excu101.filesystem.unix.operation.*
+import io.github.excu101.filesystem.unix.operation.UnixChangeOwnerOperation
 import io.github.excu101.filesystem.unix.operation.UnixCopyOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateDirectoryOperation
 import io.github.excu101.filesystem.unix.operation.UnixCreateFileOperation
@@ -13,18 +14,30 @@ import io.github.excu101.filesystem.unix.operation.UnixRenameOperation
 
 fun unixDelete(
     data: Collection<Path>,
+    options: Int = Options.Empty,
 ): FileOperation = UnixDeleteOperation(
-    data = data
+    data = data,
+    options = options
 )
 
 fun unixChangeOwner(
     source: Path,
     owner: Int,
-    group: Int
+    group: Int,
 ): FileOperation = UnixChangeOwnerOperation(
     path = source,
     owner = owner,
     group = group,
+)
+
+fun unixCopy(
+    source: Path,
+    dest: Path,
+    options: Int,
+): FileOperation = UnixCopyOperation(
+    sources = setOf(source),
+    dest = dest,
+    options = options
 )
 
 fun unixCopy(

@@ -57,10 +57,10 @@ object Deps {
         val FileSystem = mapOf("path" to ":filesystem")
         val FileSystemUnix = mapOf("path" to ":filesystem-unix")
         val PackageManager = mapOf("path" to ":package-manager")
-        val PluginSystemUi = mapOf("path" to ":pluginsystem-ui")
         val UiComponent = mapOf("path" to ":ui-component")
         val VortexService = mapOf("path" to ":vortex-service")
         val Navigation = mapOf("path" to ":navigation")
+        val VortexTheme = mapOf("path" to ":vortex-theme")
     }
 
     object Room {

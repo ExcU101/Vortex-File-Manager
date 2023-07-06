@@ -6,6 +6,9 @@ typealias Sorter<T> = Comparator<T>
 
 fun interface Filter<T> {
     fun accept(item: T): Boolean
+
+    operator fun get(item: T) = accept(item)
+
 }
 
 enum class Order {

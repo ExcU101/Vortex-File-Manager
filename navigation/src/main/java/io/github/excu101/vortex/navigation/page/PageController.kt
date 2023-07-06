@@ -1,6 +1,7 @@
 package io.github.excu101.vortex.navigation.page
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import io.github.excu101.vortex.navigation.NavPageController
@@ -15,9 +16,11 @@ abstract class PageController(private val context: Context) : BackListener {
         get() = _flag
 
     private var _view: View? = null
+    var wrapper: PageController? = null
+
     private var _controller: NavPageController? = null
-    protected val controller: NavPageController?
-        get() = _controller
+    protected open val controller: NavPageController?
+        get() = _controller ?: wrapper?.controller
 
     protected abstract fun onCreateView(context: Context): View
 
@@ -26,6 +29,8 @@ abstract class PageController(private val context: Context) : BackListener {
     }
 
     open fun getNavigationRoute(): Int = -1
+
+    open val title: String? = null
 
     val isDestroyed: Boolean
         get() = _flag and STATE_DESTROYED != 0
@@ -61,9 +66,13 @@ abstract class PageController(private val context: Context) : BackListener {
 
     }
 
+    fun canSlideBackFrom(controller: NavPageController, x: Float, y: Float) = false
+
     open fun onSaveInstance(bundle: Bundle, prefix: String): Boolean = false
 
     open fun onRestoreInstance(bundle: Bundle, prefix: String): Boolean = false
+
+    open fun onActivityResult(request: Int, result: Int, data: Intent?): Boolean = false
 
     fun getContentView(): View {
         if (_view == null) {

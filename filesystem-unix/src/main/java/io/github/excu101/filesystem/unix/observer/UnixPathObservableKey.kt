@@ -11,17 +11,13 @@ internal class UnixPathObservableKey(
     internal val descriptor: Int,
 ) : PathObservableKey {
 
-    private enum class State {
-        SIGNALED, READY
-    }
-
     private var _events = mutableListOf<PathObservableKey.Event>()
 
     private val mutex = Mutex()
 
     private var actual = true
 
-    private var state = State.READY
+    private var isReady = true
 
     override val isActual: Boolean
         get() = actual && service.isOpen
@@ -38,8 +34,8 @@ internal class UnixPathObservableKey(
     }
 
     private fun notifyService() {
-        if (state == State.READY) {
-            state = State.SIGNALED
+        if (isReady) {
+            isReady = false
             service.enqueueKey(key = this)
         }
     }
@@ -55,9 +51,9 @@ internal class UnixPathObservableKey(
     }
 
     override suspend fun reset(): Boolean {
-        if (state == State.SIGNALED) {
+        if (!isReady) {
             if (_events.isEmpty()) {
-                state = State.READY
+                isReady = true
             } else {
                 service.enqueueKey(key = this)
             }
@@ -80,7 +76,7 @@ internal class UnixPathObservableKey(
         if (descriptor != other.descriptor) return false
         if (_events != other._events) return false
         if (actual != other.actual) return false
-        if (state != other.state) return false
+        if (isReady != other.isReady) return false
 
         return true
     }

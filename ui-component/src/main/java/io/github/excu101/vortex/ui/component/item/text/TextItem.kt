@@ -4,12 +4,12 @@ import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView.TEXT_ALIGNMENT_TEXT_START
-import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.vortex.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.ItemViewTypes
 import io.github.excu101.vortex.ui.component.dsl.ItemScope
 import io.github.excu101.vortex.ui.component.list.adapter.Item
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerTitleColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerTitleColorKey
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -27,7 +27,8 @@ data class TextItem(
     ) : Parcelable {
         class Builder {
             var alignment: Int = TEXT_ALIGNMENT_TEXT_START
-            var color = ThemeColor(mainDrawerTitleColorKey)
+            var color =
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainDrawerTitleColorKey)
             var size = 14F
 
             fun build() = Attrs(

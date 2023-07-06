@@ -2,11 +2,11 @@ package io.github.excu101.vortex.ui.component.theme
 
 import android.content.Context
 import android.widget.TextView
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import kotlin.math.min
 
-open class ThemeItemView(context: Context) : ThemeFrameLayout(context = context) {
+open class ThemeItemView(context: Context) : io.github.excu101.vortex.theme.widget.ThemeFrameLayout(context = context) {
 
     private val desireHeight = 48.dp
 

@@ -1,27 +1,20 @@
 package io.github.excu101.vortex.provider
 
-import io.github.excu101.manager.ui.theme.ThemeText
+import io.github.excu101.vortex.theme.ThemeText
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
-import io.github.excu101.vortex.provider.storage.StorageBookmarkProvider
 import io.github.excu101.vortex.ui.component.dsl.scope
 import io.github.excu101.vortex.ui.component.dsl.withGroup
 import io.github.excu101.vortex.ui.component.item.divider.divider
 import io.github.excu101.vortex.ui.component.item.drawer.drawerItem
 import io.github.excu101.vortex.ui.component.list.adapter.Item
-import io.github.excu101.vortex.ui.component.theme.key.fileListGroupOperationDefaultActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreInfoActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListMoreShowTasksActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationAddActionNewTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationAddBookmarkTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationCopyActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationCopyPathTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationCutActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationDeleteActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationOpenTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationRemoveBookmarkTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationRenameActionTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListOperationSwapNamesActionTitleKey
+import io.github.excu101.vortex.theme.key.fileListGroupOperationDefaultActionTitleKey
+import io.github.excu101.vortex.theme.key.fileListMoreInfoActionTitleKey
+import io.github.excu101.vortex.theme.key.fileListMoreShowTasksActionTitleKey
+import io.github.excu101.vortex.theme.key.storageListOperationCopyActionTitleKey
+import io.github.excu101.vortex.theme.key.storageListOperationCutActionTitleKey
+import io.github.excu101.vortex.theme.key.storageListOperationDeleteActionTitleKey
+import io.github.excu101.vortex.theme.key.storageListOperationSwapNamesActionTitleKey
 import io.github.excu101.vortex.ui.icon.Icons
 
 interface StorageActionContentProvider {
@@ -31,7 +24,7 @@ interface StorageActionContentProvider {
     ): List<Item<*>>
 
     fun onSelectedItems(
-        selected: List<PathItem>,
+        count: Int,
     ): List<Item<*>>
 
     fun onMoreActions(): List<Item<*>>
@@ -39,41 +32,47 @@ interface StorageActionContentProvider {
 }
 
 fun StorageActionContentProvider(
-    bookmarks: StorageBookmarkProvider? = null,
+
 ): StorageActionContentProvider {
     return object : StorageActionContentProvider {
         override fun onSingleItem(item: PathItem) = scope {
-            withGroup(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
+            withGroup(title = io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.fileListGroupOperationDefaultActionTitleKey)) {
                 if (item.isDirectory) {
                     drawerItem {
                         id = ViewIds.Storage.Menu.OpenId
-                        title = ThemeText(storageListOperationOpenTitleKey)
+                        title =
+                            io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationOpenTitleKey)
                         icon = Icons.Rounded.FolderOpen
                     }
                     drawerItem {
                         id = ViewIds.Storage.Menu.AddNewId
-                        title = ThemeText(storageListOperationAddActionNewTitleKey)
+                        title =
+                            io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationAddActionNewTitleKey)
                         icon = Icons.Rounded.Add
                     }
                 }
                 drawerItem {
                     id = ViewIds.Storage.Menu.RenameId
-                    title = ThemeText(storageListOperationRenameActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationRenameActionTitleKey)
                     icon = Icons.Rounded.Edit
                 }
                 drawerItem {
                     id = ViewIds.Storage.Menu.DeleteId
-                    title = ThemeText(storageListOperationDeleteActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationDeleteActionTitleKey)
                     icon = Icons.Rounded.Delete
                 }
                 drawerItem {
                     id = ViewIds.Storage.Menu.CopyId
-                    title = ThemeText(storageListOperationCopyActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationCopyActionTitleKey)
                     icon = Icons.Rounded.Copy
                 }
                 drawerItem {
                     id = ViewIds.Storage.Menu.MoveId
-                    title = ThemeText(storageListOperationCutActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationCutActionTitleKey)
                     icon = Icons.Rounded.Cut
                 }
             }
@@ -85,20 +84,6 @@ fun StorageActionContentProvider(
                     title = "Edit tags"
                     icon = Icons.Rounded.Edit
                 }
-
-                if (bookmarks != null) {
-                    drawerItem {
-                        if (item in bookmarks.bookmarks.value) {
-                            id = ViewIds.Storage.Menu.RemoveBookmarkId
-                            title = ThemeText(storageListOperationRemoveBookmarkTitleKey)
-                            icon = Icons.Rounded.BookmarkRemove
-                        } else {
-                            id = ViewIds.Storage.Menu.AddBookmarkId
-                            title = ThemeText(storageListOperationAddBookmarkTitleKey)
-                            icon = Icons.Rounded.BookmarkAdd
-                        }
-                    }
-                }
             }
 
             divider()
@@ -106,7 +91,8 @@ fun StorageActionContentProvider(
             withGroup(title = "Additional") {
                 drawerItem {
                     id = ViewIds.Storage.Menu.CopyPathId
-                    title = ThemeText(storageListOperationCopyPathTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationCopyPathTitleKey)
                     icon = Icons.Rounded.Copy
                 }
 
@@ -120,30 +106,35 @@ fun StorageActionContentProvider(
 
                 drawerItem {
                     id = ViewIds.Storage.Menu.InfoId
-                    title = ThemeText(fileListMoreInfoActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.fileListMoreInfoActionTitleKey)
                     icon = Icons.Rounded.Info
                 }
             }
         }
 
-        override fun onSelectedItems(selected: List<PathItem>): List<Item<*>> = scope {
-            withGroup(title = ThemeText(fileListGroupOperationDefaultActionTitleKey)) {
-                if (selected.size == 2) {
+        override fun onSelectedItems(count: Int): List<Item<*>> = scope {
+            withGroup(title = io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.fileListGroupOperationDefaultActionTitleKey)) {
+                if (count == 2) {
                     drawerItem {
-                        title = ThemeText(storageListOperationSwapNamesActionTitleKey)
+                        title =
+                            io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationSwapNamesActionTitleKey)
                         icon = Icons.Rounded.Swap
                     }
                 }
                 drawerItem {
-                    title = ThemeText(storageListOperationCopyActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationCopyActionTitleKey)
                     icon = Icons.Rounded.Copy
                 }
                 drawerItem {
-                    title = ThemeText(storageListOperationCutActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationCutActionTitleKey)
                     icon = Icons.Rounded.Cut
                 }
                 drawerItem {
-                    title = ThemeText(storageListOperationDeleteActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.storageListOperationDeleteActionTitleKey)
                     icon = Icons.Rounded.Delete
                 }
             }
@@ -162,12 +153,14 @@ fun StorageActionContentProvider(
             withGroup(title = "Default") {
                 drawerItem {
                     id = ViewIds.Storage.Menu.InfoId
-                    title = ThemeText(fileListMoreInfoActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.fileListMoreInfoActionTitleKey)
                     icon = Icons.Rounded.Info
                 }
                 drawerItem {
                     id = ViewIds.Storage.Menu.ShowTasks
-                    title = ThemeText(fileListMoreShowTasksActionTitleKey)
+                    title =
+                        io.github.excu101.vortex.theme.ThemeText(io.github.excu101.vortex.theme.key.fileListMoreShowTasksActionTitleKey)
                     icon = Icons.Rounded.Tasks
                 }
             }

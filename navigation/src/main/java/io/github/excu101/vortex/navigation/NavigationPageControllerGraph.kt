@@ -31,10 +31,6 @@ interface NavigationPageControllerGraph : NavGraph {
         mode: Int = mode(),
     ): NavigationPageControllerGraph = this
 
-    fun restoreNavigation(inState: Bundle)
-
-    fun saveNavigation(outState: Bundle)
-
 }
 
 fun NavPageControllerGraph(

@@ -7,21 +7,21 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 import androidx.core.view.children
 import com.google.android.material.progressindicator.CircularProgressIndicator
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.theme.key.layoutProgressBarTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.layoutProgressTitleTextColorKey
+import io.github.excu101.vortex.theme.key.layoutProgressBarTintColorKey
+import io.github.excu101.vortex.theme.key.layoutProgressTitleTextColorKey
 
-class LoadingView(context: Context) : ThemeLinearLayout(context) {
+class LoadingView(context: Context) : io.github.excu101.vortex.theme.widget.ThemeLinearLayout(context) {
 
     private val progressView = CircularProgressIndicator(context).apply {
         isIndeterminate = true
-        setIndicatorColor(ThemeColor(layoutProgressBarTintColorKey))
+        setIndicatorColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.layoutProgressBarTintColorKey))
     }
     private val titleView = TextView(context).apply {
         textSize = 18F
-        setTextColor(ThemeColor(layoutProgressTitleTextColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.layoutProgressTitleTextColorKey))
         textAlignment = TEXT_ALIGNMENT_CENTER
         layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         setPadding(
@@ -60,8 +60,8 @@ class LoadingView(context: Context) : ThemeLinearLayout(context) {
 
     override fun onColorChanged() {
 //        background.setTint(ThemeColor(layoutProgressBarBackgroundColorKey))
-        progressView.setIndicatorColor(ThemeColor(layoutProgressBarTintColorKey))
-        titleView.setTextColor(ThemeColor(layoutProgressTitleTextColorKey))
+        progressView.setIndicatorColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.layoutProgressBarTintColorKey))
+        titleView.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.layoutProgressTitleTextColorKey))
     }
 
 }

@@ -29,13 +29,6 @@ fun LifecycleOwner.repeatedLifecycle(
     }
 }
 
-inline val Fragment.bar: Bar?
-    get() = (activity as? BarOwner)?.bar
-
-fun Fragment.requireBar(): Bar {
-    return bar ?: throw IllegalArgumentException()
-}
-
 inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
     isAndroidTiramisu -> getParcelable(key, T::class.java)
     else -> @Suppress("DEPRECATION") getParcelable(key) as? T

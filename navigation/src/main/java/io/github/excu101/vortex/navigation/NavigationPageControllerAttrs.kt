@@ -4,6 +4,7 @@ import androidx.annotation.IntDef
 
 @IntDef(
     flag = true, value = [
+        NO_TRANSITION,
         TRANSITION_FADE,
         TRANSITION_SLIDE_VERTICAL,
         TRANSITION_SLIDE_HORIZONTAL
@@ -12,6 +13,7 @@ import androidx.annotation.IntDef
 @Retention(AnnotationRetention.SOURCE)
 annotation class Transition
 
+const val NO_TRANSITION = -1
 const val TRANSITION_FADE = 0
 const val TRANSITION_SLIDE_VERTICAL = 1 shl 1
 const val TRANSITION_SLIDE_HORIZONTAL = 1 shl 2

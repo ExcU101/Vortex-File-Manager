@@ -11,9 +11,8 @@ import androidx.core.view.contains
 import androidx.core.view.isVisible
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeUtils
-import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.R
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
@@ -22,14 +21,23 @@ import io.github.excu101.vortex.ui.component.ThemeMaterialShapeDrawable
 import io.github.excu101.vortex.ui.component.ThemeUDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
-import io.github.excu101.vortex.ui.component.theme.key.*
+import io.github.excu101.vortex.theme.key.trailItemArrowSelectedTintColorKey
+import io.github.excu101.vortex.theme.key.trailItemArrowTintColorKey
+import io.github.excu101.vortex.theme.key.trailItemHeightKey
+import io.github.excu101.vortex.theme.key.trailItemLeftPaddingKey
+import io.github.excu101.vortex.theme.key.trailItemRightPaddingKey
+import io.github.excu101.vortex.theme.key.trailItemRippleSelectedTintColorKey
+import io.github.excu101.vortex.theme.key.trailItemRippleTintColorKey
+import io.github.excu101.vortex.theme.key.trailItemTitleSelectedTextColorKey
+import io.github.excu101.vortex.theme.key.trailItemTitleTextColorKey
+import io.github.excu101.vortex.theme.key.trailSurfaceColorKey
 
 class TrailItemView(
     context: Context,
-) : ThemeFrameLayout(context), RecyclableView<PathItem> {
+) : io.github.excu101.vortex.theme.widget.ThemeFrameLayout(context), RecyclableView<PathItem> {
 
-    private val leftPadding = ThemeDp(trailItemLeftPaddingKey)
-    private val rightPadding = ThemeDp(trailItemRightPaddingKey)
+    private val leftPadding = ThemeDp(io.github.excu101.vortex.theme.key.trailItemLeftPaddingKey)
+    private val rightPadding = ThemeDp(io.github.excu101.vortex.theme.key.trailItemRightPaddingKey)
 
     private val surface = ThemeMaterialShapeDrawable(
         builder = {
@@ -37,7 +45,7 @@ class TrailItemView(
                 ROUNDED, 16F.dp
             )
         },
-        colorKey = trailSurfaceColorKey
+        colorKey = io.github.excu101.vortex.theme.key.trailSurfaceColorKey
     )
 
     var title: CharSequence?
@@ -123,7 +131,7 @@ class TrailItemView(
         titleView.setTextColor(createTitleStateList())
         arrowView.imageTintList = createArrowStateList()
         foreground = createRippleForeground()
-        surface.setTint(ThemeColor(trailSurfaceColorKey))
+        surface.setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailSurfaceColorKey))
     }
 
     private fun createRippleForeground() = RippleDrawable(
@@ -148,8 +156,8 @@ class TrailItemView(
                 intArrayOf(),
             ),
             intArrayOf(
-                ThemeColor(trailItemRippleSelectedTintColorKey),
-                ThemeColor(trailItemRippleTintColorKey),
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailItemRippleSelectedTintColorKey),
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailItemRippleTintColorKey),
             )
         )
     }
@@ -161,8 +169,8 @@ class TrailItemView(
                 intArrayOf(),
             ),
             intArrayOf(
-                ThemeColor(trailItemArrowSelectedTintColorKey),
-                ThemeColor(trailItemArrowTintColorKey),
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailItemArrowSelectedTintColorKey),
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailItemArrowTintColorKey),
             )
         )
     }
@@ -174,15 +182,15 @@ class TrailItemView(
                 intArrayOf(),
             ),
             intArrayOf(
-                ThemeColor(trailItemTitleSelectedTextColorKey),
-                ThemeColor(trailItemTitleTextColorKey),
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailItemTitleSelectedTextColorKey),
+                io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.trailItemTitleTextColorKey),
             )
         )
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         var width = rightPadding + leftPadding
-        val height = ThemeUDp(trailItemHeightKey)
+        val height = ThemeUDp(io.github.excu101.vortex.theme.key.trailItemHeightKey)
 
         if (!title.isNullOrEmpty()) {
             measureChild(

@@ -8,58 +8,51 @@ import android.content.res.ColorStateList.valueOf
 import android.graphics.Paint
 import android.graphics.drawable.RippleDrawable
 import android.text.TextUtils
+import android.view.View
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewPropertyAnimator
+import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.core.view.updatePadding
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.textfield.TextInputEditText
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.theme.key.mainBarHeightKey
+import io.github.excu101.vortex.theme.key.mainBarWidthKey
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.bar.NavigationIcon.Type.CLOSE
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.menu.MenuAction
 import io.github.excu101.vortex.ui.component.menu.MenuActionListener
 import io.github.excu101.vortex.ui.component.menu.MenuLayout
-import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.themeMeasure
 
 
+// TODO: Animate sliding title
 class Bar(context: Context) : ThemeFrameLayout(context) {
-
-    enum class Type {
-        TOP,
-        BOTTOM
-    }
-
-    var type: Type = Type.BOTTOM
-        set(value) {
-            field = value
-            invalidate()
-        }
 
     private val icon = NavigationIcon().apply {
         type = CLOSE
     }
 
-    var isActionModeEnabled: Boolean = false
-
     private val horizontalPadding = 16.dp
     private val verticalPadding = 16.dp
     private val titleHorizontalPadding = 32.dp
     private val behavior = BarBehavior()
+//    private var navBottomInsetPadding = 0
 
     private val shape = MaterialShapeDrawable().apply {
         shadowCompatibilityMode = SHADOW_COMPAT_MODE_ALWAYS
         paintStyle = Paint.Style.FILL
         initializeElevationOverlay(context)
-        setTint(ThemeColor(mainBarSurfaceColorKey))
+        setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarSurfaceColorKey))
     }
 
     private val navigationIconView = ImageView(context).apply {
@@ -67,8 +60,12 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
         isFocusable = true
         layoutParams = LayoutParams(24.dp, 24.dp)
         background =
-            RippleDrawable(valueOf(ThemeColor(mainBarNavigationIconTintColorKey)), null, null)
-        setColorFilter(ThemeColor(mainBarNavigationIconTintColorKey))
+            RippleDrawable(
+                valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarNavigationIconTintColorKey)),
+                null,
+                null
+            )
+        setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarNavigationIconTintColorKey))
         setImageDrawable(icon)
     }
 
@@ -76,7 +73,7 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
 
     private val subtitleView = TextView(context).apply {
         textSize = 14F
-        setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarSubtitleTextColorKey))
     }
 
     private val menuView = MenuLayout(context).apply {
@@ -156,7 +153,7 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
             textSize = 18F
             ellipsize = TextUtils.TruncateAt.END
             setLines(1)
-            setTextColor(ThemeColor(mainBarTitleTextColorKey))
+            setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarTitleTextColorKey))
             layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         }
     }
@@ -169,26 +166,27 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
     }
 
     private fun ensureContainingSubtitle() {
-        if (!containsSubtitle) {
-            addView(subtitleView)
-        }
+        if (!containsSubtitle) addView(subtitleView)
     }
 
 
     private fun ensureContainingNavigationIcon() {
-        if (!containsNavigationIcon) {
-            addView(navigationIconView)
-        }
+        if (!containsNavigationIcon) addView(navigationIconView)
     }
 
     private fun ensureContainingMenu() {
-        if (!containsMenu) {
-            addView(menuView)
-        }
+        if (!containsMenu) addView(menuView)
     }
 
     fun setNavigationClickListener(listener: OnClickListener?) {
         navigationIconView.setOnClickListener(listener)
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        val i = WindowInsetsCompat.toWindowInsetsCompat(insets)
+        val pb = i.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+        updatePadding(bottom = pb)
+        return i.toWindowInsets()!!
     }
 
     override fun onAttachedToWindow() {
@@ -197,6 +195,19 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
 
         if (parent is ViewGroup) {
             (parent as ViewGroup).clipChildren = false
+        }
+
+        if (isAttachedToWindow) {
+            requestApplyInsets()
+        } else {
+            addOnAttachStateChangeListener(object : OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    v.removeOnAttachStateChangeListener(this)
+                    v.requestApplyInsets()
+                }
+
+                override fun onViewDetachedFromWindow(v: View) = Unit
+            })
         }
     }
 
@@ -232,73 +243,54 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val (width, height) = themeMeasure(
+        themeMeasure(
             widthMeasureSpec,
             heightMeasureSpec,
             mainBarWidthKey,
             mainBarHeightKey
-        )
-
-        setMeasuredDimension(width, height)
-
-        val availableWidth = width - horizontalPadding - paddingLeft - paddingRight
-        if (containsNavigationIcon) {
-            measureChild(
-                navigationIconView,
-                widthMeasureSpec,
-                heightMeasureSpec
+        ) { width, height ->
+            setMeasuredDimension(
+                width,
+                height
             )
-//            navigationIconView.measure(
-//                makeMeasureSpec(24.dp, EXACTLY),
-//                makeMeasureSpec(24.dp, EXACTLY)
-//            )
-        }
-        if (containsTitle) {
-            titleView.forEach { view ->
-                view?.let {
-                    if (it.visibility != GONE) {
-                        measureChild(
-                            it,
-                            widthMeasureSpec,
-                            heightMeasureSpec
-                        )
-//                    view?.measure(
-//                        makeMeasureSpec(availableWidth, AT_MOST),
-//                        makeMeasureSpec(24.dp, AT_MOST)
-//                    )
-                        it.pivotX = 0F
-                        it.pivotY = 1F
-                    }
-                }
 
+            val availableWidth = width - horizontalPadding - paddingLeft - paddingRight
+            if (containsNavigationIcon) {
+                measureChild(
+                    navigationIconView,
+                    widthMeasureSpec,
+                    heightMeasureSpec
+                )
             }
-//            titleView.measure(
-//                makeMeasureSpec(availableWidth, AT_MOST),
-//                makeMeasureSpec(24.dp, AT_MOST)
-//            )
-        }
-        if (containsSubtitle) {
-            measureChild(
-                subtitleView,
-                widthMeasureSpec,
-                heightMeasureSpec
-            )
-//            subtitleView.measure(
-//                makeMeasureSpec(availableWidth, AT_MOST),
-//                makeMeasureSpec(20.dp, AT_MOST)
-//            )
-        }
-        if (containsMenu) {
-//            textWidth = if (titleView.measuredWidth > subtitleView.measuredWidth) {
-//                titleView.measuredWidth
-//            } else {
-//                subtitleView.measuredWidth
-//            }
-//            val menuWidth = availableWidth - navigationIconView.measuredWidth - textWidth - paddings
-            menuView.measure(
-                makeMeasureSpec(width, AT_MOST),
-                56.dp
-            )
+            if (containsTitle) {
+                titleView.forEach { view ->
+                    view?.let {
+                        if (it.visibility != GONE) {
+                            measureChild(
+                                it,
+                                widthMeasureSpec,
+                                heightMeasureSpec
+                            )
+                            it.pivotX = 0F
+                            it.pivotY = 1F
+                        }
+                    }
+
+                }
+            }
+            if (containsSubtitle) {
+                measureChild(
+                    subtitleView,
+                    widthMeasureSpec,
+                    heightMeasureSpec
+                )
+            }
+            if (containsMenu) {
+                menuView.measure(
+                    makeMeasureSpec(width, AT_MOST),
+                    56.dp
+                )
+            }
         }
     }
 
@@ -360,18 +352,18 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
     }
 
     override fun onColorChanged() {
-        shape.setTint(ThemeColor(mainBarSurfaceColorKey))
-        titleView[0]?.setTextColor(ThemeColor(mainBarTitleTextColorKey))
-        titleView[1]?.setTextColor(ThemeColor(mainBarTitleTextColorKey))
-        subtitleView.setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
-        navigationIconView.setColorFilter(ThemeColor(mainBarNavigationIconTintColorKey))
+        shape.setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarSurfaceColorKey))
+        titleView[0]?.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarTitleTextColorKey))
+        titleView[1]?.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarTitleTextColorKey))
+        subtitleView.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarSubtitleTextColorKey))
+        navigationIconView.setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarNavigationIconTintColorKey))
     }
 
     fun setTitleWithAnimation(
         title: CharSequence?,
         isVertical: Boolean = true,
         isReverse: Boolean = false,
-        duration: Long = 150L
+        duration: Long = 150L,
     ) {
         if (title == this.title) return
         val isCrossfade = title.isNullOrEmpty()
@@ -394,11 +386,9 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
             duration
         )
 
-        if (isVertical) {
-            a?.translationY(0F)
-        } else {
-            a?.translationX(0F)
-        }
+        if (isVertical) a?.translationY(0F)
+        else a?.translationX(0F)
+
 
         a?.start()
 
@@ -412,8 +402,7 @@ class Bar(context: Context) : ThemeFrameLayout(context) {
                         20F.dp
                     }
                 )
-            }
-            else {
+            } else {
                 animator?.translationX(
                     if (isReverse) {
                         (-20F).dp

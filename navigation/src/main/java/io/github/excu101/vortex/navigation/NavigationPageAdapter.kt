@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.collection.SparseArrayCompat
 import androidx.viewpager.widget.PagerAdapter
 import io.github.excu101.vortex.navigation.page.PageController
-import io.github.excu101.vortex.navigation.page.TitledPageController
 
 class NavigationPageAdapter(
     private val provider: ControllerProvider,
@@ -27,17 +26,14 @@ class NavigationPageAdapter(
     }
 
     fun getController(index: Int): PageController? {
+        if (index < 0 || index >= cache.size()) return null
         return cache.valueAt(index)
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
         val controller = cache.valueAt(position)
 
-        return if (controller is TitledPageController) {
-            controller.title
-        } else {
-            null
-        }
+        return controller.title
     }
 
     override fun getCount(): Int {

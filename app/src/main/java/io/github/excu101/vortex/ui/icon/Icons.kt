@@ -4,49 +4,91 @@ import io.github.excu101.vortex.R
 
 object Icons {
     object Rounded {
-        val Palette = IconInitializer[R.drawable.ic_palette_24]
-        val Build = IconInitializer[R.drawable.ic_build_24]
-        val Notifications = IconInitializer[R.drawable.ic_notifications_24]
-        val Tasks = IconInitializer[R.drawable.ic_tasks_24]
-        val AddBox = IconInitializer[R.drawable.ic_add_box_24]
-        val CheckCircle = IconInitializer[R.drawable.ic_check_circle_24]
-        val Check = IconInitializer[R.drawable.ic_check_24]
-        val ViewColumn = IconInitializer[R.drawable.ic_view_column_24]
-        val ViewGrid = IconInitializer[R.drawable.ic_view_grid_24]
-        val Edit = IconInitializer[R.drawable.ic_edit_24]
-        val Audio = IconInitializer[R.drawable.ic_audio_24]
-        val Add = IconInitializer[R.drawable.ic_add_24]
-        val Bookmark = IconInitializer[R.drawable.ic_bookmark_24]
-        val BookmarkAdd = IconInitializer[R.drawable.ic_bookmark_add_24]
-        val BookmarkRemove = IconInitializer[R.drawable.ic_bookmark_remove_24]
-        val Back = IconInitializer[R.drawable.ic_back_24]
-        val ArrowLeft = IconInitializer[R.drawable.ic_arrow_left_24]
-        val ArrowRight = IconInitializer[R.drawable.ic_arrow_right_24]
-        val Cut = IconInitializer[R.drawable.ic_cut_24]
-        val ContentPaste = IconInitializer[R.drawable.ic_content_paste_24]
-        val Delete = IconInitializer[R.drawable.ic_delete_24]
+        inline val Palette
+            get() = IconInitializer[R.drawable.ic_palette_24]
+        inline val Build
+            get() = IconInitializer[R.drawable.ic_build_24]
+        inline val Notifications
+            get() = IconInitializer[R.drawable.ic_notifications_24]
+        inline val Tasks
+            get() = IconInitializer[R.drawable.ic_tasks_24]
+        inline val AddBox
+            get() = IconInitializer[R.drawable.ic_add_box_24]
+        inline val CheckCircle
+            get() = IconInitializer[R.drawable.ic_check_circle_24]
+        inline val Check
+            get() = IconInitializer[R.drawable.ic_check_24]
+        inline val ViewColumn
+            get() = IconInitializer[R.drawable.ic_view_column_24]
+        inline val ViewGrid
+            get() = IconInitializer[R.drawable.ic_view_grid_24]
+        inline val Edit
+            get() = IconInitializer[R.drawable.ic_edit_24]
+        inline val Audio
+            get() = IconInitializer[R.drawable.ic_audio_24]
+        inline val Add
+            get() = IconInitializer[R.drawable.ic_add_24]
+        inline val Bookmark
+            get() = IconInitializer[R.drawable.ic_bookmark_24]
+        inline val BookmarkAdd
+            get() = IconInitializer[R.drawable.ic_bookmark_add_24]
+        inline val BookmarkRemove
+            get() = IconInitializer[R.drawable.ic_bookmark_remove_24]
+        inline val Back
+            get() = IconInitializer[R.drawable.ic_back_24]
+        inline val ArrowLeft
+            get() = IconInitializer[R.drawable.ic_arrow_left_24]
+        inline val ArrowRight
+            get() = IconInitializer[R.drawable.ic_arrow_right_24]
+        inline val Cut
+            get() = IconInitializer[R.drawable.ic_cut_24]
+        inline val ContentPaste
+            get() = IconInitializer[R.drawable.ic_content_paste_24]
+        inline val Delete
+            get() = IconInitializer[R.drawable.ic_delete_24]
         val FileMove = IconInitializer[R.drawable.ic_file_move_24]
         val File = IconInitializer[R.drawable.ic_file_24]
-        val Folder = IconInitializer[R.drawable.ic_folder_24]
-        val FolderOpen = IconInitializer[R.drawable.ic_folder_open_24]
-        val Inbox = IconInitializer[R.drawable.ic_inbox_24]
-        val Info = IconInitializer[R.drawable.ic_info_24]
-        val Copy = IconInitializer[R.drawable.ic_copy_24]
-        val More = IconInitializer[R.drawable.ic_more_24]
-        val Filter = IconInitializer[R.drawable.ic_filter_24]
-        val Search = IconInitializer[R.drawable.ic_search_24]
-        val SelectAll = IconInitializer[R.drawable.ic_select_all_24]
-        val DeselectAll = IconInitializer[R.drawable.ic_deselect_all_24]
-        val SortAscending = IconInitializer[R.drawable.ic_sort_ascending_24]
-        val Swap = IconInitializer[R.drawable.ic_swap_24]
-        val Link = IconInitializer[R.drawable.ic_link_24]
-        val Watch = IconInitializer[R.drawable.ic_watch_24]
-        val Refresh = IconInitializer[R.drawable.ic_refresh_24]
-        val Settings = IconInitializer[R.drawable.ic_settings_24]
-        val Video = IconInitializer[R.drawable.ic_video_24]
-        val Text = IconInitializer[R.drawable.ic_text_24]
-        val Image = IconInitializer[R.drawable.ic_image_24]
-        val DarkMode = IconInitializer[R.drawable.ic_dark_mode_24]
-        val LightMode = IconInitializer[R.drawable.ic_light_mode_24]
+        inline val Folder
+            get() = IconInitializer[R.drawable.ic_folder_24]
+        inline val FolderOpen
+            get() = IconInitializer[R.drawable.ic_folder_open_24]
+        inline val Inbox
+            get() = IconInitializer[R.drawable.ic_inbox_24]
+        inline val Info
+            get() = IconInitializer[R.drawable.ic_info_24]
+        inline val Copy
+            get() = IconInitializer[R.drawable.ic_copy_24]
+        inline val More
+            get() = IconInitializer[R.drawable.ic_more_24]
+        inline val Filter
+            get() = IconInitializer[R.drawable.ic_filter_24]
+        inline val Search
+            get() = IconInitializer[R.drawable.ic_search_24]
+        inline val SelectAll
+            get() = IconInitializer[R.drawable.ic_select_all_24]
+        inline val DeselectAll
+            get() = IconInitializer[R.drawable.ic_deselect_all_24]
+        inline val SortAscending
+            get() = IconInitializer[R.drawable.ic_sort_ascending_24]
+        inline val Swap
+            get() = IconInitializer[R.drawable.ic_swap_24]
+        inline val Link
+            get() = IconInitializer[R.drawable.ic_link_24]
+        inline val Watch
+            get() = IconInitializer[R.drawable.ic_watch_24]
+        inline val Refresh
+            get() = IconInitializer[R.drawable.ic_refresh_24]
+        inline val Settings
+            get() = IconInitializer[R.drawable.ic_settings_24]
+        inline val Video
+            get() = IconInitializer[R.drawable.ic_video_24]
+        inline val Text
+            get() = IconInitializer[R.drawable.ic_text_24]
+        inline val Image
+            get() = IconInitializer[R.drawable.ic_image_24]
+        inline val DarkMode
+            get() = IconInitializer[R.drawable.ic_dark_mode_24]
+        inline val LightMode
+            get() = IconInitializer[R.drawable.ic_light_mode_24]
     }
 }

@@ -9,9 +9,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.MeasureSpec.getSize
 import androidx.recyclerview.widget.RecyclerView
-import io.github.excu101.manager.ui.theme.ThemeColor
+import io.github.excu101.vortex.theme.ThemeColor
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.theme.key.accentColorKey
+import io.github.excu101.vortex.theme.key.accentColorKey
 import kotlin.math.ceil
 
 class FastScroller(context: Context?) : View(context) {
@@ -31,7 +31,8 @@ class FastScroller(context: Context?) : View(context) {
     private val progress: Float = 0F
 
     private val handlePaint = Paint().apply {
-        color = ThemeColor(accentColorKey)
+        color =
+            io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.accentColorKey)
     }
 
     private var recycler: RecyclerView? = null

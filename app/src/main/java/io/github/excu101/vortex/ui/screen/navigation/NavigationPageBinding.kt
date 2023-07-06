@@ -6,8 +6,6 @@ import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.viewpager2.widget.ViewPager2
-import io.github.excu101.vortex.ui.component.FragmentAdapter
 import io.github.excu101.vortex.ui.component.bar.Bar
 
 class NavigationPageBinding(

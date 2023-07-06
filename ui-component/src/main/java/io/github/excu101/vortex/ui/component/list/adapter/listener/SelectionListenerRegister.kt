@@ -1,7 +1,9 @@
 package io.github.excu101.vortex.ui.component.list.adapter.listener
 
-fun interface SelectionListenerRegister<T> {
+interface SelectionListenerRegister<T> {
 
-    fun registerSelection(listener: ItemViewSelectionListener<T>)
+    fun registerItemSelection(listener: ItemViewSelectionListener<T>)
+
+    fun registerSelection(listener: SelectionListener<T>)
 
 }

@@ -1,39 +1,51 @@
 package io.github.excu101.vortex.ui.screen.storage
 
+import android.net.Uri
 import android.os.Build
 import android.os.Environment.getExternalStorageDirectory
-import io.github.excu101.filesystem.FileProvider
+import androidx.annotation.RequiresApi
 import io.github.excu101.filesystem.fs.collect
-import io.github.excu101.filesystem.fs.observer.PathObservableEventType
 import io.github.excu101.filesystem.fs.observer.PathObservableKey
-import io.github.excu101.filesystem.fs.operation.observer
 import io.github.excu101.filesystem.fs.operation.option.Options
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.asPath
-import io.github.excu101.filesystem.unix.utils.unixCreateFile
-import io.github.excu101.manager.ui.theme.ThemeText
+import io.github.excu101.vortex.base.utils.logIt
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.data.storage.PathItemSorters
+import io.github.excu101.vortex.provider.storage.AndroidStorageHelper
+import io.github.excu101.vortex.provider.storage.Filter
 import io.github.excu101.vortex.provider.storage.StorageProvider
+import io.github.excu101.vortex.provider.storage.impl.ListResultParser
 import io.github.excu101.vortex.provider.storage.impl.StorageProviderImpl
 import io.github.excu101.vortex.ui.component.list.adapter.SuperItem
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningFullStorageAccessTitleKey
-import io.github.excu101.vortex.ui.component.theme.key.fileListWarningStorageAccessTitleKey
-import io.github.excu101.vortex.ui.screen.storage.page.list.StorageListPageScreen.DataResolver
 import io.github.excu101.vortex.utils.DispatcherProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class StorageStateController @Inject constructor(
     private val provider: StorageProvider,
-    private val dispatchers: DispatcherProvider,
-) {
-    private val _listeners = arrayListOf<Listener>()
+    val helper: AndroidStorageHelper,
+    dispatchers: DispatcherProvider,
+) : StateController {
+    private val listeners = arrayListOf<Listener>()
 
-    private val scope
-        get() = dispatchers.StorageStateUpdateCoroutineScope
+    override val scope: CoroutineScope = dispatchers.StorageStateUpdateCoroutineScope
 
     companion object {
+        const val FLAG_EMPTY = -1
+        const val FLAG_LOADING = 0
+        const val FLAG_MESSAGE_EMPTY_DIR = 1
+
+        @RequiresApi(30)
+        const val FLAG_MESSAGE_RESTRICTED_DIR = 2
+        const val FLAG_MESSAGE_REQUIRES_STORAGE_ACCESS = 3
+
+        @RequiresApi(30)
+        const val FLAG_MESSAGE_REQUIRES_FULL_STORAGE_ACCESS = 4
+
         private fun parseSegmentsSpeed(path: Path): ArrayList<PathItem> {
             if (path == getExternalStorageDirectory().asPath()) return arrayListOf(PathItem(path))
             val segments = arrayListOf<PathItem>()
@@ -78,62 +90,55 @@ class StorageStateController @Inject constructor(
         }
     }
 
+    private val parser = ListResultParser()
+    private val sorter = PathItemSorters.Name
+    private val filter = Filter<PathItem> { true }
+
     var list: List<SuperItem> = emptyList()
         private set
     var trail: List<PathItem> = emptyList()
         private set
     var currentIndex: Int = -1
         private set
-    var isLoading: Boolean = true
+    var flag: Int = FLAG_MESSAGE_EMPTY_DIR
         private set
-    var message: String? = null
+
+    // E.G. SnackBar stuff
+    var notification: String? = null
         private set
 
     val current: PathItem?
         get() = trail.getOrNull(currentIndex)
 
     fun addListener(listener: Listener) {
-        _listeners.add(listener)
-    }
-
-    fun removeListeners() {
-        _listeners.clear()
-        provider.closeObservers()
+        listeners.add(listener)
     }
 
     fun interface Listener {
         fun onUpdateState(state: StorageStateController)
     }
 
-    fun interface EventListener {
-        fun onEvent(item: PathItem, event: PathObservableKey.Event)
-    }
-
     fun checkPerms() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (provider.requiresFullStorageAccess()) {
-                updateState(
-                    message = ThemeText(fileListWarningFullStorageAccessTitleKey)
-                )
-            }
+            if (helper.requiresFullStorageAccess()) return updateState(
+                flag = FLAG_MESSAGE_REQUIRES_FULL_STORAGE_ACCESS,
+            )
         } else {
-            if (provider.requiresPermissions()) {
-                updateState(
-                    message = ThemeText(fileListWarningStorageAccessTitleKey)
-                )
-            }
+            if (helper.requiresPermissions()) return updateState(
+                flag = FLAG_MESSAGE_REQUIRES_STORAGE_ACCESS,
+            )
         }
+
+        navigate(PathItem(getExternalStorageDirectory()))
     }
 
     fun createObserver(
         item: PathItem,
-        vararg type: PathObservableEventType,
-        listener: EventListener,
-    ) {
-        scope.launch {
-            provider.registerObserver(item.value, *type).collect { event ->
-                listener.onEvent(item, event)
-            }
+        types: Int,
+        onEvent: (PathObservableKey.Event) -> Unit,
+    ) = intent {
+        provider.registerObserver(item.value, types).collect { event ->
+            onEvent(event)
         }
     }
 
@@ -141,9 +146,11 @@ class StorageStateController @Inject constructor(
         item: PathItem,
         withPrefixChecking: Boolean = true,
     ) {
-        if (item == current) {
-            updateList(item)
-            return
+        if (!provider.hasObserver(item.value)) {
+            if (item == current) {
+                updateList(item)
+                return
+            }
         }
 
         navigate(
@@ -152,20 +159,19 @@ class StorageStateController @Inject constructor(
         )
     }
 
-    private fun updateList(item: PathItem) {
-        scope.launch {
-            updateState(
-                list = DataResolver().run(provider.getItems(item).toList())
-            )
-        }
+    private fun updateList(item: PathItem) = intent {
+        updateState(
+            list = parser.parse(provider.getItems(item).toList())
+        )
     }
+
 
     private fun navigate(
         segments: MutableList<PathItem>,
         selectedIndex: Int = segments.lastIndex,
         withPrefixChecking: Boolean = true,
-    ) {
-        updateState(isLoading = true)
+    ) = intent {
+        updateState(flag = FLAG_LOADING)
 
         if (withPrefixChecking) {
             var hasPrefix = true
@@ -179,20 +185,39 @@ class StorageStateController @Inject constructor(
             }
         }
 
-        scope.launch {
-            updateState(
-                currentIndex = selectedIndex,
-                isLoading = false,
-                trail = segments,
-                list = DataResolver().run(provider.getItems(segments[selectedIndex]).toList())
-            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (helper.checkRestrictedPath(item = segments[selectedIndex])) {
+                if (!helper.containsPersist(segments[selectedIndex].name)) {
+                    return@intent updateState(
+                        currentIndex = selectedIndex,
+                        trail = segments,
+                        flag = FLAG_MESSAGE_RESTRICTED_DIR
+                    )
+                } else {
+                    navigateDocument(helper.buildDirectoryUri(segments[selectedIndex].name))
+                }
+            }
         }
+
+        val list = provider.getItems(segments[selectedIndex]).toList()
+
+        if (list.isEmpty()) updateState(
+            currentIndex = selectedIndex,
+            trail = segments,
+            flag = FLAG_MESSAGE_EMPTY_DIR
+        )
+        else updateState(
+            currentIndex = selectedIndex,
+            trail = segments,
+            list = parser.parse(list.sortedWith(sorter))
+        )
     }
 
-    fun open(
-        file: PathItem,
-    ) {
-
+    @RequiresApi(30)
+    fun navigateDocument(tree: Uri) {
+        helper.readDocumentTree(uri = tree).forEach { document ->
+            document.uri.toString().logIt()
+        }
     }
 
     fun createFile(
@@ -201,63 +226,49 @@ class StorageStateController @Inject constructor(
         flags: Int = Options.Open.CreateNew or Options.Open.Read or
                 Options.Open.Write or
                 Options.Open.Append,
-    ) {
-        scope.launch {
-            val op = unixCreateFile(
-                source = path,
-                flags = flags,
-                mode = mode,
-            )
+    ) = intent {
 
-            FileProvider.runOperation(op, observer(
-                onAction = { action ->
-
-                },
-                onError = { error ->
-
-                },
-                onComplete = {
-
-                }
-            ))
-        }
     }
 
-    fun navigateBack() {
+    fun navigateBack() = intent {
+        updateState(flag = FLAG_LOADING)
+
+        currentIndex--
+
         updateState(
-            isLoading = true
+            list = parser.parse(getItems(trail[currentIndex])),
         )
+    }
 
-        scope.launch {
-            currentIndex--
-
-            updateState(
-                list = DataResolver()
-                    .run(provider.getItems(trail[currentIndex]).toList()),
-                isLoading = false
-            )
-        }
+    private suspend fun getItems(item: PathItem): List<PathItem> {
+        return provider.getItems(item).filter(filter::get).toList()
     }
 
     private fun updateState(
-        list: List<SuperItem> = emptyList(),
+        list: List<SuperItem> = this.list,
         trail: List<PathItem> = this.trail,
+        flag: Int = FLAG_EMPTY,
         currentIndex: Int = this.currentIndex,
-        isLoading: Boolean = false,
-        message: String? = null,
+        notification: String? = null,
     ) {
         this.list = list
         this.trail = trail
+        this.flag = flag
         this.currentIndex = currentIndex
-        this.isLoading = isLoading
-        this.message = message
+        this.notification = notification
 
         notifyListeners()
     }
 
-    private fun notifyListeners() {
-        for (listener in _listeners) {
+    private fun notifyListeners() = intent {
+        for (listener in listeners) {
             listener.onUpdateState(state = this@StorageStateController)
         }
+    }
+
+    override fun onDestroy() {
+        provider.closeObservers()
+        listeners.clear()
+        scope.cancel()
     }
 }

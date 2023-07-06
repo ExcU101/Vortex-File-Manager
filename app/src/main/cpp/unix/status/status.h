@@ -14,10 +14,6 @@
 #define FILESYSTEM_STATUS(...) statvfs(__VA_ARGS__)
 #define FILESYSTEM_STATUS64(...) statvfs64(__VA_ARGS__)
 
-int isCurrentDirectory(const char *name, unsigned int len);
-
-int isParentDirectory(const char *name, unsigned int len);
-
 int isCurrentDirectory(const char *name);
 
 int isParentDirectory(const char *name);

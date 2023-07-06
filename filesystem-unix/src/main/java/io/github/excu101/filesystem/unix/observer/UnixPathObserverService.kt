@@ -2,11 +2,8 @@ package io.github.excu101.filesystem.unix.observer
 
 import android.system.OsConstants
 import io.github.excu101.filesystem.fs.attr.BasicAttrs
-import io.github.excu101.filesystem.fs.observer.PathObservableEventType
 import io.github.excu101.filesystem.fs.observer.PathObservableKey
 import io.github.excu101.filesystem.fs.observer.PathObserverService
-import io.github.excu101.filesystem.fs.observer.event.CreateEvent
-import io.github.excu101.filesystem.fs.observer.type.*
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.utils.attrs
 import io.github.excu101.filesystem.unix.UnixCalls
@@ -43,7 +40,7 @@ internal class UnixPathObserverService(
 
     private val keys = mutableMapOf<Int, UnixPathObservableKey>()
 
-    private val buffer = ByteArray(size = 8192)
+    private val buffer = ByteArray(size = DEFAULT_BUFFER_SIZE)
 
     override val isOpen: Boolean
         get() = !closed
@@ -73,7 +70,7 @@ internal class UnixPathObserverService(
                     val observable = UnixObserverCalls.addObservable(
                         descriptor = descriptor,
                         path = path.bytes,
-                        mask = wrapMask(types = request.types)
+                        mask = request.types
                     )
 
                     val key = UnixPathObservableKey(
@@ -159,10 +156,12 @@ internal class UnixPathObserverService(
                                 key?.cancel()
                             }
 
-                            wrapMask(
-                                event.mask,
-                                system.getPath(event.name.decodeToString()) as UnixPath
-                            )?.let { key?.registerEvent(event = it) }
+                            key?.registerEvent(
+                                event = PathObservableKey.Event(
+                                    event.mask,
+                                    system.getPath(event.name.decodeToString())
+                                )
+                            )
                         }
                     }
                 }
@@ -172,7 +171,7 @@ internal class UnixPathObserverService(
 
     override suspend fun register(
         source: Path,
-        vararg types: PathObservableEventType,
+        types: Int,
     ): PathObservableKey {
         if (source !is UnixPath) throw IllegalArgumentException()
         if (!source.attrs<BasicAttrs>().isDirectory) throw IllegalArgumentException("Source isn't directory ($source)")
@@ -206,42 +205,5 @@ internal class UnixPathObserverService(
 
     internal suspend fun removeObservable(observable: UnixPathObservableKey) {
         poller.send(Cancel(key = observable))
-    }
-
-    private fun wrapMask(
-        mask: Int,
-        context: UnixPath,
-    ): PathObservableKey.Event? {
-        return when (mask) {
-            UnixMasks.CREATE -> {
-                CreateEvent(context)
-            }
-
-            else -> null
-        }
-    }
-
-    private fun wrapMask(
-        types: Array<out PathObservableEventType>,
-    ): Int {
-        var mask = 0
-
-        types.forEach { type ->
-            when (type) {
-                is PathObservableModifyEventType -> {
-                    mask = mask or UnixMasks.MODIFY
-                }
-
-                is PathObservableDeleteEventType -> {
-                    mask = mask or UnixMasks.DELETE
-                }
-
-                is PathObservableCreateEventType -> {
-                    mask = mask or UnixMasks.CREATE
-                }
-            }
-        }
-
-        return mask
     }
 }

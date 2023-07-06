@@ -10,13 +10,13 @@ import android.view.View.MeasureSpec.getSize
 import android.view.View.MeasureSpec.makeMeasureSpec
 import android.widget.ImageView
 import android.widget.TextView
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
-import io.github.excu101.vortex.ui.component.theme.key.mainBarActionIconTintColorKey
+import io.github.excu101.vortex.theme.key.mainBarActionIconTintColorKey
 import kotlin.math.min
 
-class MenuItem(context: Context) : ThemeFrameLayout(context) {
+class MenuItem(context: Context) : io.github.excu101.vortex.theme.widget.ThemeFrameLayout(context) {
 
     enum class Mode {
         TITLE,
@@ -41,11 +41,11 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
 
     private val titleView = TextView(context).apply {
         textSize = 16F
-        setTextColor(ThemeColor(mainBarActionIconTintColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarActionIconTintColorKey))
     }
 
     private val background =
-        RippleDrawable(valueOf(ThemeColor(mainBarActionIconTintColorKey)), null, null)
+        RippleDrawable(valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarActionIconTintColorKey)), null, null)
 
     private val iconView = ImageView(context).apply {
         isClickable = true
@@ -53,7 +53,7 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
         background = this@MenuItem.background
         minimumWidth = iconSize
         minimumHeight = iconSize
-        setColorFilter(ThemeColor(mainBarActionIconTintColorKey))
+        setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarActionIconTintColorKey))
     }
 
     override fun setOnClickListener(l: OnClickListener?) {
@@ -87,8 +87,8 @@ class MenuItem(context: Context) : ThemeFrameLayout(context) {
     }
 
     override fun onColorChanged() {
-        iconView.setColorFilter(ThemeColor(mainBarActionIconTintColorKey))
-        background.setColor(valueOf(ThemeColor(mainBarActionIconTintColorKey)))
+        iconView.setColorFilter(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarActionIconTintColorKey))
+        background.setColor(valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarActionIconTintColorKey)))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

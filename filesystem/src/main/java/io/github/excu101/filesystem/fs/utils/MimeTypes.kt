@@ -47,6 +47,7 @@ val videoMimeTypes = mapOf(
 )
 
 val imageMimeTypes = mapOf(
+    "png" to "image/png",
     "svg" to "image/svg+xml",
     "jpg" to "image/jpeg",
     "jpeg" to "image/jpeg",
@@ -103,6 +104,7 @@ val applicationMimeTypes = mapOf(
     "setreg" to "application/set-registration-initiation",
     "sema" to "application/vnd.sema",
     "semd" to "application/vnd.semd",
+    "sh" to "application/x-sh",
     "semf" to "application/vnd.semf",
     "see" to "application/vnd.seemail",
     "snf" to "application/x-font-snf",

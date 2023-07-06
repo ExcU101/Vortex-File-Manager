@@ -2,6 +2,10 @@ package io.github.excu101.vortex.ui.component.list.adapter
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListAdapter
+import androidx.collection.SparseArrayCompat
+import androidx.collection.set
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil.Callback
 import androidx.recyclerview.widget.DiffUtil.calculateDiff
 import io.github.excu101.vortex.ui.component.list.adapter.diff.ItemDiffer
@@ -10,12 +14,16 @@ import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFacto
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ClickListenerRegister
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewListener
 import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewLongListener
+import io.github.excu101.vortex.ui.component.list.adapter.listener.ItemViewSelectionListener
+import io.github.excu101.vortex.ui.component.list.adapter.listener.SelectionListener
+import io.github.excu101.vortex.ui.component.list.adapter.listener.SelectionListenerRegister
 import io.github.excu101.vortex.ui.component.list.adapter.selection.SelectableAdapter
 import io.github.excu101.vortex.ui.component.list.adapter.selection.SelectionAdapter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
+import kotlin.reflect.KClass
 
 class UnsupportedViewTypeException(
     viewType: Int,
@@ -23,7 +31,7 @@ class UnsupportedViewTypeException(
 
 open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, EditableAdapter<T>,
     SelectableAdapter<T>,
-    ClickListenerRegister<T> {
+    ClickListenerRegister<T>, SelectionListenerRegister<T> {
 
     companion object {
         const val selectionPayload = "SELECTION"
@@ -37,13 +45,15 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
     protected val selection = mutableSetOf<T>()
 
     // key: viewType, value: viewHolder factory
-    private val factories = mutableMapOf<Int, ViewHolderFactory<T>>()
+    private val factories = SparseArrayCompat<ViewHolderFactory<T>>()
 
     val viewTypes: Int
-        get() = factories.keys.size
+        get() = factories.size()
 
     private val itemViewListeners = mutableListOf<ItemViewListener<T>>()
     private val itemViewLongListeners = mutableListOf<ItemViewLongListener<T>>()
+    private val itemViewSelectionListeners = mutableListOf<ItemViewSelectionListener<T>>()
+    private val selectionListeners = mutableListOf<SelectionListener<T>>()
 
     protected val adapterList = mutableListOf<T>()
     val list: List<T>
@@ -52,7 +62,9 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
     private val scope = CoroutineScope(Dispatchers.Default)
 
     constructor(vararg types: Pair<Int, ViewHolderFactory<T>>) {
-        factories.putAll(types)
+        types.forEach { (type, factory) ->
+            factories.put(type, factory)
+        }
     }
 
     @OptIn(ObsoleteCoroutinesApi::class)
@@ -108,12 +120,16 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
     override fun select(item: T) {
         if (isSelected(item)) {
             selection.remove(item)
+            notifySelection(item, false)
         } else {
             selection.add(item)
+            notifySelection(item, true)
         }
 
         if (isPayload) changed(item, selectionPayload)
         else changed(item)
+
+        notifySelection()
     }
 
     override fun replaceSelected(selected: List<T>) {
@@ -131,6 +147,7 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
             if (item !in selected) {
                 if (isPayload) changed(item, selectionPayload)
                 else changed(item)
+                notifySelection(item, false)
                 true
             } else false
         }
@@ -140,8 +157,11 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
                 selection.add(newItem)
                 if (isPayload) changed(newItem, selectionPayload)
                 else changed(newItem)
+                notifySelection(newItem, true)
             }
         }
+
+        notifySelection()
     }
 
     override fun isSelected(position: Int): Boolean {
@@ -162,6 +182,10 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
 
     fun getSelectedCount(): Int = selection.size
 
+    fun getSelectedCountInstance(clazz: KClass<out T>) = selection.count {
+        it::class == clazz
+    }
+
     override fun getItemCount(): Int = adapterList.size
 
     override fun getItemViewType(position: Int): Int = adapterList[position].type
@@ -178,7 +202,7 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
     }
 
     fun add(vararg types: Pair<Int, ViewHolderFactory<T>>) {
-        factories.putAll(types)
+        types.map { (type, factory) -> factories[type] = factory }
     }
 
     fun removeFactory(type: Int) {
@@ -229,7 +253,6 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
     }
 
     override fun onViewRecycled(holder: ViewHolder<T>) {
-        super.onViewRecycled(holder)
         holder.unbind()
         holder.unbindListeners()
     }
@@ -242,6 +265,14 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
         itemViewLongListeners.add(listener)
     }
 
+    override fun registerSelection(listener: SelectionListener<T>) {
+        selectionListeners.add(listener)
+    }
+
+    override fun registerItemSelection(listener: ItemViewSelectionListener<T>) {
+        itemViewSelectionListeners.add(listener)
+    }
+
     protected fun notify(view: View, item: T, position: Int) {
         itemViewListeners.forEach { listener ->
             listener.onClick(view, item, position)
@@ -249,13 +280,22 @@ open class ItemAdapter<T : SuperItem> : SelectionAdapter<T, ViewHolder<T>>, Edit
     }
 
     protected fun notifyLong(view: View, item: T, position: Int): Boolean {
-        var clicked = false
-
         itemViewLongListeners.forEach { listener ->
-            clicked = listener.onLongClick(view, item, position)
+            if (listener.onLongClick(view, item, position)) return true
         }
+        return false
+    }
 
-        return clicked
+    protected fun notifySelection(item: T, isSelected: Boolean) {
+        itemViewSelectionListeners.forEach { listener ->
+            listener.onItemSelectionChanged(item, isSelected)
+        }
+    }
+
+    protected fun notifySelection() {
+        selectionListeners.forEach { listener ->
+            listener.onSelectionChanged(selection.toList())
+        }
     }
 
 }
@@ -267,6 +307,11 @@ fun <T : Item<*>> ItemAdapter<T>.register(listener: ItemViewListener<Item<*>>) {
 fun <T : Item<*>> ItemAdapter<T>.registerLong(listener: ItemViewLongListener<Item<*>>) {
     registerLong(listener as ItemViewLongListener<T>)
 }
+
+fun <T : Item<*>> ItemAdapter<T>.registerItemSelection(listener: ItemViewSelectionListener<Item<*>>) {
+    registerItemSelection(listener as ItemViewSelectionListener<T>)
+}
+
 
 infix fun <T> Int.with(factory: ViewHolderFactory<*>): Pair<Int, ViewHolderFactory<T>> {
     return Pair(this, factory as ViewHolderFactory<T>)

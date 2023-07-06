@@ -3,6 +3,7 @@ package io.github.excu101.vortex.ui.component.item.drawer
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.InsetDrawable
 import android.graphics.drawable.RippleDrawable
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
@@ -13,20 +14,21 @@ import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.shape.ShapeAppearanceModel.builder
 import com.google.android.material.shape.Shapeable
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.key.drawerItemHeightKey
+import io.github.excu101.vortex.theme.key.drawerItemWidthKey
+import io.github.excu101.vortex.theme.key.mainDrawerItemBackgroundColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerItemIconSelectedTintColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerItemIconTintColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerItemSelectedBackgroundColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerItemTitleSelectedTextColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerItemTitleTextColorKey
+import io.github.excu101.vortex.theme.key.trailItemRippleTintColorKey
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.ItemViewIds
+import io.github.excu101.vortex.ui.component.ddp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder.RecyclableView
-import io.github.excu101.vortex.ui.component.theme.key.drawerItemHeightKey
-import io.github.excu101.vortex.ui.component.theme.key.drawerItemWidthKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemBackgroundColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconSelectedTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemIconTintColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemSelectedBackgroundColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemTitleSelectedTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerItemTitleTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.trailItemRippleTintColorKey
 import io.github.excu101.vortex.ui.component.themeMeasure
 
 class DrawerItemView(
@@ -39,18 +41,17 @@ class DrawerItemView(
 
     private val rippleTintList = ColorStateList(
         arrayOf(
-//            intArrayOf(android.R.attr.state_focused, android.R.attr.state_selected),
             intArrayOf()
         ),
         intArrayOf(
-//            ThemeColor(trailItemRippleSelectedTintColorKey),
             ThemeColor(trailItemRippleTintColorKey)
         )
     )
 
     private val surface = MaterialShapeDrawable(
-        builder().setAllCorners(ROUNDED, 0F.dp).build()
+        builder().setAllCorners(ROUNDED, 8F.dp).build()
     ).apply {
+        setBounds(4.ddp, 4.ddp, 4.ddp, 4.ddp)
         tintList = createShapeColorStateList()
     }
 
@@ -107,14 +108,13 @@ class DrawerItemView(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val (width, height) = themeMeasure(
+        themeMeasure(
             widthMeasureSpec,
             heightMeasureSpec,
             drawerItemWidthKey,
-            drawerItemHeightKey
+            drawerItemHeightKey,
+            ::setMeasuredDimension
         )
-
-        setMeasuredDimension(width, height)
 
         measureChildren(widthMeasureSpec, heightMeasureSpec)
     }
@@ -183,7 +183,7 @@ class DrawerItemView(
         return RippleDrawable(
             rippleTintList,
             null,
-            surface
+            InsetDrawable(surface, 4.dp)
         )
     }
 

@@ -1,7 +1,10 @@
 package io.github.excu101.vortex.ui.component.storage.standard.linear
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.text.TextUtils
@@ -11,20 +14,35 @@ import android.widget.ImageView.ScaleType
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.contains
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.shape.CornerFamily.ROUNDED
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.MaterialShapeUtils
 import com.google.android.material.shape.ShapeAppearanceModel.builder
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ViewIds
 import io.github.excu101.vortex.data.PathItem
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.key.storageListItemHorizontalSubtitlePaddingKey
+import io.github.excu101.vortex.theme.key.storageListItemHorizontalTitlePaddingKey
+import io.github.excu101.vortex.theme.key.storageListItemIconBackgroundBookmarkedColorKey
+import io.github.excu101.vortex.theme.key.storageListItemIconBackgroundColorKey
+import io.github.excu101.vortex.theme.key.storageListItemIconBookmarkedColorKey
+import io.github.excu101.vortex.theme.key.storageListItemIconTintColorKey
+import io.github.excu101.vortex.theme.key.storageListItemLinearHeightDimenKey
+import io.github.excu101.vortex.theme.key.storageListItemLinearWidthDimenKey
+import io.github.excu101.vortex.theme.key.storageListItemSecondaryTextColorKey
+import io.github.excu101.vortex.theme.key.storageListItemSurfaceColorKey
+import io.github.excu101.vortex.theme.key.storageListItemSurfaceRippleColorKey
+import io.github.excu101.vortex.theme.key.storageListItemTitleTextColorKey
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.ThemeDp
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.storage.RecyclableStorageCell
-import io.github.excu101.vortex.ui.component.theme.key.*
 import io.github.excu101.vortex.ui.component.themeMeasure
 import io.github.excu101.vortex.utils.icon
+import java.lang.Math.toRadians
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
@@ -37,6 +55,24 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private val infoPadding = ThemeDp(storageListItemHorizontalSubtitlePaddingKey)
 
     private val iconSize = 40.dp
+
+    private var selectionFactor = 0F
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    private var selectionBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+        color =
+            ThemeColor(io.github.excu101.vortex.theme.key.storageListItemIconSelectedTintColorKey)
+        style = Paint.Style.FILL
+    }
+
+//    private var selectionOuterBackgroundPaint =
+//        Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG).apply {
+//            color = Color.GRAY
+//            style = Paint.Style.FILL
+//        }
 
     private val containsTitle: Boolean
         get() = contains(titleView)
@@ -107,10 +143,10 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
             iconView.setImageDrawable(value)
         }
 
-    override var isCellSelected: Boolean
-        get() = isSelected
+    override var isCellSelected: Boolean = false
         set(value) {
-            isSelected = value
+            field = value
+            createSelectionAnimator().start()
         }
 
     override var isBookmarked: Boolean = false
@@ -178,15 +214,42 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         iconView.setOnLongClickListener(listener)
     }
 
+    override fun onDrawForeground(canvas: Canvas?) {
+        if (isCellSelected) {
+            val radis = toRadians(45.0)
+            val centerX =
+                ((iconView.left + iconView.right) * 0.5F) + (iconView.width / 2 * sin(radis))
+            val centerY =
+                ((iconView.top + iconView.bottom) * 0.5F) + (iconView.height / 2 * cos(radis))
+            val radius = 9F.dp
+//            canvas?.drawArc(
+//                (centerX - radius).toFloat(),
+//                (centerY - radius).toFloat(),
+//                (centerX + radius).toFloat(),
+//                (centerY + radius).toFloat(),
+//                135F,
+//                170F * selectionFactor,
+//                false,
+//                selectionOuterBackgroundPaint
+//            )
+            canvas?.drawCircle(
+                centerX.toFloat(),
+                centerY.toFloat(),
+                (radius - 1F.dp) * selectionFactor,
+                selectionBackgroundPaint
+            )
+        }
+        super.onDrawForeground(canvas)
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val (width, height) = themeMeasure(
+        themeMeasure(
             widthSpec = widthMeasureSpec,
             heightSpec = heightMeasureSpec,
             widthKey = storageListItemLinearWidthDimenKey,
-            heightKey = storageListItemLinearHeightDimenKey
+            heightKey = storageListItemLinearHeightDimenKey,
+            ::setMeasuredDimension
         )
-
-        setMeasuredDimension(width, height)
 
         measureChildren(widthMeasureSpec, heightMeasureSpec)
     }
@@ -239,6 +302,7 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     }
 
     override fun onBindSelection(isSelected: Boolean) {
+        if (isCellSelected == isSelected) return
         isCellSelected = isSelected
     }
 
@@ -257,6 +321,17 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
         setOnIconClickListener(null)
         setOnLongClickListener(null)
         setOnIconLongClickListener(null)
+    }
+
+    private fun createSelectionAnimator(): ValueAnimator {
+        val start = if (isCellSelected) 1F else 0F
+        val end = if (isCellSelected) 0F else 1F
+
+        val animator = ValueAnimator.ofFloat(start, end)
+        animator.duration = 150L
+        animator.interpolator = FastOutSlowInInterpolator()
+        animator.addUpdateListener { selectionFactor = it.animatedFraction }
+        return animator
     }
 
     private fun updateStateLists() {
@@ -278,11 +353,9 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createSurfaceStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-//                intArrayOf(android.R.attr.state_selected),
                 intArrayOf(),
             ),
             intArrayOf(
-//                ThemeColor(storageListItemSurfaceSelectedColorKey),
                 ThemeColor(storageListItemSurfaceColorKey)
             )
         )
@@ -291,11 +364,9 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createRippleStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-//                intArrayOf(android.R.attr.state_selected),
                 intArrayOf() // default
             ),
             intArrayOf(
-//                ThemeColor(storageListItemSurfaceRippleSelectedColorKey),
                 ThemeColor(storageListItemSurfaceRippleColorKey) // default
             )
         )
@@ -304,11 +375,9 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createTitleStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-//                intArrayOf(android.R.attr.state_selected),
                 intArrayOf(),
             ),
             intArrayOf(
-//                ThemeColor(storageListItemTitleSelectedTextColorKey),
                 ThemeColor(storageListItemTitleTextColorKey)
             )
         )
@@ -317,11 +386,9 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createInfoStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-//            intArrayOf(android.R.attr.state_selected),
                 intArrayOf(),
             ),
             intArrayOf(
-//                ThemeColor(storageListItemSecondarySelectedTextColorKey),
                 ThemeColor(storageListItemSecondaryTextColorKey)
             )
         )
@@ -330,11 +397,9 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createIconStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-//                intArrayOf(android.R.attr.state_selected),
                 intArrayOf(),
             ),
             intArrayOf(
-//                ThemeColor(storageListItemIconSelectedTintColorKey),
                 if (isBookmarked) ThemeColor(
                     storageListItemIconBookmarkedColorKey
                 )
@@ -348,11 +413,9 @@ class StandardStorageLinearCell(context: Context) : ThemeFrameLayout(context),
     private fun createIconSurfaceStateList(): ColorStateList {
         return ColorStateList(
             arrayOf(
-//            intArrayOf(android.R.attr.state_selected),
                 intArrayOf(),
             ),
             intArrayOf(
-//                ThemeColor(storageListItemIconBackgroundSelectedColorKey),
                 if (isBookmarked) ThemeColor(
                     storageListItemIconBackgroundBookmarkedColorKey
                 )

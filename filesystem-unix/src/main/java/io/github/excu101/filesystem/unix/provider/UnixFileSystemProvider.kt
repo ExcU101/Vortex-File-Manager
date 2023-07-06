@@ -26,8 +26,10 @@ import io.github.excu101.filesystem.unix.path.UnixPath
 import io.github.excu101.filesystem.unix.structure.UnixDirectoryEntryStructure
 import io.github.excu101.filesystem.unix.structure.isCurrentDirectory
 import io.github.excu101.filesystem.unix.structure.isParentDirectory
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.supervisorScope
 import kotlin.reflect.KClass
 
 
@@ -149,9 +151,7 @@ class UnixFileSystemProvider : FileSystemProvider() {
 
     private fun getNextEntry(
         pointer: Long,
-    ): UnixDirectoryEntryStructure? {
-        return UnixCalls.readDir(pointer)
-    }
+    ): UnixDirectoryEntryStructure? = UnixCalls.readDir(pointer)
 
     override fun getFileStore(path: Path): FileStore {
         return UnixFileStore.from(path)

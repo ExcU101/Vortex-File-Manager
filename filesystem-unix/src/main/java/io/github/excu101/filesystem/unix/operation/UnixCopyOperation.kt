@@ -37,7 +37,7 @@ internal class UnixCopyOperation(
 
     private suspend inline fun resolveOp(
         source: Path,
-        parent: Path? = null
+        parent: Path? = null,
     ) = with(stat(source.bytes, noFollowLinks)) {
         when (mode and S_IFMT) {
             S_IFDIR -> copyDir(
@@ -65,7 +65,7 @@ internal class UnixCopyOperation(
     private suspend inline fun copyFile(
         source: Path,
         parent: Path? = null,
-        status: UnixStatusStructure
+        status: UnixStatusStructure,
     ) {
         val dest = parent ?: resolveSourceWithDest(source)
 
@@ -113,7 +113,7 @@ internal class UnixCopyOperation(
     private suspend fun copyDir(
         source: Path,
         parent: Path? = null,
-        status: UnixStatusStructure
+        status: UnixStatusStructure,
     ) {
         val content = source.flow.map { resolveSourceWithDest(source, it) }.toList()
         val dir = dest.resolve(source.getName())
@@ -130,7 +130,5 @@ internal class UnixCopyOperation(
         return dest.resolve(source.relativize(entry))
     }
 
-    private fun resolveSourceWithDest(source: Path): Path {
-        return dest.resolve(source.getName())
-    }
+    private fun resolveSourceWithDest(source: Path): Path = dest.resolve(source.getName())
 }

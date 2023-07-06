@@ -8,9 +8,6 @@ data class IntentScope<S, E>(val scope: ContainerScope<S, E>) {
     val state: S
         get() = scope.getState()
 
-    fun async() {
-
-    }
 }
 
 data class StateContext<S>(val state: S)

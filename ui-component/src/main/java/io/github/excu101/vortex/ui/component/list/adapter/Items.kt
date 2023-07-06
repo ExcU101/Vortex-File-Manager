@@ -6,8 +6,8 @@ import io.github.excu101.vortex.ui.component.item.drawer.DrawerItem
 import io.github.excu101.vortex.ui.component.item.text.TextItem
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolderFactory
 
-val DrawerViewHolderFactories = arrayOf(
-    ItemViewTypes.DrawerItem to DrawerItem as ViewHolderFactory<Item<*>>,
-    ItemViewTypes.TextItem to TextItem as ViewHolderFactory<Item<*>>,
-    ItemViewTypes.DividerItem to DividerHeaderItem as ViewHolderFactory<Item<*>>,
+val DrawerViewHolderFactories: Array<Pair<Int, ViewHolderFactory<SuperItem>>> = arrayOf(
+    ItemViewTypes.DrawerItem with DrawerItem,
+    ItemViewTypes.TextItem with TextItem,
+    ItemViewTypes.DividerItem with DividerHeaderItem,
 )

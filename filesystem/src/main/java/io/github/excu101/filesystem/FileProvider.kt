@@ -7,10 +7,14 @@ import io.github.excu101.filesystem.fs.attr.BasicAttrs
 import io.github.excu101.filesystem.fs.error.NotAnyProviderInstalled
 import io.github.excu101.filesystem.fs.observer.PathObserverService
 import io.github.excu101.filesystem.fs.operation.FileOperation
-import io.github.excu101.filesystem.fs.operation.FileOperationObserver
+import io.github.excu101.filesystem.fs.operation.PathOperationObserver
+import io.github.excu101.filesystem.fs.operation.observer
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.fs.provider.FileSystemProvider
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.reflect.KClass
 
 object FileProvider {
@@ -94,16 +98,38 @@ object FileProvider {
         systems.remove(system)
     }
 
-    fun runOperation(operation: FileOperation, observer: FileOperationObserver): Job {
+    suspend fun runOperation(operation: FileOperation, observer: PathOperationObserver) {
         return runOperation(operation, listOf(observer))
     }
 
-    fun runOperation(
+    fun prepareOperation(
         operation: FileOperation,
-        observers: List<FileOperationObserver> = listOf(),
-    ): Job {
+    ): Flow<FileOperation.Action> = callbackFlow {
+        runOperation(
+            operation, observer(
+                onAction = ::trySendBlocking,
+                onError = ::close,
+                onComplete = ::close
+            )
+        )
+
+        awaitClose()
+    }
+
+    suspend fun runOperation(
+        operation: FileOperation,
+        observers: List<PathOperationObserver> = listOf(),
+    ) {
         return getProvider().runOperation(operation = operation, observers = observers)
     }
+
+    suspend inline fun runOperation(
+        operation: FileOperation,
+        crossinline onAction: (FileOperation.Action) -> Unit = {},
+        crossinline onError: (Throwable) -> Unit = {},
+        crossinline onComplete: () -> Unit = {},
+    ) = runOperation(operation, observer(onAction, onError, onComplete))
+
 
     fun parsePath(input: String, scheme: String? = null): Path {
         return getSystem(scheme).getPath(first = input)

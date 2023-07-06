@@ -1,7 +1,6 @@
 package io.github.excu101.vortex.ui.component.item.text
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.view.View.MeasureSpec.AT_MOST
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.getMode
@@ -10,19 +9,16 @@ import android.view.View.MeasureSpec.makeMeasureSpec
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.TextView
 import androidx.core.view.contains
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.MaterialShapeUtils
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerTitleColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerTitleColorKey
 import kotlin.math.min
 
 class TextItemView(
     context: Context,
-) : ThemeFrameLayout(context), ViewHolder.RecyclableView<TextItem> {
+) : io.github.excu101.vortex.theme.widget.ThemeFrameLayout(context), ViewHolder.RecyclableView<TextItem> {
 
     private val innerWidthPadding = 16.dp
 
@@ -30,7 +26,7 @@ class TextItemView(
     private val desireHeight = 48.dp
 
     private val title = TextView(context).apply {
-        setTextColor(ThemeColor(mainDrawerTitleColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainDrawerTitleColorKey))
         textSize = 14F
     }
 
@@ -104,7 +100,7 @@ class TextItemView(
     }
 
     override fun onColorChanged() {
-        title.setTextColor(ThemeColor(mainDrawerTitleColorKey))
+        title.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainDrawerTitleColorKey))
     }
 
     override fun onBind(item: TextItem) {

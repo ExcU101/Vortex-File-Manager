@@ -11,8 +11,8 @@ object BuildConfig {
     }
 
     object JDK {
-        const val Ver = "1.8"
-        val VerEnum = JavaVersion.VERSION_1_8
+        const val Ver = "17"
+        val VerEnum = JavaVersion.VERSION_17
     }
 
 

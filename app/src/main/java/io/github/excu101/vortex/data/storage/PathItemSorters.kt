@@ -20,7 +20,7 @@ object PathItemSorters {
     val Size: Sorter<PathItem> = compareByDescending<PathItem> { item ->
         item.isDirectory
     }.thenBy {
-        it.size.memory
+        it.size.original
     }
 
     val LastModifiedTime: Sorter<PathItem> = compareByDescending<PathItem> { item ->

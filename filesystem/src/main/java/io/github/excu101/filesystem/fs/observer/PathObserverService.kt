@@ -9,7 +9,7 @@ interface PathObserverService {
 
     suspend fun register(
         source: Path,
-        vararg types: PathObservableEventType,
+        types: Int,
     ): PathObservableKey
 
     suspend fun take(): PathObservableKey?

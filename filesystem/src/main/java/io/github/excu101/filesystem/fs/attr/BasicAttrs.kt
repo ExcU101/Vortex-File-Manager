@@ -1,7 +1,7 @@
 package io.github.excu101.filesystem.fs.attr
 
-import io.github.excu101.filesystem.fs.attr.size.Size
 import io.github.excu101.filesystem.fs.attr.time.FileTime
+import io.github.excu101.filesystem.fs.attr.size.Size
 
 interface BasicAttrs {
 

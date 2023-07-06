@@ -4,6 +4,7 @@ import io.github.excu101.filesystem.fs.operation.FileOperation
 import io.github.excu101.filesystem.fs.path.Path
 import io.github.excu101.filesystem.unix.UnixCalls
 import io.github.excu101.filesystem.unix.path.UnixPath
+import kotlinx.coroutines.flow.Flow
 
 internal class UnixChangeOwnerOperation(
     private val path: Path,

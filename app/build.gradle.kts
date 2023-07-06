@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.api.DefaultAndroidSourceDirectorySet
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
@@ -70,12 +69,6 @@ android {
             version = Versions.cmakeVer
         }
     }
-
-    sourceSets {
-        getByName("main") {
-            (kotlin as DefaultAndroidSourceDirectorySet).filter.excludes += "**/StorageListPageFragment.kt"
-        }
-    }
 }
 
 dependencies {
@@ -102,8 +95,8 @@ dependencies {
     implementation(project(Deps.Application.FileSystem))
     implementation(project(Deps.Application.FileSystemUnix))
     implementation(project(Deps.Application.PackageManager))
-    implementation(project(Deps.Application.PluginSystemUi))
     implementation(project(Deps.Application.UiComponent))
     implementation(project(Deps.Application.VortexService))
     implementation(project(Deps.Application.Navigation))
+    implementation(project(Deps.Application.VortexTheme))
 }

@@ -3,12 +3,12 @@ package io.github.excu101.vortex.ui.component.item.menu
 import android.content.Context
 import android.widget.TextView
 import androidx.core.view.contains
-import io.github.excu101.manager.ui.theme.widget.ThemeFrameLayout
+import io.github.excu101.vortex.theme.widget.ThemeFrameLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.menu.MenuLayout
 import kotlin.math.min
 
-class MenuHeader(context: Context) : ThemeFrameLayout(context) {
+class MenuHeader(context: Context) : io.github.excu101.vortex.theme.widget.ThemeFrameLayout(context) {
 
     private val desireHeight = 48.dp
 

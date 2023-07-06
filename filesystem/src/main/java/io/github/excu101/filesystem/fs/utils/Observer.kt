@@ -1,7 +1,7 @@
 package io.github.excu101.filesystem.fs.utils
 
 import io.github.excu101.filesystem.fs.operation.FileOperation
-import io.github.excu101.filesystem.fs.operation.FileOperationObserver
+import io.github.excu101.filesystem.fs.operation.PathOperationObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -17,8 +17,8 @@ inline fun FileOperationObserver(
     crossinline action: Action,
     crossinline error: Error,
     crossinline completion: Completion,
-): FileOperationObserver {
-    return object : FileOperationObserver {
+): PathOperationObserver {
+    return object : PathOperationObserver {
         override fun onAction(action: FileOperation.Action) {
             action(action)
         }
@@ -38,8 +38,8 @@ inline fun FileOperationObserver(
     crossinline action: SuspendAction,
     crossinline error: SuspendError,
     crossinline completion: SuspendCompletion,
-): FileOperationObserver {
-    return object : FileOperationObserver {
+): PathOperationObserver {
+    return object : PathOperationObserver {
         override fun onAction(action: FileOperation.Action) {
             scope.launch { action(action) }
         }

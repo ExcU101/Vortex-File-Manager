@@ -10,38 +10,38 @@ import android.widget.TextView
 import androidx.core.view.contains
 import androidx.core.view.updatePadding
 import com.google.android.material.shape.MaterialShapeDrawable
-import io.github.excu101.manager.ui.theme.ThemeColor
-import io.github.excu101.manager.ui.theme.widget.ThemeLinearLayout
+import io.github.excu101.vortex.theme.ThemeColor
+import io.github.excu101.vortex.theme.widget.ThemeLinearLayout
 import io.github.excu101.vortex.ui.component.dp
 import io.github.excu101.vortex.ui.component.list.adapter.holder.ViewHolder
-import io.github.excu101.vortex.ui.component.theme.key.mainBarSubtitleTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainBarTitleTextColorKey
-import io.github.excu101.vortex.ui.component.theme.key.mainDrawerBackgroundColorKey
-import io.github.excu101.vortex.ui.component.theme.key.storageListItemSurfaceRippleColorKey
+import io.github.excu101.vortex.theme.key.mainBarSubtitleTextColorKey
+import io.github.excu101.vortex.theme.key.mainBarTitleTextColorKey
+import io.github.excu101.vortex.theme.key.mainDrawerBackgroundColorKey
+import io.github.excu101.vortex.theme.key.storageListItemSurfaceRippleColorKey
 
 class InfoItemView(
     context: Context,
-) : ThemeLinearLayout(
+) : io.github.excu101.vortex.theme.widget.ThemeLinearLayout(
     context
 ), ViewHolder.RecyclableView<InfoItem> {
 
     private val shape = MaterialShapeDrawable().apply {
-        setTint(ThemeColor(mainDrawerBackgroundColorKey))
+        setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainDrawerBackgroundColorKey))
     }
 
     private val background = RippleDrawable(
-        ColorStateList.valueOf(ThemeColor(storageListItemSurfaceRippleColorKey)),
+        ColorStateList.valueOf(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.storageListItemSurfaceRippleColorKey)),
         shape,
         null
     )
 
     private val titleView = TextView(context).apply {
-        setTextColor(ThemeColor(mainBarTitleTextColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarTitleTextColorKey))
         textSize = 14F
     }
 
     private val descriptionView = TextView(context).apply {
-        setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
+        setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarSubtitleTextColorKey))
         textSize = 12F
     }
 
@@ -104,9 +104,9 @@ class InfoItemView(
     }
 
     override fun onColorChanged() {
-        titleView.setTextColor(ThemeColor(mainBarTitleTextColorKey))
-        descriptionView.setTextColor(ThemeColor(mainBarSubtitleTextColorKey))
-        shape.setTint(ThemeColor(mainDrawerBackgroundColorKey))
+        titleView.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarTitleTextColorKey))
+        descriptionView.setTextColor(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainBarSubtitleTextColorKey))
+        shape.setTint(io.github.excu101.vortex.theme.ThemeColor(io.github.excu101.vortex.theme.key.mainDrawerBackgroundColorKey))
     }
 
 
