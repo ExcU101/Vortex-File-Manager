@@ -1,10 +1,5 @@
-# VortexFileManager
+We've switched to this repos 
+!(1)[https://gitlab.com/umbra.excalibur101/Vortex-File-Manager]
+!(2)[https://notabug.org/Hellsinger/Vortex_File_Manager]
 
-# Idea
-Here's something special, but it will be later soon...
-
-# Special thanks
-Here's something special, but it will be later soon...
-
-# Adding localization (Remark that not all keys are included) 
-Comming soon...
+Github is no longer our solution
